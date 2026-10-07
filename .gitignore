@@ -1,0 +1,18 @@
+# imágenes fuente descargadas del proveedor (regenerables con feed_sync.py)
+data/raw/
+
+# credenciales y tokens (jamás al repositorio)
+.env
+*.token
+token
+.netrc
+.git-credentials
+
+# sistema
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+.idea/

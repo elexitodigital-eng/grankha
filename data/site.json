@@ -1,0 +1,27 @@
+{
+  "name": "GRANKHA",
+  "legal_name": "ZENQA LIFE",
+  "tagline": "Accesorios para mascotas con propósito",
+  "url": "https://elexitodigital-eng.github.io/grankha",
+  "contactEmail": "zenqalife@gmail.com",
+  "currency": "EUR",
+  "shipping": {
+    "default": "pen",
+    "freeFromPeninsular": 49,
+    "vat": 0.21,
+    "note": "Precios con IVA español incluido (21%). Canarias, Ceuta y Melilla: el IVA no se aplica; el impuesto se liquida en destino (IGIC/IPSI).",
+    "options": [
+      { "id": "pen", "name": "España peninsular", "price": 4.95, "free_from": 49, "eta": "Entrega en 3-6 días laborables" },
+      { "id": "bal", "name": "Islas Baleares", "price": 6.95, "eta": "Entrega en 4-8 días laborables" },
+      { "id": "can", "name": "Canarias, Ceuta y Melilla", "price": 12.95, "eta": "Entrega en 5-10 días laborables" },
+      { "id": "prt", "name": "Portugal peninsular", "price": 5.95, "eta": "Entrega en 4-8 días laborables" },
+      { "id": "ue", "name": "Resto de la Unión Europea", "price": 12.95, "eta": "Entrega en 5-12 días laborables" }
+    ]
+  },
+  "checkout": {
+    "endpoint": "",
+    "_comment": "Deja endpoint vacío para el flujo de confirmación por email. Al conectar Stripe/Supabase, pon aquí la URL de tu función y el carrito enviará el pedido en JSON y redirigirá a la pasarela si devuelve { url }."
+  },
+  "returns_days": 30,
+  "delivery_days": "3-8"
+}
