@@ -68,40 +68,59 @@ def specs_for(sku, p, commercial):
 
 
 def pack_image(code, components, raw_dir: Path, dest: Path):
-    """Compone la imagen de un pack: componentes en fila sobre fondo blanco."""
-    imgs = []
+    """Compone la imagen del pack en cuadrícula con aire: 2 piezas en fila,
+    3 piezas en 1 grande + 2 apiladas, 4+ en 2×2. Sin recortes."""
+    items = []
     for sku, qty in components:
         f = raw_dir / f"{sku}.webp"
         if f.exists():
-            imgs.append((Image.open(f).convert("RGB"), qty))
-    if not imgs:
+            items.append((Image.open(f).convert("RGB"), qty))
+    if not items:
         return False
-    n = len(imgs)
     W = H = 1200
+    GAP = 26
+    MARGIN = 46
     canvas = Image.new("RGB", (W, H), (255, 255, 255))
-    cell_w = int(W / max(n, 1))
-    pad = 60
-    for i, (im, qty) in enumerate(imgs):
+    n = len(items)
+
+    def fit(im, box_w, box_h):
         im = im.copy()
-        im.thumbnail((cell_w - pad, H - 2 * pad), Image.LANCZOS)
-        x = int(i * cell_w + (cell_w - im.width) / 2)
-        y = int((H - im.height) / 2)
-        canvas.paste(im, (x, y))
+        im.thumbnail((box_w, box_h), Image.LANCZOS)
+        return im
+
+    # zonas (x0, y0, x1, y1) para cada pieza
+    if n == 1:
+        zones = [(0, 0, W, H)]
+    elif n == 2:
+        half = W // 2
+        zones = [(0, 0, half, H), (half, 0, W, H)]
+    elif n == 3:
+        half_w, half_h = W // 2, H // 2
+        zones = [(0, 0, half_w, H), (half_w, 0, W, half_h), (half_w, half_h, W, H)]
+    else:
+        half_w, half_h = W // 2, H // 2
+        zones = [(0, 0, half_w, half_h), (half_w, 0, W, half_h),
+                 (0, half_h, half_w, H), (half_w, half_h, W, H)]
+
+    try:
+        f_bold = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 34)
+    except Exception:
+        f_bold = ImageFont.load_default()
+
+    for (im, qty), (x0, y0, x1, y1) in zip(items, zones):
+        bw, bh = (x1 - x0) - 2 * MARGIN, (y1 - y0) - 2 * MARGIN
+        sq = fit(im, bw, bh)
+        px = int(x0 + (x1 - x0 - sq.width) / 2)
+        py = int(y0 + (y1 - y0 - sq.height) / 2)
+        canvas.paste(sq, (px, py))
         if qty > 1:
             d = ImageDraw.Draw(canvas)
-            try:
-                f = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 40)
-            except Exception:
-                f = ImageFont.load_default()
-            label = f"×{qty}"
-            lw = d.textlength(label, font=f)
-            d.rectangle([x + 8, y + 8, x + 8 + lw + 24, y + 68], fill=(11, 11, 11))
-            d.text((x + 20, y + 18), label, fill=(255, 255, 255), font=f)
-    if n > 1:
-        d = ImageDraw.Draw(canvas)
-        for i in range(1, n):
-            x = int(i * cell_w)
-            d.line([(x, 140), (x, H - 140)], fill=(230, 230, 228), width=2)
+            label = f"x{qty}"
+            lw = d.textlength(label, font=f_bold)
+            bx = min(px + 14, x1 - int(lw) - 44)
+            d.rectangle([bx, py + 12, bx + lw + 26, py + 60], fill=(11, 11, 11))
+            d.text((bx + 13, py + 20), label, fill=(255, 255, 255), font=f_bold)
+
     dest.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(dest, "WEBP", quality=84, method=6)
     return True
@@ -207,7 +226,7 @@ def build(raw_dir: Path, out_path: Path, thumbs_dir: Path, og_dir: Path, packs_d
                           thumbs_dir / f"{slug}.webp", og_dir)
         products.append({
             "sku": code, "slug": slug, "kind": "pack",
-            "name": pk["name"], "subtitle": f'{len(comps)} piezas · ahorras {saving:.2f} €'.replace(".", ","),
+            "name": pk["name"], "subtitle": f"Pack de {len(comps)} piezas",
             "collection": "Packs", "cat": "packs", "catName": "Packs",
             "audience": pk["audience"],
             "audienceLabel": {"perro": "Pack para perros", "gato": "Pack para gatos",
@@ -216,7 +235,7 @@ def build(raw_dir: Path, out_path: Path, thumbs_dir: Path, og_dir: Path, packs_d
             "cost": round(an.get("component_cost", 0), 2),
             "stock": stock, "weight_g": weight,
             "color": "Varios", "colorHex": "#0B0B0B",
-            "tags": ["Pack", f'Ahorras {saving:.2f} €'.replace(".", ",")],
+            "tags": ["Pack", "Envío gratis incluido"],
             "material": "", "desc": pk["desc"], "bullets": pk["bullets"], "why": None,
             "components": [{"sku": s, "qty": q, "slug": commercial_all[s]["slug"],
                             "name": commercial_all[s]["name"]} for s, q in comps],

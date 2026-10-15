@@ -153,27 +153,27 @@
  },
  "PACK-02": {
   "price": 62.9,
-  "name": "Pack Paseo Guardian XS · 2 piezas · ahorras 3,90 €"
+  "name": "Pack Paseo Guardian XS · Pack de 2 piezas"
  },
  "PACK-01": {
   "price": 66.9,
-  "name": "Pack Paseo Guardian S · 2 piezas · ahorras 4,90 €"
+  "name": "Pack Paseo Guardian S · Pack de 2 piezas"
  },
  "PACK-04": {
   "price": 66.9,
-  "name": "Pack Descanso · 2 piezas · ahorras 4,90 €"
+  "name": "Pack Descanso · Pack de 2 piezas"
  },
  "PACK-03": {
   "price": 78.9,
-  "name": "Pack Primeros Días Gato · 3 piezas · ahorras 7,80 €"
+  "name": "Pack Primeros Días Gato · Pack de 3 piezas"
  },
  "PACK-06": {
   "price": 80.9,
-  "name": "Pack Hidratación · 2 piezas · ahorras 6,80 €"
+  "name": "Pack Hidratación · Pack de 2 piezas"
  },
  "PACK-05": {
   "price": 84.9,
-  "name": "Pack Hogar Real · 2 piezas · ahorras 6,90 €"
+  "name": "Pack Hogar Real · Pack de 2 piezas"
  },
  "costs": {
   "PAWH-01": 18.63,

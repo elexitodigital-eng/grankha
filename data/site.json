@@ -8,8 +8,6 @@
   "shipping": {
     "default": "pen",
     "freeFromPeninsular": 39,
-    "donation_rate": 0.05,
-    "donation_text": "5 % de los beneficios",
     "vat": 0.21,
     "note": "Precios con IVA español incluido (21 %). Canarias, Ceuta y Melilla: el IVA no se aplica; el impuesto se liquida en destino (IGIC/IPSI).",
     "options": [
@@ -102,7 +100,8 @@
   "delivery_days": "3-8",
   "donation": {
     "rate": 0.05,
-    "text": "5 % de los beneficios",
-    "purpose": "investigación del cáncer y las enfermedades raras en mascotas"
+    "public_text": "un porcentaje de los beneficios",
+    "purpose": "investigación del cáncer y las enfermedades raras en mascotas",
+    "internal_note": "El porcentaje exacto (5 %) es interno: se reserva en orders.donation y en la auditoría de precios. No mostrarlo en la web."
   }
 }

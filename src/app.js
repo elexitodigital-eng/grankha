@@ -477,7 +477,7 @@
     var root = $("#pd");
     if (!root) return;
     var slug = root.getAttribute("data-slug");
-    // los packs avisan de cuánto ahorra el cliente
+    // los packs muestran sus piezas en la ficha
     var box = $("#pd-pack");
     if (box) {
       var sku = root.getAttribute("data-sku");
@@ -488,7 +488,7 @@
       if (conmigo.length) {
         box.innerHTML = '<p class="small mb-m">Este artículo forma parte de estos packs:</p><div class="filters">' +
           conmigo.map(function (p) {
-            return '<a class="chip" href="' + p.slug + '.html">' + p.name + ' · ahorras ' + eur(p.saving) + '</a>';
+            return '<a class="chip" href="' + p.slug + '.html">' + p.name + '</a>';
           }).join("") + '</div>';
       }
     }
@@ -606,6 +606,53 @@
     });
   }
 
+  /* -------------------------------------------------------------- galería */
+  function initGallery() {
+    $$("[data-gallery]").forEach(function (g) {
+      var track = $(".gallery__track", g);
+      var slides = $$(".gallery__slide", g);
+      if (!track || slides.length < 2) { $$(".gallery__nav", g).forEach(function (b) { b.remove(); }); return; }
+      var dots = $("[data-gdots]", g), pos = $("[data-gpos]", g), i = 0;
+
+      if (dots) {
+        dots.innerHTML = slides.map(function (_, k) {
+          return '<button type="button" aria-label="Ver pieza ' + (k + 1) + '"></button>';
+        }).join("");
+      }
+      var dbs = dots ? $$("button", dots) : [];
+
+      function go(n) {
+        i = (n + slides.length) % slides.length;
+        track.style.transform = "translateX(" + (-i * 100) + "%)";
+        dbs.forEach(function (d, k) { d.classList.toggle("is-on", k === i); });
+        if (pos) pos.textContent = (i + 1) + " / " + slides.length;
+        slides.forEach(function (s2, k) {
+          s2.setAttribute("aria-hidden", k === i ? "false" : "true");
+          var a = $("a", s2); if (a) a.setAttribute("tabindex", k === i ? "0" : "-1");
+        });
+      }
+      $$("[data-gprev]", g).forEach(function (b) { b.addEventListener("click", function () { go(i - 1); }); });
+      $$("[data-gnext]", g).forEach(function (b) { b.addEventListener("click", function () { go(i + 1); }); });
+      dbs.forEach(function (d, k) { d.addEventListener("click", function () { go(k); }); });
+      g.setAttribute("tabindex", "0");
+      g.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowLeft") { go(i - 1); }
+        if (e.key === "ArrowRight") { go(i + 1); }
+      });
+      var x0 = null, y0 = null;
+      g.addEventListener("touchstart", function (e) {
+        x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+      }, { passive: true });
+      g.addEventListener("touchend", function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { go(dx < 0 ? i + 1 : i - 1); }
+        x0 = y0 = null;
+      }, { passive: true });
+      go(0);
+    });
+  }
+
   function initMisc() {
     $$("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
     var t = $("#toast");
@@ -628,6 +675,7 @@
     initProduct();
     initCart();
     initMenu();
+    initGallery();
     initContact();
     initReveal();
     initNewsletter();

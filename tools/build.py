@@ -27,7 +27,7 @@ JS = (ROOT / "src" / "app.js").read_text().replace("</", "<\\/")
 BASE = SITE["url"].rstrip("/")
 SHIP_OPTS = SITE["shipping"]["options"]
 FREE_FROM = SITE["shipping"]["freeFromPeninsular"]
-DON_TEXT = SITE["donation"]["text"]
+DON_TEXT = SITE["donation"].get("public_text", "un porcentaje de los beneficios")
 RETURNS = SITE.get("returns_days", 30)
 DELIVERY = SITE.get("delivery_days", "3-8")
 
@@ -38,12 +38,12 @@ CATS = [
     ("correas", "Correas", "Correas de paseo y retráctiles"),
     ("camas", "Camas", "Camas y refugios para descansar"),
     ("comederos", "Comederos y fuentes", "Acero, madera y fuentes de agua"),
-    ("packs", "Packs", "Conjuntos con descuento"),
+    ("packs", "Packs", "Conjuntos coordinados"),
 ]
 DESTACADOS_SKU = ["PAWH-01", "PawL-01", "PawB-10", "PAWFB-08", "PAWH-06", "PawB-07",
                   "PAWFB-04", "PawL-05"]
 TAG_BY_CAT = {"arneses": "Malla reflectante", "correas": "Uso diario", "camas": "Lavable",
-              "comederos": "Acero inox.", "packs": "Pack con descuento"}
+              "comederos": "Acero inox.", "packs": "Pack"}
 
 # --------------------------------------------------------------------- utils
 def esc(t):
@@ -97,9 +97,19 @@ LITE = [{"slug": p["slug"], "title": p["name"], "subtitle": p["subtitle"], "sku"
 FULL = [dict(x, thumb=THUMB[x["slug"]], colorHex=by_sku[x["sku"]]["colorHex"],
              components=(by_sku[x["sku"]].get("components") if x["kind"] == "pack" else None))
         for x in LITE]
-CFG = {"name": SITE["name"], "contactEmail": SITE["contactEmail"], "shipping": SITE["shipping"],
-       "checkout": {"endpoint": SITE["checkout"]["endpoint"]}, "currency": SITE["currency"],
-       "returns": RETURNS, "donation": SITE.get("donation", {}), "delivery": DELIVERY}
+# Configuración que se incrusta en el navegador: SOLO datos públicos.
+# (el porcentaje interno de donación no se publica nunca)
+CFG = {
+    "name": SITE["name"],
+    "contactEmail": SITE["contactEmail"],
+    "shipping": {k: v for k, v in SITE["shipping"].items()
+                 if k in ("default", "freeFromPeninsular", "vat", "note", "options")},
+    "checkout": {"endpoint": SITE["checkout"]["endpoint"]},
+    "currency": SITE["currency"],
+    "returns": RETURNS,
+    "delivery": DELIVERY,
+    "donation": {"public_text": DON_TEXT},   # solo la frase genérica
+}
 
 FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
            "%3Crect width='64' height='64' fill='%230B0B0B'/%3E%3Ctext x='32' y='45' font-family="
@@ -126,10 +136,12 @@ def cat_count(cat):
     return sum(1 for p in PRODUCTS if p["cat"] == cat)
 
 def price_block(p, big=False):
-    """Precio con precio anterior tachado si lo hay."""
+    """Precio. En packs nunca mostramos ahorro ni precio tachado; en productos,
+    solo si la diferencia con el precio anterior es relevante (>= 15 %)."""
     strike = ""
-    if p.get("prevPrice") and p["prevPrice"] > p["price"] + 0.4:
-        strike = f'<span class="was">{eur(p["prevPrice"])}</span>'
+    prev = p.get("prevPrice")
+    if p.get("kind") != "pack" and prev and p["price"] > 0 and prev > p["price"] * 1.15:
+        strike = f'<span class="was">{eur(prev)}</span>'
     cls = "now mono" + (" now--big" if big else "")
     return f'<span class="{cls}">{eur(p["price"])}</span>{strike}'
 
@@ -174,7 +186,7 @@ def header(active=""):
         a("tienda.html?aud=gato", "Gatos", "gato"),
         a("compromiso.html", "Compromiso", "compromiso"),
     ])
-    return f"""<div class="announce">Envío gratis en península desde {eur(FREE_FROM)} · Devoluciones {RETURNS} días · {esc(DON_TEXT)} a investigación · <a href="envios.html">Envíos</a></div>
+    return f"""<div class="announce">Envío gratis en península desde {eur(FREE_FROM)} · Devoluciones {RETURNS} días · <a href="compromiso.html">GRANKHA por la salud animal</a></div>
 <header class="site-head">
   <div class="wrap site-head__in">
     <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio">GRANKHA</a>
@@ -195,7 +207,7 @@ def footer():
     <div class="footer__cols">
       <div>
         <a class="wordmark" href="index.html" style="color:#fff">GRANKHA</a>
-        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios financia la investigación del cáncer y las enfermedades raras en mascotas. En memoria de khalid, un gato blanco inolvidable.</p>
+        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas. En memoria de Khalid, un gato blanco inolvidable.</p>
         <div class="pays"><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span><span>Pago seguro</span></div>
       </div>
       <div><h4>Tienda</h4><ul>{cats}<li><a href="tienda.html">Ver todo</a></li></ul></div>
@@ -226,18 +238,20 @@ def card(p, rank=None):
     if rank is not None and rank < 0:
         tag, dark = "Más vendido", " tag--dark"
     if p["kind"] == "pack":
-        tag, dark = f'Ahorras {eur(p["saving"]).replace(" €", " €")}', " tag--dark"
+        tag, dark = "Pack", " tag--dark"
     aud_icon = "" if p["audience"] == "ambos" else (SVG["cat"] if p["audience"] == "gato" else SVG["dog"])
     sub = p["subtitle"]
     if p["kind"] == "pack":
         sub = pack_of(p)
+    # en los packs la categoría y la colección coinciden: no repetir el rótulo
+    col_label = p["catName"] if p["catName"] == p["collection"] else f"{p['catName']} · {p['collection']}"
     return f"""<article class="card" data-cat="{p['cat']}" data-aud="{p['audience']}" data-price="{p['price']:.2f}" data-rank="{order_rank[p['slug']]}" data-search="{esc(p['name'] + ' ' + p['subtitle'] + ' ' + p['collection'] + ' ' + p['catName'] + ' ' + ' '.join(p.get('tags', [])))}">
   <a class="card__media" href="{href}" tabindex="-1" aria-hidden="true">
     <span class="card__tags"><span class="tag{dark}">{tag}</span></span>
     <img src="{THUMB[p['slug']]}" alt="{esc(p['name'] + ' — ' + p['subtitle'])}" width="380" height="380" loading="lazy" decoding="async">
   </a>
   <div class="card__body">
-    <span class="card__col">{esc(p['catName'])} · {esc(p['collection'])}</span>
+    <span class="card__col">{esc(col_label)}</span>
     <a class="card__title" href="{href}">{esc(p['name'])}</a>
     <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span>{esc(sub)}</span>
     <div class="card__foot">
@@ -254,7 +268,8 @@ def products_grid(items, ranks=None):
 def tail(full=False):
     cfg = json.dumps(CFG, ensure_ascii=False)
     lite = json.dumps(LITE, ensure_ascii=False)
-    packs = json.dumps([{k: v for k, v in p.items() if k in ("slug", "name", "price", "saving", "components")} for p in PACKS], ensure_ascii=False)
+    # al navegador solo van los datos públicos de cada pack (sin importes de ahorro)
+    packs = json.dumps([{k: v for k, v in p.items() if k in ("slug", "name", "price", "components")} for p in PACKS], ensure_ascii=False)
     f = f"window.GRANKHA_CATALOG_FULL={json.dumps(FULL, ensure_ascii=False)};" if full else ""
     return f"""<div id="toast" class="toast" role="status" aria-live="polite"><span data-toast-msg></span><a data-toast-link href="#"></a></div>
 <script>window.GRANKHA_CONFIG={cfg};window.GRANKHA_CATALOG={lite};window.GRANKHA_PACKS={packs};{f}</script>
@@ -283,7 +298,7 @@ def build_index():
       <div class="hero__copy">
         <p class="kicker">Colección PAW · Perros y gatos</p>
         <h1 class="h1">Accesorios con<br>propósito.</h1>
-        <p class="lede">Arneses, correas, camas, comederos y fuentes de diseño limpio para los que siempre están a tu lado —sean de cuatro patas y ladren, o de cuatro patas y ronroneen—. Y una promesa: <strong>{esc(DON_TEXT.lower())}</strong> de los beneficios financia la investigación del cáncer y las enfermedades raras en mascotas.</p>
+        <p class="lede">Arneses, correas, camas, comederos y fuentes de diseño limpio para los que siempre están a tu lado —sean de cuatro patas y ladren, o de cuatro patas y ronroneen—. Y una promesa: <strong>un porcentaje de los beneficios</strong> se destinará a la investigación del cáncer y las enfermedades raras en mascotas.</p>
         <div class="hero__cta">
           <a class="btn" href="tienda.html">Ver la colección</a>
           <a class="btn btn--ghost" href="tienda.html?cat=packs">Ver packs con descuento</a>
@@ -291,7 +306,7 @@ def build_index():
         <div class="hero__meta">
           <div>{SVG['truck']} Envío gratis desde {eur(FREE_FROM)}</div>
           <div>{SVG['return']} Devoluciones {RETURNS} días</div>
-          <div>{SVG['heart']} {esc(DON_TEXT)} a investigación</div>
+          <div>{SVG['heart']} Un porcentaje a investigación</div>
         </div>
       </div>
       <div class="hero__media">
@@ -305,7 +320,7 @@ def build_index():
       <div class="strip__i">{SVG['truck']}<div><b>Envío gratis desde {eur(FREE_FROM)}</b><span>Entrega en {DELIVERY} días laborables en España</span></div></div>
       <div class="strip__i">{SVG['return']}<div><b>Devoluciones {RETURNS} días</b><span>Cambios sencillos, sin preguntas incómodas</span></div></div>
       <div class="strip__i">{SVG['shield']}<div><b>Pago seguro</b><span>Tarjeta y pagos móviles con cifrado</span></div></div>
-      <div class="strip__i">{SVG['heart']}<div><b>{esc(DON_TEXT)} a investigación</b><span>Cáncer y enfermedades raras en mascotas</span></div></div>
+      <div class="strip__i">{SVG['heart']}<div><b>Un porcentaje a investigación</b><span>Cáncer y enfermedades raras en mascotas</span></div></div>
     </div>
   </section>
 
@@ -339,9 +354,9 @@ def build_index():
     <div class="wrap">
       <div class="section-head reveal">
         <div>
-          <p class="kicker">Compra mejor, ahorra más</p>
+          <p class="kicker">Compra mejor, compra en conjunto</p>
           <h2 class="h2">Packs con descuento</h2>
-          <p class="lede mt-s">Conjuntos pensados para resolver un rincón de la casa o el paseo completo, con un 6-9 % de descuento y envío gratis incluido.</p>
+          <p class="lede mt-s">Conjuntos pensados para resolver el paseo completo o un rincón de la casa, coordinados en color y con envío gratis incluido.</p>
         </div>
         <a class="link-arrow" href="tienda.html?cat=packs">Ver los {len(PACKS)} packs</a>
       </div>
@@ -352,15 +367,15 @@ def build_index():
   <section class="section memorial" id="compromiso">
     <div class="wrap memorial__in">
       <figure class="memorial__media reveal">
-        <img src="{KHALID}" alt="khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000" loading="lazy" decoding="async">
-        <figcaption>khalid · 2013 – 2025</figcaption>
+        <img src="{KHALID}" alt="Khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000" loading="lazy" decoding="async">
+        <figcaption>Khalid</figcaption>
       </figure>
       <div class="reveal">
         <p class="kicker kicker--light">Compromiso y corazón</p>
-        <blockquote>«khalid era un gato blanco, sordo de nacimiento y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; ningún dueño debería cargar con ese dolor solo, ni ninguna mascota debería padecerlo.»</blockquote>
-        <p>Esta web no es solo un escaparate de productos: es un legado personal nacido del amor y la pérdida. Por eso, <strong>{esc(DON_TEXT.lower())} de los beneficios de GRANKHA</strong> va destinado directamente a la investigación del cáncer y las enfermedades raras en nuestras mascotas.</p>
+        <blockquote>«Khalid era un gato blanco. Sordo de nacimiento y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió: ningún dueño debería cargar con ese dolor solo, ni ninguna mascota debería padecerlo.»</blockquote>
+        <p>Esta web no es solo un escaparate de productos: es un legado personal nacido del amor y la pérdida. Por eso, <strong>un porcentaje de los beneficios de GRANKHA</strong> irá destinado directamente a la investigación del cáncer y las enfermedades raras en nuestras mascotas.</p>
         <div class="donate-note">{SVG['ribbon']}<div><b>GRANKHA por la salud animal</b><br>
-        <span style="font-size:.88rem">khalid sigue en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</span></div></div>
+        <span style="font-size:.88rem">Khalid sigue en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</span></div></div>
         <p class="mt-m"><a class="link-arrow" href="compromiso.html" style="color:#fff;border-color:#fff">Leer nuestra historia completa</a></p>
       </div>
     </div>
@@ -389,7 +404,7 @@ def build_index():
         "logo": f"{BASE}/assets/img/hero.jpg", "email": SITE["contactEmail"],
         "currenciesAccepted": "EUR", "areaServed": "ES",
         "description": ("Accesorios de diseño para perros y gatos. Un porcentaje de los beneficios financia "
-                        "la investigación del cáncer y enfermedades raras en mascotas. En memoria de khalid."),
+                        "la investigación del cáncer y enfermedades raras en mascotas. En memoria de Khalid."),
     }, {"@context": "https://schema.org", "@type": "WebSite", "name": SITE["name"], "url": BASE}]
     desc = (f"Arneses, correas, camas, comederos y fuentes para perros y gatos. Envío gratis desde {eur(FREE_FROM)}, "
             f"devoluciones de {RETURNS} días y {DON_TEXT.lower()} de los beneficios a investigación animal.")
@@ -470,15 +485,41 @@ def build_product(p):
             f'{" × " + str(c["qty"]) if c["qty"] > 1 else ""}</span></li>' for c in p["components"])
         variants = f"""<div class="notice mt-m"><b>Este pack incluye {len(p["components"])} piezas:</b>
           <ul class="usp" style="border:0;margin-top:8px">{rows}</ul>
-          <p class="small mb-0">Sumando los artículos por separado: {eur(p["componentSum"])} ·
-          ahorras <b>{eur(p["saving"])}</b> ({p["discount"]*100:.1f} %)</p></div>"""
+          </div>"""
+
+    # galería: los packs muestran sus piezas una a una en un deslizador
+    if is_pack:
+        slides = ""
+        for i, c in enumerate(p["components"]):
+            comp = by_sku[c["sku"]]
+            qty = f'{c["qty"]}× ' if c["qty"] > 1 else ""
+            slides += f"""<figure class="gallery__slide">
+        <a href="{comp['slug']}.html" tabindex="-1" aria-hidden="true"><img src="{PHOTO[comp['slug']]}" alt="{esc(comp['name'] + ' — ' + comp['subtitle'])}" width="900" height="900"{' fetchpriority="high"' if i == 0 else ''} loading="{'eager' if i == 0 else 'lazy'}" decoding="async"></a>
+        <figcaption><b>{qty}{esc(comp['name'])}</b><span>{esc(comp['subtitle'])}</span></figcaption>
+      </figure>"""
+        media = f"""<div class="gallery" data-gallery>
+        <div class="gallery__viewport">
+          <div class="gallery__track">{slides}</div>
+          <button class="gallery__nav gallery__nav--prev" type="button" data-gprev aria-label="Ver pieza anterior">‹</button>
+          <button class="gallery__nav gallery__nav--next" type="button" data-gnext aria-label="Ver pieza siguiente">›</button>
+        </div>
+        <div class="gallery__bar">
+          <span class="small">Desliza para ver las {len(p['components'])} piezas del pack</span>
+          <span class="gallery__dots" data-gdots></span>
+          <span class="gallery__pos mono" data-gpos>1 / {len(p['components'])}</span>
+        </div>
+      </div>"""
+    else:
+        media = (f'<img src="{PHOTO[p["slug"]]}" alt="{esc(p["name"] + " — " + p["subtitle"])}" '
+                 f'width="900" height="900" fetchpriority="high">')
 
     stock = p["stock"]
     avail = ("https://schema.org/InStock" if stock > 5 else
              ("https://schema.org/LimitedAvailability" if stock > 0 else "https://schema.org/OutOfStock"))
     why = f'<div class="notice mt-m"><b>Por qué lo tenemos</b><br>{esc(p["why"])}</div>' if p.get("why") else ""
     pledge = ""
-    if p.get("prevPrice") and p["prevPrice"] > p["price"] + 0.4:
+    if (not is_pack and p.get("prevPrice") and p["price"] > 0
+            and p["prevPrice"] > p["price"] * 1.15):
         pledge = (f'<p class="small mt-s">Precio anterior {eur(p["prevPrice"])} · ajustado para estar en línea '
                   f'con el mercado real.</p>')
 
@@ -490,7 +531,7 @@ def build_product(p):
   </div>
   <section class="wrap pd" id="pd" data-slug="{p['slug']}" data-sku="{p['sku']}">
     <div class="pd__media reveal">
-      <img src="{PHOTO[p['slug']]}" alt="{esc(p['name'] + ' — ' + p['subtitle'])}" width="900" height="900" fetchpriority="high">
+      {media}
     </div>
     <div>
       <p class="kicker">{esc(p['audienceLabel'] or p['catName'])} · {esc(p['collection'])}</p>
@@ -517,7 +558,7 @@ def build_product(p):
         <li>{SVG['truck']}<span><b>Envío gratis</b> desde {eur(FREE_FROM)} · entrega en {DELIVERY} días laborables</span></li>
         <li>{SVG['return']}<span><b>Devoluciones fáciles</b> durante {RETURNS} días</span></li>
         <li>{SVG['lock']}<span><b>Pago seguro</b> con cifrado · tarjeta y pagos móviles</span></li>
-        <li>{SVG['heart']}<span><b>{esc(DON_TEXT)} de los beneficios</b> se destina a investigación animal</span></li>
+        <li>{SVG['heart']}<span><b>Un porcentaje de los beneficios</b> se destina a investigación animal</span></li>
       </ul>
       <div class="acc">
         <details open><summary>Descripción</summary><div class="acc__body">{esc(p['desc'])}</div></details>
@@ -539,10 +580,10 @@ def build_product(p):
   <section class="memorial" style="padding-block:clamp(40px,6vw,72px)">
     <div class="wrap pledge">
       <div class="donate-note" style="margin:0">{SVG['ribbon']}<div><b>GRANKHA por la salud animal</b><br>
-        <span style="font-size:.88rem">{esc(DON_TEXT)} de los beneficios financia la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
+        <span style="font-size:.88rem">Un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
       <div>
         <h3 class="h3" style="margin-bottom:10px;color:#fff">Esta compra también investiga.</h3>
-        <p>Cada pedido reserva una parte del beneficio para proyectos de investigación veterinaria. khalid, un gato blanco que perdimos por un cáncer de colon, es la razón. <a href="compromiso.html" style="color:#fff;text-decoration:underline">Nuestra historia</a>.</p>
+        <p>Cada pedido reserva una parte del beneficio para proyectos de investigación veterinaria. Khalid, un gato blanco que perdimos por un cáncer de colon, es la razón. <a href="compromiso.html" style="color:#fff;text-decoration:underline">Nuestra historia</a>.</p>
       </div>
     </div>
   </section>
@@ -653,7 +694,7 @@ def build_carrito():
           <button class="btn btn--block" type="submit">Confirmar pedido</button>
           <div id="checkout-pay" class="hide"></div>
           <p class="small">{SVG['lock']} Pago con tarjeta en entorno seguro (Stripe). GRANKHA no almacena datos de tarjeta.
-          Con cada pedido reservamos {esc(DON_TEXT.lower())} del beneficio para investigación veterinaria.</p>
+          Con cada pedido reservamos un porcentaje del beneficio para investigación veterinaria.</p>
         </form>
       </div>
     </div>
@@ -674,8 +715,8 @@ def build_compromiso():
   <section class="section section--tight">
     <div class="wrap">
       <p class="kicker">Compromiso y corazón</p>
-      <h1 class="h2" style="font-size:clamp(2.2rem,6vw,4.4rem)">In memoriam: khalid.</h1>
-      <p class="lede mt-m">khalid era un gato blanco, sordo de nacimiento y el compañero más cariñoso que he tenido.
+      <h1 class="h2" style="font-size:clamp(2.2rem,6vw,4.4rem)">In memoriam: Khalid.</h1>
+      <p class="lede mt-m">Khalid era un gato blanco. Sordo de nacimiento, y el compañero más cariñoso que he tenido.
       En GRANKHA creemos que el diseño solo tiene sentido si sirve para proteger aquello que amamos.</p>
     </div>
   </section>
@@ -683,15 +724,15 @@ def build_compromiso():
   <section class="section" style="padding-top:0">
     <div class="wrap split">
       <figure class="memorial__media reveal" style="margin:0">
-        <img src="{KHALID}" alt="khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000">
-        <figcaption style="color:var(--muted)">khalid</figcaption>
+        <img src="{KHALID}" alt="Khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000">
+        <figcaption style="color:var(--muted)">Khalid</figcaption>
       </figure>
       <div class="prose reveal">
         <p><b>En GRANKHA, creemos que la tecnología solo tiene sentido si sirve para proteger aquello que amamos.</b> Esta web no es solo un escaparate de productos, es un legado personal nacido del amor y la pérdida.</p>
-        <p>Hace poco perdí a mi gran amigo khalid debido a un cáncer de colon. No hay día que pase sin que su recuerdo me acompañe. Verle sufrir, ver cómo su luz se apagaba lentamente y tener que tomar la dolorosa decisión de dejarle marchar cuando ya no había solución, es un dolor que ningún dueño debería cargar solo ni ninguna mascota debería padecer.</p>
-        <p>Por eso, <b>{esc(DON_TEXT.lower())} de los beneficios de GRANKHA</b> irá destinado directamente a la investigación del cáncer y enfermedades raras en nuestras mascotas. Queremos contribuir a que el desconocimiento no sea la causa de más sufrimiento. Queremos evitar ese dolor tanto al animal como a sus familias. khalid siempre estará en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</p>
+        <p>Hace poco perdí a mi gran amigo Khalid debido a un cáncer de colon. No hay día que pase sin que su recuerdo me acompañe. Verle sufrir, ver cómo su luz se apagaba lentamente y tener que tomar la dolorosa decisión de dejarle marchar cuando ya no había solución, es un dolor que ningún dueño debería cargar solo ni ninguna mascota debería padecer.</p>
+        <p>Por eso, <b>un porcentaje de los beneficios de GRANKHA</b> irá destinado directamente a la investigación del cáncer y enfermedades raras en nuestras mascotas. Queremos contribuir a que el desconocimiento no sea la causa de más sufrimiento. Queremos evitar ese dolor tanto al animal como a sus familias. Khalid siempre estará en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</p>
         <blockquote class="mt-m" style="margin:34px 0 0;padding-left:20px;border-left:2px solid var(--ink);font-size:clamp(1.1rem,1.9vw,1.5rem);letter-spacing:-.02em"><b>GRANKHA por la salud animal</b></blockquote>
-        <p class="small mt-m">khalid era un gato: la tienda nace de él, y por eso aquí encontrarás accesorios para gatos y para perros,
+        <p class="small mt-m">Khalid era un gato: la tienda nace de él, y por eso aquí encontrarás accesorios para gatos y para perros,
         sin favoritismos. Los gatos también salen a pasear, también necesitan beber, también duermen en coronas.</p>
       </div>
     </div>
@@ -706,7 +747,7 @@ def build_compromiso():
         </div>
       </div>
       <div class="grid g3">
-        <div class="donate-note" style="margin:0">{SVG['heart']}<div><b>{esc(DON_TEXT)} de los beneficios</b><br><span style="font-size:.88rem">Se reserva cada mes de forma continua, no solo en campañas puntuales.</span></div></div>
+        <div class="donate-note" style="margin:0">{SVG['heart']}<div><b>Un porcentaje de los beneficios</b><br><span style="font-size:.88rem">Se reserva cada mes de forma continua, no solo en campañas puntuales.</span></div></div>
         <div class="donate-note" style="margin:0">{SVG['shield']}<div><b>Entidades verificadas</b><br><span style="font-size:.88rem">Buscamos grupos de investigación con programas en oncología y enfermedades raras veterinarias.</span></div></div>
         <div class="donate-note" style="margin:0">{SVG['ribbon']}<div><b>Transparencia</b><br><span style="font-size:.88rem">Publicaremos un resumen anual con importes donados y proyectos apoyados, con nombre y apellidos.</span></div></div>
       </div>
@@ -722,13 +763,13 @@ def build_compromiso():
     <div class="wrap prose">
       <h2 style="margin-top:0">Preguntas sobre el compromiso</h2>
       <h3>¿Qué porcentaje de los beneficios se dona?</h3>
-      <p><b>{esc(DON_TEXT)}</b> de los beneficios. Sale del margen de GRANKHA (no es un recargo en el pedido) y se reserva pedido a pedido desde el primer día.</p>
+      <p><b>Un porcentaje de los beneficios.</b> Sale del margen de GRANKHA (no es un recargo en el pedido) y se reserva pedido a pedido desde el primer día. El importe exacto se revisa cada ejercicio y se comunica en el resumen anual de donaciones.</p>
       <h3>¿Cuándo se hace la donación?</h3>
       <p>La reserva es continua y la aportación se materializa al cierre del ejercicio o cuando el importe acumulado permite una aportación útil al proyecto elegido.</p>
       <h3>¿Esto sube el precio de los productos?</h3>
       <p>No. Los precios se fijan según el coste del producto, el envío y la gestión. La donación sale del beneficio, no de un recargo que pagues tú.</p>
       <h3>¿Por qué la tienda es de perros y gatos?</h3>
-      <p>Porque khalid era un gato, y porque en casa conviven los dos. Los arneses, camas y comederos están pensados para perros pequeños y gatos; las correas y fuentes, para ambos. Si dudas de si un producto encaja con tu mascota, pregúntanos antes de comprar.</p>
+      <p>Porque Khalid era un gato, y porque en casa conviven los dos. Los arneses, camas y comederos están pensados para perros pequeños y gatos; las correas y fuentes, para ambos. Si dudas de si un producto encaja con tu mascota, pregúntanos antes de comprar.</p>
       <h3>Mi mascota está enferma, ¿podéis ayudarme?</h3>
       <p>No somos veterinarios ni podemos dar diagnóstico. Si tu mascota está enferma, acude a un profesional. Podemos orientarte sobre a qué entidades o asociaciones acudir: escríbenos y te ayudamos en lo que esté en nuestra mano.</p>
     </div>
@@ -736,7 +777,7 @@ def build_compromiso():
 </main>
 {footer()}"""
     write("compromiso.html", head(f"Compromiso y corazón · {SITE['name']}",
-          f"En memoria de khalid, un gato blanco: {DON_TEXT.lower()} de los beneficios de GRANKHA financia "
+          f"En memoria de Khalid, un gato blanco: {DON_TEXT.lower()} de los beneficios de GRANKHA financia "
           "la investigación del cáncer y las enfermedades raras en mascotas.",
           "compromiso.html", og="assets/img/khalid.jpg") + body + tail())
 
@@ -919,7 +960,7 @@ def build_legal():
       <p>Garantía legal de conformidad de <b>3 años</b> desde la entrega (RDL 1/2007). Ante un defecto de origen,
       GRANKHA asume reparación, sustitución, rebaja o reembolso.</p>
       <h3>7. Compromiso de donación</h3>
-      <p>{esc(DON_TEXT).capitalize()} de los beneficios de GRANKHA se reserva para la investigación del cáncer y las
+      <p>Un porcentaje de los beneficios de GRANKHA se reserva para la investigación del cáncer y las
       enfermedades raras en mascotas. Es un compromiso de marca, no una condición del contrato de compraventa: si en algún
       ejercicio no hubiera beneficios, no habría aportación, y se informará en el resumen anual de donaciones.</p>
       <h3>8. Atención al cliente y resolución de conflictos</h3>
@@ -1019,7 +1060,9 @@ def build_extras():
         "cama-patita-grande-beige": "cama-patita-grande",
         "cama-tienda-48-48-40-cm-verde-y-naranja": "cama-tienda-48-verde",
         "cama-tienda-58-58-48-cm-beige-y-naranja": "cama-tienda-58-beige",
-    }
+        "correa-elefante-azul": "correa-elephant-azul",
+        "correa-elefante-gris": "correa-elephant-gris",
+        "correa-elefante-marron": "correa-elephant-marrón",    }
     for old, new in OLD.items():
         if (ROOT / f"{new}.html").exists():
             write(old + ".html", f"""<!doctype html><html lang="es"><head><meta charset="utf-8">
