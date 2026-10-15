@@ -510,6 +510,23 @@ html.js .reveal.is-in{opacity:1;transform:none}
   /* en móvil y tablet la foto vuelve a ser apaisada: los dos animales centrados */
   .hero__media img{object-position:center 58%}
 }
+
+/* ==========================================================================
+   CTA de packs en la portada: botón con más presencia y su nota de apoyo
+   ========================================================================== */
+.btn--lg{padding:17px 34px;font-size:.78rem;letter-spacing:.22em}
+.btn__arrow{display:inline-block;transition:transform .35s var(--ease);margin-left:2px}
+.btn:hover .btn__arrow{transform:translateX(6px)}
+.packs-cta{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.packs-cta__note{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+/* halo suave para que el ojo vaya a él sin romper el estilo minimalista */
+.packs-cta .btn{box-shadow:0 10px 26px -14px rgba(11,11,11,.55)}
+.packs-cta .btn:hover{box-shadow:none}
+@media (max-width:700px){
+  .packs-cta{align-items:stretch;width:100%}
+  .packs-cta .btn{width:100%}
+  .packs-cta__note{text-align:center}
+}
 </style>
 </head>
 <body><div class="announce">Envío gratis en península desde 39,00 € · Devoluciones 30 días · <a href="compromiso.html">GRANKHA por la salud animal</a></div>

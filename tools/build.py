@@ -365,7 +365,12 @@ def build_index():
           <h2 class="h2">Packs con descuento</h2>
           <p class="lede mt-s">Conjuntos pensados para resolver el paseo completo o un rincón de la casa, coordinados en color y con envío gratis incluido.</p>
         </div>
-        <a class="link-arrow" href="tienda.html?cat=packs">Ver los {len(PACKS)} packs</a>
+        <div class="packs-cta reveal">
+          <a class="btn btn--lg" href="tienda.html?cat=packs">
+            Ver los {len(PACKS)} packs <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
+          <span class="packs-cta__note">Envío gratis incluido · desde {eur(min(pk['price'] for pk in PACKS))}</span>
+        </div>
       </div>
       <div class="reveal">{products_grid(packs_home)}</div>
     </div>
@@ -501,7 +506,7 @@ def build_product(p):
             comp = by_sku[c["sku"]]
             qty = f'{c["qty"]}× ' if c["qty"] > 1 else ""
             slides += f"""<figure class="gallery__slide">
-        <a href="{comp['slug']}.html" tabindex="-1" aria-hidden="true"><img src="{PHOTO[comp['slug']]}" alt="{esc(comp['name'] + ' — ' + comp['subtitle'])}" width="900" height="900"{' fetchpriority="high"' if i == 0 else ''} loading="{'eager' if i == 0 else 'lazy'}" decoding="async"></a>
+        <img src="{PHOTO[comp['slug']]}" alt="{esc(comp['name'] + ' — ' + comp['subtitle'])}" width="900" height="900"{' fetchpriority="high"' if i == 0 else ''} loading="{'eager' if i == 0 else 'lazy'}" decoding="async">
         <figcaption><b>{qty}{esc(comp['name'])}</b><span>{esc(comp['subtitle'])}</span></figcaption>
       </figure>"""
         media = f"""<div class="gallery" data-gallery>
