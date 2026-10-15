@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "assets/img"
+SRC = ROOT / "assets/src"
 CANDIDATOS = ["logo-src.png", "logo-src.jpg", "logo-src.jpeg", "logo-src.webp", "logo-src.svg.png"]
 
 
@@ -99,20 +100,37 @@ def circular(src: Image.Image, size: int, margen=0.07) -> Image.Image:
     return out.resize((size, size), Image.LANCZOS)
 
 
+def sin_marco(src: Image.Image, size: int) -> Image.Image:
+    """Tu huella tal cual, sin el disco blanco: el dibujo sobre fondo transparente.
+    (Útil sobre fondos claros; sobre el pie negro haría falta la versión blanca.)"""
+    limpio = limpiar(src)
+    lado = max(limpio.size)
+    lienzo = Image.new("RGBA", (lado, lado), (0, 0, 0, 0))
+    lienzo.alpha_composite(limpio, ((lado - limpio.width) // 2, (lado - limpio.height) // 2))
+    return lienzo.resize((size, size), Image.LANCZOS)
+
+
 def main():
     ruta = None
     if len(sys.argv) > 1:
         ruta = Path(sys.argv[1])
     else:
-        for c in CANDIDATOS:
-            if (IMG / c).exists():
-                ruta = IMG / c
+        for carpeta in (SRC, IMG):
+            for c in CANDIDATOS:
+                if (carpeta / c).exists():
+                    ruta = carpeta / c
+                    break
+            if ruta:
                 break
 
     if ruta and ruta.exists():
         src = Image.open(ruta)
         print(f"· usando {ruta}")
-        icon = lambda s: circular(src, s)  # noqa: E731
+        if "--sin-marco" in sys.argv:
+            print("· modo sin marco: la huella sin el disco blanco")
+            icon = lambda s: sin_marco(src, s)  # noqa: E731
+        else:
+            icon = lambda s: circular(src, s)  # noqa: E731
     else:
         print("· no hay imagen de origen: genero un monograma provisional "
               "(pásame tu logo con: python3 tools/logo.py ruta/a/tu-logo.png)")

@@ -78,8 +78,8 @@ print("· cargando imágenes…")
 # en diferido). Antes iban incrustadas en base64 y engordaban ~400 KB cada página.
 THUMB = {p["slug"]: f'assets/img/thumbs/{p["slug"]}.webp' for p in PRODUCTS}
 PHOTO = {p["slug"]: f'assets/img/products/{p["img"]}' for p in PRODUCTS}
-HERO = data_uri(IMG_DIR / "hero.jpg", 1500, 80)
-KHALID = data_uri(IMG_DIR / "khalid.jpg", 1000, 80)
+HERO = "assets/img/hero.jpg"
+KHALID = "assets/img/khalid.jpg"
 
 by_slug = {p["slug"]: p for p in PRODUCTS}
 by_sku = {p["sku"]: p for p in PRODUCTS}
@@ -94,11 +94,12 @@ def pack_of(p):
         return ""
     return " + ".join(f'{c["qty"]}× {c["name"]}' if c["qty"] > 1 else c["name"] for c in p["components"])
 
+# La miniatura viaja en TODAS las páginas: la vista rápida de la cesta la necesita
 LITE = [{"slug": p["slug"], "title": p["name"], "subtitle": p["subtitle"], "sku": p["sku"],
          "cat": p["cat"], "price": p["price"], "stock": p["stock"], "weight_g": p["weight_g"],
-         "kind": p["kind"], "url": p["slug"] + ".html",
+         "kind": p["kind"], "url": p["slug"] + ".html", "thumb": THUMB[p["slug"]],
          "packOf": pack_of(p) or None} for p in PRODUCTS]
-FULL = [dict(x, thumb=THUMB[x["slug"]], colorHex=by_sku[x["sku"]]["colorHex"],
+FULL = [dict(x, colorHex=by_sku[x["sku"]]["colorHex"],
              components=(by_sku[x["sku"]].get("components") if x["kind"] == "pack" else None))
         for x in LITE]
 # Configuración que se incrusta en el navegador: SOLO datos públicos.
@@ -202,9 +203,21 @@ def header(active=""):
     <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio"><img class="wordmark__logo" src="assets/img/logo.png" srcset="assets/img/logo.png 1x, assets/img/logo@2x.png 2x" alt="" width="34" height="34" fetchpriority="high" decoding="async"><span>GRANKHA</span></a>
     <nav class="nav" aria-label="Navegación principal">{nav}</nav>
     <div class="head-actions">
-      <a class="icon-btn" href="carrito.html" aria-label="Ver carrito">
-        {SVG['cart']}<span class="cart-count hide" data-cart-count>0</span>
-      </a>
+      <div class="cart-wrap" data-cart-wrap>
+        <a class="cart-pill" href="carrito.html" aria-label="Ver la cesta">
+          {SVG['cart']}<span class="cart-pill__txt">Cesta</span><span class="cart-pill__tot" data-cart-total></span><span class="cart-count hide" data-cart-count>0</span>
+        </a>
+        <div class="mini" id="mini-cart" hidden aria-hidden="true">
+          <div class="mini__head"><b>Tu cesta</b><button class="mini__x" type="button" data-mini-close aria-label="Cerrar la vista rápida">&times;</button></div>
+          <div class="mini__lines" data-mini-lines></div>
+          <div class="mini__foot">
+            <div class="mini__tot"><span>Subtotal <span class="small">IVA incl.</span></span><b class="mono" data-mini-total>&mdash;</b></div>
+            <div data-mini-bar></div>
+            <a class="btn btn--block" href="carrito.html">Ver cesta y finalizar</a>
+            <p class="mini__note">Pago seguro con tarjeta · Devoluciones {RETURNS} días</p>
+          </div>
+        </div>
+      </div>
       <button class="icon-btn menu-btn" id="menu-btn" aria-label="Abrir menú">{SVG['menu']}</button>
     </div>
   </div>
@@ -266,7 +279,7 @@ def card(p, rank=None):
     <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span>{esc(sub)}</span>
     <div class="card__foot">
       <span class="price">{price_block(p)}<small>IVA incl.</small></span>
-      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} al carrito">{SVG['plus']}</button>
+      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} a la cesta">{SVG['cart']}</button>
     </div>
   </div>
 </article>"""
@@ -282,6 +295,10 @@ def tail(full=False):
     packs = json.dumps([{k: v for k, v in p.items() if k in ("slug", "name", "price", "components")} for p in PACKS], ensure_ascii=False)
     f = f"window.GRANKHA_CATALOG_FULL={json.dumps(FULL, ensure_ascii=False)};" if full else ""
     return f"""<div id="toast" class="toast" role="status" aria-live="polite"><span data-toast-msg></span><a data-toast-link href="#"></a></div>
+<a class="cart-fab" id="cart-fab" href="carrito.html" hidden aria-hidden="true" aria-label="Ver la cesta">
+  <span class="cart-fab__ico">{SVG['cart']}<span class="cart-count hide" data-cart-count>0</span></span>
+  <span class="cart-fab__tot" data-cart-total></span>
+</a>
 <script>window.GRANKHA_CONFIG={cfg};window.GRANKHA_CATALOG={lite};window.GRANKHA_PACKS={packs};{f}</script>
 <script src="app.js?v={ASSET_V}" defer></script>
 </body></html>"""
@@ -408,11 +425,12 @@ def build_index():
       </div>
       <div class="reveal">
         <form data-news>
-          <input type="email" required placeholder="tu@email.com" aria-label="Tu email">
-          <button class="btn" type="submit">Suscribirme</button>
+          <div class="news__row">
+            <input type="email" required placeholder="tu@email.com" aria-label="Tu email">
+            <button class="btn" type="submit">Suscribirme</button>
+          </div>
           <label class="consent small"><input type="checkbox" required>
-            Acepto recibir novedades de GRANKHA y he leído la
-            <a href="legal.html#privacidad" style="text-decoration:underline">política de privacidad</a>.</label>
+            <span>Acepto recibir novedades de GRANKHA y he leído la <a href="legal.html#privacidad">política de privacidad</a>.</span></label>
         </form>
         <p class="small mt-s">Puedes darte de baja en cualquier momento con un clic.</p>
       </div>
@@ -570,8 +588,8 @@ def build_product(p):
           <input type="number" value="1" min="1" max="{max(1, min(stock, 20))}" aria-label="Cantidad">
           <button type="button" data-step="1" aria-label="Más">+</button>
         </div>
-        <button class="btn btn--ghost" data-add="{p['slug']}">Añadir a la cesta</button>
-        <button class="btn" data-buy="{p['slug']}">Comprar ahora</button>
+        <button class="btn btn--cart" data-add="{p['slug']}">{SVG['cart']}<span>Añadir a la cesta</span></button>
+        <button class="btn btn--ghost btn--fast" data-buy="{p['slug']}">Comprar ahora</button>
       </div>
       <div class="filters" style="margin-top:4px">{tags}</div>
       {why}
@@ -1139,6 +1157,12 @@ if __name__ == "__main__":
         for slug, ruta in THUMB.items():
             if ruta in html:
                 html = html.replace(ruta, webp_uri(ROOT / ruta))
+        # fotos y logo: en el sitio son archivos normales; aquí van incrustados
+        for ruta, ancho in (("assets/img/logo@2x.png", 512), ("assets/img/logo.png", 256),
+                            ("assets/img/hero-movil.jpg", 1200), ("assets/img/hero.jpg", 1200),
+                            ("assets/img/khalid.jpg", 1000)):
+            if ruta in html:
+                html = html.replace(ruta, data_uri(ROOT / ruta, ancho, 82))
         (ROOT / "preview.html").write_text(html, encoding="utf-8")
         print("  · preview.html (vista previa autocontenida)")
     except Exception as e:  # pragma: no cover

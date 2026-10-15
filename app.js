@@ -69,19 +69,110 @@
   function cartCount() {
     return readCart().reduce(function (n, l) { return n + l.qty; }, 0);
   }
+  var EN_CARRITO = /carrito\.html$/.test(location.pathname);
+  function cartSubtotal() {
+    return readCart().reduce(function (s, l) {
+      var p = byslug[l.slug];
+      return s + (p && p.price ? p.price * l.qty : 0);
+    }, 0);
+  }
+  /* barra de envío gratis (zona por defecto) para la vista rápida */
+  function barraEnvio(subtotal) {
+    var zona = shippingFor((CFG.shipping && CFG.shipping.default) || "pen", subtotal);
+    var libre = (zona.tiers || []).filter(function (x) { return x.price === 0; })[0];
+    if (!libre) return "";
+    if (subtotal >= libre.min) {
+      return '<div class="free-bar">✓ Envío gratuito (' + esc(zona.name || "") + ') aplicado</div>';
+    }
+    var pct = Math.min(100, (subtotal / libre.min) * 100);
+    return '<div class="free-bar">Te faltan <b>' + eur(libre.min - subtotal) +
+      '</b> para el envío gratuito<div class="free-bar__track"><div class="free-bar__fill" style="width:' +
+      pct + '%"></div></div></div>';
+  }
+
+  /* ------------------------------------------------- vista rápida de la cesta */
+  var miniEl = null, miniTimer = null, miniAuto = null;
+  function miniAbierta() { return !!(miniEl && miniEl.classList.contains("is-open")); }
+  function abrirMini() {
+    if (!miniEl || !cartCount()) return;
+    clearTimeout(miniAuto);
+    miniEl.hidden = false;
+    miniEl.classList.add("is-open");
+    miniEl.setAttribute("aria-hidden", "false");
+  }
+  function cerrarMini() {
+    clearTimeout(miniAuto);
+    if (!miniEl) return;
+    miniEl.classList.remove("is-open");
+    miniEl.setAttribute("aria-hidden", "true");
+    setTimeout(function () { if (miniEl && !miniAbierta()) miniEl.hidden = true; }, 300);
+  }
+  function paintMini() {
+    var box = $("#mini-cart");
+    if (!box) return;
+    miniEl = box;
+    var lines = readCart();
+    if (!lines.length) { cerrarMini(); return; }
+    var visibles = lines.slice(0, 4);
+    var html = visibles.map(function (l) {
+      var p = byslug[l.slug];
+      if (!p) return "";
+      return '<div class="mini__line">' +
+        '<a href="' + p.url + '"><img src="' + (p.thumb || "") + '" alt="' + esc(p.title) + '" loading="lazy" decoding="async"></a>' +
+        '<div><a class="mini__t" href="' + p.url + '">' + esc(p.title) + '</a>' +
+        '<div class="mini__s">' + l.qty + ' × ' + eur(p.price) + '</div></div>' +
+        '<div class="mini__p mono">' + eur(p.price * l.qty) + '</div>' +
+      '</div>';
+    }).join("");
+    if (lines.length > visibles.length) {
+      html += '<p class="mini__s">y ' + (lines.length - visibles.length) + ' referencia(s) más en la cesta</p>';
+    }
+    $("[data-mini-lines]", box).innerHTML = html;
+    var tot = $("[data-mini-total]", box);
+    if (tot) tot.textContent = eur(cartSubtotal());
+    var bar = $("[data-mini-bar]", box);
+    if (bar) bar.innerHTML = barraEnvio(cartSubtotal());
+  }
+
   function paintCount() {
     var n = cartCount();
     $$("[data-cart-count]").forEach(function (el) {
       el.textContent = n;
       el.classList.toggle("hide", n === 0);
     });
-    if (n === 0) $$("[data-cart-count]").forEach(function (el) { el.textContent = "0"; });
+    var sub = cartSubtotal();
+    /* el importe se enseña en la pastilla de la cabecera y en el botón flotante */
+    $$("[data-cart-total]").forEach(function (el) { el.textContent = n ? eur(sub) : ""; });
+    $$(".cart-pill").forEach(function (el) { el.classList.toggle("has-items", n > 0); });
+    /* botón flotante de cesta (móvil y tablet): aparece en cuanto hay algo dentro */
+    var fab = $("#cart-fab");
+    if (fab) {
+      var on = n > 0 && !EN_CARRITO;
+      fab.hidden = false;
+      fab.classList.toggle("is-on", on);
+      fab.setAttribute("aria-hidden", on ? "false" : "true");
+      document.body.classList.toggle("has-fab", on);
+    }
+    paintMini();
   }
   function bump() {
     $$("[data-cart-count]").forEach(function (el) {
       el.classList.add("is-bump");
-      setTimeout(function () { el.classList.remove("is-bump"); }, 320);
+      setTimeout(function () { el.classList.remove("is-bump"); }, 330);
     });
+    $$(".cart-pill").forEach(function (el) {
+      el.classList.add("is-pulse");
+      setTimeout(function () { el.classList.remove("is-pulse"); }, 950);
+    });
+    $$(".cart-fab").forEach(function (el) {
+      el.classList.add("is-bump");
+      setTimeout(function () { el.classList.remove("is-bump"); }, 520);
+    });
+    /* en escritorio la vista rápida se abre sola 4 s para que se vea qué llevas */
+    if (miniEl && cartCount()) {
+      abrirMini();
+      miniAuto = setTimeout(cerrarMini, 4000);
+    }
   }
 
   /* ----------------------------------------------------------------- toast */
@@ -721,6 +812,31 @@
     });
   }
 
+  function initMini() {
+    var wrap = $("[data-cart-wrap]");
+    if (!wrap) return;
+    miniEl = $("#mini-cart");
+    if (!miniEl) return;
+    /* ratón: se abre al pasar por encima y se cierra al salir */
+    wrap.addEventListener("mouseenter", function () { clearTimeout(miniTimer); abrirMini(); });
+    wrap.addEventListener("mouseleave", function () {
+      clearTimeout(miniTimer);
+      miniTimer = setTimeout(cerrarMini, 240);
+    });
+    wrap.addEventListener("focusin", function () { clearTimeout(miniTimer); abrirMini(); });
+    wrap.addEventListener("focusout", function () {
+      clearTimeout(miniTimer);
+      miniTimer = setTimeout(cerrarMini, 240);
+    });
+    document.addEventListener("click", function (e) {
+      if (!wrap.contains(e.target)) cerrarMini();
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") cerrarMini(); });
+    var x = $("[data-mini-close]", miniEl);
+    if (x) x.addEventListener("click", function (e) { e.preventDefault(); cerrarMini(); });
+    paintMini();
+  }
+
   function initMisc() {
     $$("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
     var t = $("#toast");
@@ -744,6 +860,7 @@
     initCart();
     initMenu();
     initGallery();
+    initMini();
     initContact();
     initReveal();
     initNewsletter();
