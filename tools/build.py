@@ -23,6 +23,8 @@ SITE = json.loads((ROOT / "data" / "site.json").read_text())
 ANALYSIS = json.loads((ROOT / "data" / "pricing_analysis.json").read_text())
 CSS = (ROOT / "src" / "styles.css").read_text()
 JS = (ROOT / "src" / "app.js").read_text().replace("</", "<\\/")
+# sello de versión: invalida la caché del navegador solo cuando el archivo cambia
+ASSET_V = str(abs(hash(CSS + JS)) % 10 ** 8)
 
 BASE = SITE["url"].rstrip("/")
 SHIP_OPTS = SITE["shipping"]["options"]
@@ -72,8 +74,10 @@ def webp_uri(path: Path):
     return "data:image/webp;base64," + base64.b64encode(path.read_bytes()).decode()
 
 print("· cargando imágenes…")
-THUMB = {p["slug"]: webp_uri(IMG_DIR / "thumbs" / f'{p["slug"]}.webp') for p in PRODUCTS}
-PHOTO = {p["slug"]: webp_uri(IMG_DIR / "products" / p["img"]) for p in PRODUCTS}
+# Las imágenes se sirven como archivos (se cachean entre páginas y se cargan
+# en diferido). Antes iban incrustadas en base64 y engordaban ~400 KB cada página.
+THUMB = {p["slug"]: f'assets/img/thumbs/{p["slug"]}.webp' for p in PRODUCTS}
+PHOTO = {p["slug"]: f'assets/img/products/{p["img"]}' for p in PRODUCTS}
 HERO = data_uri(IMG_DIR / "hero.jpg", 1500, 80)
 KHALID = data_uri(IMG_DIR / "khalid.jpg", 1000, 80)
 
@@ -105,6 +109,8 @@ CFG = {
     "shipping": {k: v for k, v in SITE["shipping"].items()
                  if k in ("default", "freeFromPeninsular", "vat", "note", "options")},
     "checkout": {"endpoint": SITE["checkout"]["endpoint"]},
+    # si algún día hay proyecto Supabase, la newsletter se guarda de verdad
+    "supabase": SITE.get("supabase", {}),
     "currency": SITE["currency"],
     "returns": RETURNS,
     "delivery": DELIVERY,
@@ -175,7 +181,7 @@ def head(title, desc, path, og="assets/img/hero.jpg", og_type="website", jsonld=
 <meta property="og:image" content="{img}">
 <meta name="twitter:card" content="summary_large_image">
 {j}
-<style>{CSS}</style>
+<link rel="stylesheet" href="styles.css?v={ASSET_V}">
 </head>
 <body>"""
 
@@ -277,7 +283,7 @@ def tail(full=False):
     f = f"window.GRANKHA_CATALOG_FULL={json.dumps(FULL, ensure_ascii=False)};" if full else ""
     return f"""<div id="toast" class="toast" role="status" aria-live="polite"><span data-toast-msg></span><a data-toast-link href="#"></a></div>
 <script>window.GRANKHA_CONFIG={cfg};window.GRANKHA_CATALOG={lite};window.GRANKHA_PACKS={packs};{f}</script>
-<script>{JS}</script>
+<script src="app.js?v={ASSET_V}" defer></script>
 </body></html>"""
 
 def write(name, content):
@@ -404,8 +410,11 @@ def build_index():
         <form data-news>
           <input type="email" required placeholder="tu@email.com" aria-label="Tu email">
           <button class="btn" type="submit">Suscribirme</button>
+          <label class="consent small"><input type="checkbox" required>
+            Acepto recibir novedades de GRANKHA y he leído la
+            <a href="legal.html#privacidad" style="text-decoration:underline">política de privacidad</a>.</label>
         </form>
-        <p class="small mt-s">Al suscribirte aceptas la <a href="legal.html#privacidad" style="text-decoration:underline">política de privacidad</a>. Puedes darte de baja cuando quieras.</p>
+        <p class="small mt-s">Puedes darte de baja en cualquier momento con un clic.</p>
       </div>
     </div>
   </section>
@@ -933,8 +942,8 @@ def build_legal():
   </section>
   <section class="section" style="padding-top:0">
     <div class="wrap prose">
-      <div class="notice"><b>Pendiente de completar antes de vender:</b> razón social, NIF, domicilio fiscal y teléfono
-      del titular (sustituye los campos marcados con [ ]). Ver docs/PENDIENTES.md.</div>
+      <!-- HUECOS PENDIENTES (invisibles para el cliente): razón social, NIF, domicilio fiscal y teléfono.
+           Se sustituyen en cuanto el titular facilite los datos. Ver docs/PENDIENTES.md -->
 
       <h2 id="aviso">Aviso legal</h2>
       <p>En cumplimiento del artículo 10 de la Ley 34/2002 (LSSI-CE), se informa:</p>
@@ -977,7 +986,7 @@ def build_legal():
       ejercicio no hubiera beneficios, no habría aportación, y se informará en el resumen anual de donaciones.</p>
       <h3>8. Atención al cliente y resolución de conflictos</h3>
       <p>Para cualquier reclamación, escribe a {esc(SITE['contactEmail'])}. También puedes acudir a la Junta Arbitral
-      de Consumo de tu provincia o a la plataforma europea de resolución de litigios en línea. No estamos adheridos a
+      de Consumo de tu provincia o a la plataforma europea de resolución de litigios en línea (<a href="https://ec.europa.eu/consumers/odr" rel="noopener" target="_blank">ec.europa.eu/consumers/odr</a>). No estamos adheridos a
       ningún sistema arbitral de consumo.</p>
 
       <h2 id="privacidad">Política de privacidad</h2>
@@ -1106,6 +1115,9 @@ location.replace(m?decodeURIComponent(m[1]).replace(/[^a-z0-9-]/gi,"")+".html":"
 # --------------------------------------------------------------------- main
 if __name__ == "__main__":
     print("· generando páginas…")
+    # CSS y JS como archivos (se cachean entre páginas; el sello ?v= los refresca)
+    (ROOT / "styles.css").write_text(CSS, encoding="utf-8")
+    (ROOT / "app.js").write_text(JS.replace("<\\/", "</"), encoding="utf-8")
     build_index()
     build_tienda()
     for p in PRODUCTS:
@@ -1118,4 +1130,18 @@ if __name__ == "__main__":
     build_404()
     build_extras()
     total = sum(f.stat().st_size for f in ROOT.glob("*.html"))
-    print(f"✓ sitio generado · {len(list(ROOT.glob('*.html')))} páginas · {total/1024/1024:.1f} MB")
+    # vista previa autocontenida: un solo archivo con todo incrustado, para
+    # revisar el diseño abriéndolo directamente (el sitio publicado usa archivos)
+    try:
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = html.replace(f'<link rel="stylesheet" href="styles.css?v={ASSET_V}">', f"<style>{CSS}</style>")
+        html = html.replace(f'<script src="app.js?v={ASSET_V}" defer></script>', f"<script>{JS}</script>")
+        for slug, ruta in THUMB.items():
+            if ruta in html:
+                html = html.replace(ruta, webp_uri(ROOT / ruta))
+        (ROOT / "preview.html").write_text(html, encoding="utf-8")
+        print("  · preview.html (vista previa autocontenida)")
+    except Exception as e:  # pragma: no cover
+        print("  · no se pudo generar preview.html:", e)
+
+    print(f"✓ sitio generado · {len(list(ROOT.glob('*.html'))) - 1} páginas · {total/1024/1024:.1f} MB")

@@ -69,15 +69,21 @@ Deno.serve(async (req) => {
     cogs += (COSTS[l.sku] ?? 0) * Number(l.qty);
   }
   subtotal = round(subtotal);
+  // Canarias, Ceuta y Melilla: el IVA español no se aplica (IGIC/IPSI en destino),
+  // así que se cobra la base sin IVA y sin impuesto en la factura.
+  const zone = String(order.zone ?? "pen");
+  const sinIva = zone === "can";
   const shippingCharged = Math.max(0, Number(order.shipping_price ?? 0));
-  const allowedShipping = [0, 3.95, 5.95, 6.95, 7.95, 13.95, 14.95];
+  const allowedShipping = [0, 3.95, 5.95, 6.95, 7.95, 12.36, 13.95, 14.95];
   if (!allowedShipping.includes(round(shippingCharged))) {
     return json({ error: "Gastos de envío no válidos" }, 400);
   }
-  order.subtotal = subtotal;
+  const base = sinIva ? round(subtotal / 1.21) : subtotal;
+  order.zone = zone;
+  order.subtotal = base;
   order.shipping_price = round(shippingCharged);
-  order.total = round(subtotal + shippingCharged);
-  order.vat_included = round(subtotal - subtotal / 1.21);
+  order.total = round(base + shippingCharged);
+  order.vat_included = sinIva ? 0 : round(subtotal - subtotal / 1.21);
   // la donación es el 5 % del beneficio real del pedido (no del precio)
   const grossBenefit = round(subtotal / 1.21 - cogs);
   order.donation = grossBenefit > 0 ? round(grossBenefit * DONATION_RATE) : 0;

@@ -101,3 +101,19 @@ Sin Supabase, la web funciona al 100 %; solo pierdes el registro centralizado de
 - Sistema de reseñas con fotos.
 - Blog / revista con contenido SEO («cómo elegir un arnés», «señales de dolor en perros»).
 - Programa de donación visible: contador de importe donado con datos reales de Supabase.
+
+---
+
+## Corregido en la revisión del 15/10/2026 (bloque 0 de la auditoría)
+
+- ✅ El carrito se vacía al confirmar el pedido (ya no se pueden duplicar).
+- ✅ El país del formulario manda sobre la zona de envío (Portugal 6,95 € · UE 13,95 €).
+- ✅ Canarias, Ceuta y Melilla sin IVA, con aviso de IGIC/IPSI y aduana en destino.
+- ✅ Newsletter con casilla de consentimiento (y envío a Supabase cuando exista el proyecto).
+- ✅ Contraste del gris secundario corregido a 5,2:1 (WCAG AA).
+- ✅ CSS y JS como archivos externos y fotos sin base64: las páginas pesan entre un 77 % y un 91 % menos.
+- ✅ 108 imágenes antiguas sin uso eliminadas (3,2 MB).
+- ✅ Enlace a la plataforma europea de resolución de litigios en la página legal.
+
+Sigue pendiente de ti: datos fiscales (razón social, NIF, domicilio, teléfono), email definitivo
+de la tienda, elección Brevo/Resend y confirmar la tarifa de Canarias con AW.

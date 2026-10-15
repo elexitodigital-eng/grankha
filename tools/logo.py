@@ -13,7 +13,7 @@ Genera:
   favicon.ico                    multi-tamaño para navegadores antiguos
 
 Uso:
-  python3 tools/logo.py                      # usa assets/img/logo-src.<ext> si existe
+  python3 tools/logo.py                      # usa assets/src/logo-src.<ext> si existe
   python3 tools/logo.py ruta/a/mi-logo.png    # o la imagen que le pases
 Si no encuentra ninguna imagen, dibuja un monograma provisional de GRANKHA.
 """

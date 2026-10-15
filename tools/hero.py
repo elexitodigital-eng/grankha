@@ -11,7 +11,7 @@ automático se comía al gato. Aquí se genera:
   assets/img/hero.jpg        formato vertical (mismo hueco que ocupa ahora)
   assets/img/hero-movil.jpg  formato apaisado para móvil y tablet
 
-La foto de origen es assets/img/hero-fuente.jpg y no se toca, así que se puede
+La foto de origen es assets/src/hero-fuente.jpg y no se toca, así que se puede
 volver a ejecutar tantas veces como haga falta sin degradar la imagen.
 
 Los dos salen de la misma foto: se amplía el fondo de estudio (un degradado

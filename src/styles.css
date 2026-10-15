@@ -11,7 +11,7 @@
   --paper-3:#EDEDEB;
   --line:#E3E3E1;
   --line-strong:#C9C9C6;
-  --muted:#8A8A88;
+  --muted:#6B6B69;      /* 5,2:1 sobre blanco: cumple WCAG AA */
   --muted-2:#5E5E5C;
   --white-soft:rgba(255,255,255,.62);
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,"Helvetica Neue",Arial,sans-serif;
@@ -504,3 +504,12 @@ html.js .reveal.is-in{opacity:1;transform:none}
   .packs-cta .btn{width:100%}
   .packs-cta__note{text-align:center}
 }
+
+/* ==========================================================================
+   Casilla de consentimiento de la newsletter
+   ========================================================================== */
+.consent{display:flex;gap:10px;align-items:flex-start;line-height:1.5;cursor:pointer;
+  text-align:left;margin-top:6px;color:var(--muted-2)}
+.consent input{margin-top:3px;flex:none;width:15px;height:15px;accent-color:var(--ink)}
+.foot [data-news]{display:flex;flex-wrap:wrap;gap:10px}
+.foot [data-news] .consent{flex-basis:100%}

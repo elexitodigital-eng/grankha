@@ -126,21 +126,37 @@
     }
     return { id: o.id, name: o.name, price: price, eta: o.eta, next: next, tiers: o.tiers };
   }
+  // Zonas sin IVA español (el impuesto se liquida en destino: IGIC/IPSI)
+  function zonaSinIva(id) { return id === "can"; }
+  function round2(n) { return Math.round(n * 100) / 100; }
+
   function totals(lines, shipId) {
     var subtotal = 0, units = 0;
     lines.forEach(function (l) {
       var p = byslug[l.slug];
       if (!p) return;
-      subtotal += p.price * l.qty;
+      subtotal += p.price * l.qty;      // precios de catálogo, con IVA incluido
       units += l.qty;
     });
-    var ship = shippingFor(shipId || (CFG.shipping && CFG.shipping.default), subtotal);
+    var id = shipId || (CFG.shipping && CFG.shipping.default);
+    var sinIva = zonaSinIva(id);
     var vatRate = (CFG.shipping && CFG.shipping.vat) || 0.21;
+    // En Canarias, Ceuta y Melilla los precios se muestran sin IVA
+    var base = sinIva ? subtotal / (1 + vatRate) : subtotal;
+    var ship = shippingFor(id, base);
+    var shipPrice = sinIva ? ship.price / (1 + vatRate) : ship.price;
     return {
-      subtotal: subtotal, ship: ship, total: subtotal + ship.price, units: units,
-      vat: subtotal - subtotal / (1 + vatRate)
+      subtotal: base, catalogo: subtotal, units: units, sinIva: sinIva, vatRate: vatRate,
+      ship: { id: ship.id, name: ship.name, price: round2(shipPrice), next: ship.next, eta: ship.eta },
+      total: round2(base + shipPrice),
+      vat: sinIva ? 0 : subtotal - subtotal / (1 + vatRate)
     };
   }
+
+  // El país del formulario manda sobre la zona de envío
+  var ZONA_POR_PAIS = { "España": "pen", "Portugal": "prt", "Francia": "ue", "Alemania": "ue",
+                        "Italia": "ue", "Países Bajos": "ue", "Bélgica": "ue", "Irlanda": "ue",
+                        "Austria": "ue", "Luxemburgo": "ue" };
 
   /* ------------------------------------------------- añadir desde listados */
   function bindAddButtons(root) {
@@ -276,6 +292,7 @@
     var list = $("#cart-lines"), sum = $("#cart-summary");
     var shipBox = $("#cart-shipping");
     var shipId = (CFG.shipping && CFG.shipping.default) || "pen";
+    var paisAplicado = false;
 
     function render() {
       var lines = readCart();
@@ -317,7 +334,8 @@
       var t = totals(lines, shipId);
       sum.innerHTML = '' +
         '<h3 class="h4">Resumen del pedido</h3>' +
-        '<p class="small mb-m">Precios con IVA incluido · Entrega en 3-8 días laborables</p>' +
+        '<p class="small mb-m">' + (t.sinIva ? 'Precios sin IVA · IGIC/IPSI en destino' : 'Precios con IVA incluido') +
+          ' · Entrega en 3-8 días laborables</p>' +
         '<div class="sum-row"><span>Subtotal (' + t.units + ' art.)</span><span class="mono">' + eur(t.subtotal) + '</span></div>' +
         '<div class="sum-row"><span>Envío · ' + esc(t.ship.name) + '</span><span class="mono">' +
           (t.ship.price === 0 ? "Gratis" : eur(t.ship.price)) + '</span></div>' +
@@ -325,9 +343,12 @@
           ? '<div class="free-bar">Añade <b>' + eur(t.ship.next.min - t.subtotal) +
             '</b> más y el envío baja a ' + (t.ship.next.price === 0 ? 'gratis' : eur(t.ship.next.price)) + '</div>'
           : '') +
-        '<div class="sum-row"><span>IVA incluido (21%)</span><span class="mono">' + eur(t.vat) + '</span></div>' +
+        (t.sinIva
+          ? '<div class="sum-row"><span>IVA</span><span class="mono">No aplicable</span></div>' +
+            '<div class="sum-row"><span class="small">En Canarias, Ceuta y Melilla el impuesto (IGIC/IPSI) y la aduana se abonan en destino.</span><span></span></div>'
+          : '<div class="sum-row"><span>IVA incluido (' + Math.round(t.vatRate * 100) + '%)</span><span class="mono">' + eur(t.vat) + '</span></div>') +
         '<div class="sum-row sum-row--total"><span>Total</span><span class="mono">' + eur(t.total) + '</span></div>' +
-        freeBar(t.subtotal) +
+        freeBar(t.subtotal, shipId) +
         '<a class="btn btn--block mt-m" href="#checkout">Finalizar compra</a>' +
         '<p class="small mt-s">Pago seguro con tarjeta. No guardamos datos de pago.</p>';
 
@@ -358,16 +379,37 @@
           render();
         });
       });
+      // cambiar el país del formulario cambia la zona de envío y su precio
+      var pais = $("#f-country");
+      if (pais && !pais.dataset.bound) {
+        pais.dataset.bound = "1";
+        pais.addEventListener("change", function () {
+          var z = ZONA_POR_PAIS[pais.value];
+          if (z && z !== shipId) { shipId = z; render(); }
+        });
+      }
+      // al cargar la página, el país del formulario fija la zona una sola vez
+      // (si no, no se podría elegir Canarias o Baleares a mano)
+      if (pais && !paisAplicado) {
+        paisAplicado = true;
+        var zz = ZONA_POR_PAIS[pais.value];
+        if (zz && zz !== shipId) { shipId = zz; render(); return; }
+      }
       paintCount();
       var tc = $("#to-checkout");
       if (tc) tc.href = "#checkout";
     }
 
-    function freeBar(subtotal) {
-      var free = (CFG.shipping && CFG.shipping.freeFromPeninsular) || 39;
-      if (subtotal >= free) return '<div class="free-bar">✓ Envío gratuito (península) aplicado</div>';
-      var falta = free - subtotal, pct = Math.min(100, (subtotal / free) * 100);
-      return '<div class="free-bar">Te faltan <b>' + eur(falta) + '</b> para el envío gratuito en península' +
+    function freeBar(subtotal, shipId) {
+      var zona = shippingFor(shipId || (CFG.shipping && CFG.shipping.default), subtotal);
+      var libre = (zona.tiers || []).filter(function (x) { return x.price === 0; })[0];
+      if (!libre) return "";
+      var nombre = zona.name || "";
+      if (subtotal >= libre.min) {
+        return '<div class="free-bar">✓ Envío gratuito (' + esc(nombre) + ') aplicado</div>';
+      }
+      var falta = libre.min - subtotal, pct = Math.min(100, (subtotal / libre.min) * 100);
+      return '<div class="free-bar">Te faltan <b>' + eur(falta) + '</b> para el envío gratuito (' + esc(nombre) + ')' +
         '<div class="free-bar__track"><div class="free-bar__fill" style="width:' + pct + '%"></div></div></div>';
     }
 
@@ -411,7 +453,8 @@
             city: data.city, province: data.province || "", country: data.country,
             nif: data.nif || ""
           },
-          notes: data.notes || ""
+          notes: data.notes || "",
+          zone: shipId
         };
 
         var endpoint = CFG.checkout && CFG.checkout.endpoint;
@@ -428,7 +471,9 @@
             "&body=" + encodeURIComponent(
               "Pedido " + order.reference + "\n\n" + body + "\n\nSubtotal: " + eur(order.subtotal) +
               "\nEnvío (" + order.shipping_method + "): " + eur(order.shipping_price) +
-              "\nIVA incluido: " + eur(order.vat_included) + "\nTOTAL: " + eur(order.total) +
+              (order.zone === "can" ? "\nIVA: no aplicable (IGIC/IPSI en destino)"
+                                    : "\nIVA incluido: " + eur(order.vat_included)) +
+              "\nTOTAL: " + eur(order.total) +
               "\n\nDatos de envío:\n" + order.customer.name + "\n" + order.customer.address +
               (order.customer.address2 ? " " + order.customer.address2 : "") + "\n" +
               order.customer.zip + " " + order.customer.city + "\n" + order.customer.country +
@@ -443,6 +488,16 @@
             '<p class="small mt-s">Total a pagar: <b class="mono">' + eur(order.total) + '</b> (IVA y envío incluidos)</p>' +
             '<div class="pd__buy"><a class="btn" href="' + mail + '">Confirmar por email</a>' +
             '<a class="btn btn--ghost" href="tienda.html">Seguir comprando</a></div>';
+          // el pedido ya está hecho: vaciamos la cesta (sin duplicados) pero
+          // dejamos a la vista el resumen del pedido y el botón de confirmación
+          clearCart();
+          paintCount();
+          var _l = $("#cart-lines");
+          if (_l) _l.innerHTML = '<p class="small">Tu cesta se ha vaciado: el pedido <b>' + order.reference +
+            '</b> queda registrado. Completa el pago con el botón de abajo.</p>';
+          var _s = $("#cart-summary"); if (_s) _s.innerHTML = "";
+          var _sh = $("#cart-shipping"); if (_sh) _sh.innerHTML = "";
+          var _f = $("#checkout-form"); if (_f) _f.classList.add("hide");
           pay.scrollIntoView({ behavior: "smooth", block: "center" });
           form.querySelector("button[type=submit]").disabled = false;
           toast("Pedido " + order.reference + " guardado", "Ver resumen", "#checkout-pay");
@@ -578,12 +633,25 @@
       f.addEventListener("submit", function (e) {
         e.preventDefault();
         var input = $("input[type=email]", f);
+        var ok = $("input[type=checkbox]", f);
         if (!input || !input.checkValidity()) { toast("Revisa tu email"); return; }
+        if (ok && !ok.checked) { toast("Marca la casilla de consentimiento"); return; }
+        var email = input.value.trim();
         var list = [];
         try { list = JSON.parse(localStorage.getItem("grankha.news") || "[]"); } catch (err) {}
-        if (list.indexOf(input.value) === -1) list.push(input.value);
+        if (list.indexOf(email) === -1) list.push(email);
         try { localStorage.setItem("grankha.news", JSON.stringify(list)); } catch (err) {}
-        input.value = "";
+        // si el backend está configurado, la suscripción queda guardada de verdad
+        var sb = CFG.supabase;
+        if (sb && sb.url && sb.key) {
+          fetch(sb.url + "/rest/v1/subscribers", {
+            method: "POST",
+            headers: { "apikey": sb.key, "Authorization": "Bearer " + sb.key,
+                       "Content-Type": "application/json", "Prefer": "return=minimal" },
+            body: JSON.stringify({ email: email, source: "web", consent: true })
+          }).catch(function () {});
+        }
+        f.reset();
         toast("¡Gracias! Te escribiremos muy pronto.");
       });
     });

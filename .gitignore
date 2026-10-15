@@ -16,3 +16,6 @@ __pycache__/
 .venv/
 .vscode/
 .idea/
+
+# material fuente (no se publica)
+assets/src/
