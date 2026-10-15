@@ -392,7 +392,7 @@ def build_index():
           <a class="btn btn--lg" href="tienda.html?cat=packs">
             Ver los {len(PACKS)} packs <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
-          <span class="packs-cta__note">Envío gratis incluido · desde {eur(min(pk['price'] for pk in PACKS))}</span>
+          <span class="packs-cta__note">Envío gratis desde {eur(FREE_FROM)}</span>
         </div>
       </div>
       <div class="reveal">{products_grid(packs_home)}</div>
