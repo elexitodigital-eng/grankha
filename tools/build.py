@@ -314,7 +314,10 @@ def build_index():
         </div>
       </div>
       <div class="hero__media">
-        <img src="{HERO}" alt="Un perro y un gato juntos sobre fondo blanco" width="1500" height="838" fetchpriority="high">
+        <picture>
+          <source media="(max-width:980px)" srcset="assets/img/hero-movil.jpg">
+          <img src="{HERO}" alt="Un perro y un gato juntos sobre fondo blanco" width="1080" height="1926" fetchpriority="high" decoding="async">
+        </picture>
       </div>
     </div>
   </section>
@@ -376,7 +379,7 @@ def build_index():
       </figure>
       <div class="reveal">
         <p class="kicker kicker--light">Compromiso y corazón</p>
-        <blockquote>«Khalid era un gato blanco. Era sordo de nacimiento y por ello mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo.»</blockquote>
+        <blockquote>«Khalid, mi gatito blanco. Sordo de nacimiento pero mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo»</blockquote>
         <p>Esta web no es solo un escaparate de productos: es un legado personal nacido del amor y la pérdida. Por eso, <strong>un porcentaje de los beneficios de GRANKHA</strong> irá destinado directamente a la investigación del cáncer y las enfermedades raras en nuestras mascotas.</p>
         <div class="donate-note">{SVG['ribbon']}<div><b>GRANKHA por la salud animal</b><br>
         <span style="font-size:.88rem">Khalid sigue en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</span></div></div>
@@ -720,7 +723,7 @@ def build_compromiso():
     <div class="wrap">
       <p class="kicker">Compromiso y corazón</p>
       <h1 class="h2" style="font-size:clamp(2.2rem,6vw,4.4rem)">In memoriam: Khalid.</h1>
-      <p class="lede mt-m">Khalid era un gato blanco. Era sordo de nacimiento y por ello mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo.</p>
+      <p class="lede mt-m">Khalid, mi gatito blanco. Sordo de nacimiento pero mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo.</p>
       <p class="lede mt-s">En GRANKHA creemos que el diseño solo tiene sentido si sirve para proteger aquello que amamos.</p>
     </div>
   </section>

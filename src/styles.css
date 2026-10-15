@@ -478,3 +478,12 @@ html.js .reveal.is-in{opacity:1;transform:none}
   .wordmark__logo{width:30px;height:30px}
   .wordmark span{letter-spacing:.22em}
 }
+
+/* ==========================================================================
+   Portada: la foto muestra al perro y al gato, composición alineada a la derecha
+   ========================================================================== */
+.hero__media img{object-position:78% center}
+@media (max-width:980px){
+  /* en móvil y tablet la foto vuelve a ser apaisada: los dos animales centrados */
+  .hero__media img{object-position:center 58%}
+}
