@@ -202,8 +202,9 @@ def header(active=""):
     <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio"><img class="wordmark__logo" src="assets/img/logo.png" srcset="assets/img/logo.png 1x, assets/img/logo@2x.png 2x" alt="" width="34" height="34" fetchpriority="high" decoding="async"><span>GRANKHA</span></a>
     <nav class="nav" aria-label="Navegación principal">{nav}</nav>
     <div class="head-actions">
-      <a class="icon-btn" href="carrito.html" aria-label="Ver carrito">
-        {SVG['cart']}<span class="cart-count hide" data-cart-count>0</span>
+      <a class="cart-pill" href="carrito.html" aria-label="Ver la cesta">
+        <span class="cart-pill__ico">{SVG['cart']}<span class="cart-count hide" data-cart-count>0</span></span>
+        <span class="cart-pill__txt">Cesta</span>
       </a>
       <button class="icon-btn menu-btn" id="menu-btn" aria-label="Abrir menú">{SVG['menu']}</button>
     </div>
@@ -266,7 +267,7 @@ def card(p, rank=None):
     <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span>{esc(sub)}</span>
     <div class="card__foot">
       <span class="price">{price_block(p)}<small>IVA incl.</small></span>
-      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} al carrito">{SVG['plus']}</button>
+      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} a la cesta">{SVG['cart']}</button>
     </div>
   </div>
 </article>"""
@@ -282,6 +283,11 @@ def tail(full=False):
     packs = json.dumps([{k: v for k, v in p.items() if k in ("slug", "name", "price", "components")} for p in PACKS], ensure_ascii=False)
     f = f"window.GRANKHA_CATALOG_FULL={json.dumps(FULL, ensure_ascii=False)};" if full else ""
     return f"""<div id="toast" class="toast" role="status" aria-live="polite"><span data-toast-msg></span><a data-toast-link href="#"></a></div>
+<a class="cart-fab" id="cart-fab" href="carrito.html" hidden aria-hidden="true" aria-label="Ver la cesta">
+  <span class="cart-fab__ico">{SVG['cart']}<span class="cart-count hide" data-cart-count>0</span></span>
+  <span class="cart-fab__txt">Ver cesta</span>
+  <span class="cart-fab__tot" data-cart-total></span>
+</a>
 <script>window.GRANKHA_CONFIG={cfg};window.GRANKHA_CATALOG={lite};window.GRANKHA_PACKS={packs};{f}</script>
 <script src="app.js?v={ASSET_V}" defer></script>
 </body></html>"""
@@ -570,8 +576,8 @@ def build_product(p):
           <input type="number" value="1" min="1" max="{max(1, min(stock, 20))}" aria-label="Cantidad">
           <button type="button" data-step="1" aria-label="Más">+</button>
         </div>
-        <button class="btn btn--ghost" data-add="{p['slug']}">Añadir a la cesta</button>
-        <button class="btn" data-buy="{p['slug']}">Comprar ahora</button>
+        <button class="btn btn--cart" data-add="{p['slug']}">{SVG['cart']}<span>Añadir a la cesta</span></button>
+        <button class="btn btn--ghost btn--fast" data-buy="{p['slug']}">Comprar ahora</button>
       </div>
       <div class="filters" style="margin-top:4px">{tags}</div>
       {why}

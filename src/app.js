@@ -69,6 +69,13 @@
   function cartCount() {
     return readCart().reduce(function (n, l) { return n + l.qty; }, 0);
   }
+  var EN_CARRITO = /carrito\.html$/.test(location.pathname);
+  function cartSubtotal() {
+    return readCart().reduce(function (s, l) {
+      var p = byslug[l.slug];
+      return s + (p && p.price ? p.price * l.qty : 0);
+    }, 0);
+  }
   function paintCount() {
     var n = cartCount();
     $$("[data-cart-count]").forEach(function (el) {
@@ -76,12 +83,28 @@
       el.classList.toggle("hide", n === 0);
     });
     if (n === 0) $$("[data-cart-count]").forEach(function (el) { el.textContent = "0"; });
+    /* botón flotante de cesta: aparece en cuanto hay algo dentro */
+    var fab = $("#cart-fab");
+    if (fab) {
+      var on = n > 0 && !EN_CARRITO;
+      fab.hidden = false;
+      fab.classList.toggle("is-on", on);
+      fab.setAttribute("aria-hidden", on ? "false" : "true");
+      var tot = $("[data-cart-total]", fab);
+      if (tot) tot.textContent = eur(cartSubtotal());
+      document.body.classList.toggle("has-fab", on);
+    }
   }
   function bump() {
     $$("[data-cart-count]").forEach(function (el) {
       el.classList.add("is-bump");
       setTimeout(function () { el.classList.remove("is-bump"); }, 320);
     });
+    var pill = $(".cart-pill");
+    if (pill) {
+      pill.classList.add("is-pulse");
+      setTimeout(function () { pill.classList.remove("is-pulse"); }, 950);
+    }
   }
 
   /* ----------------------------------------------------------------- toast */
