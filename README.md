@@ -14,10 +14,10 @@ la investigación del cáncer y las enfermedades raras en mascotas** (en memoria
 | Página | Contenido |
 |---|---|
 | `index.html` | Hero, categorías, destacados, sección «Compromiso y corazón», newsletter |
-| `tienda.html` | Las 38 referencias con filtros por categoría, búsqueda y ordenación |
-| `<slug>.html` × 38 | Ficha de producto: galería, características, medidas, variantes, envío, schema.org |
+| `tienda.html` | 44 referencias (38 productos + 6 packs) con filtros por categoría, por mascota (perro/gato), búsqueda y ordenación |
+| `<slug>.html` × 44 | Ficha de producto o pack: foto, características, medidas, variantes, packs sugeridos, schema.org |
 | `carrito.html` | Carrito con cantidades, método de envío, IVA y checkout |
-| `compromiso.html` | La historia completa (texto original) y preguntas sobre la donación |
+| `compromiso.html` | La historia completa (texto original, khalid como gato blanco) y preguntas sobre la donación |
 | `envios.html` | Tarifas, plazos, devoluciones 30 días y FAQ |
 | `contacto.html` | Formulario (abre el correo con todo rellenado) |
 | `legal.html` | Aviso legal, condiciones de venta, privacidad y cookies |
@@ -33,9 +33,11 @@ dentro de una previsualización sin red. No usa CDN, ni fuentes externas, ni coo
 
 - Precios mostrados **con IVA (21 %) incluido**; el carrito desglosa el IVA.
 - Canarias, Ceuta y Melilla: sin IVA (IGIC/IPSI en destino), con su propia tarifa de envío.
-- Envío gratis en península a partir de **49 €** (umbral editable).
-- Gastos del proveedor, comisión de Stripe, devoluciones y CAC modelados en
-  `docs/GRANKHA_Margenes_IVA_Envios.xlsx`.
+- **Envío por tramos** (península): hasta 20 € → 5,95 € · de 20 € a 39 € → 3,95 € · **desde 39 € → gratis**.
+- **Donación**: 5 % de los beneficios a investigación del cáncer y enfermedades raras en mascotas.
+- Precios auditados contra el mercado real (idealo, Tiendanimal, Bitiba, ManoMano) y
+  contribución por pedido calculada en **`docs/GRANKHA_Auditoria_Precios.xlsx`**.
+- 6 **packs** con 5,8-9 % de descuento que elevan el ticket medio y la rentabilidad.
 
 ---
 
@@ -53,9 +55,10 @@ grankha/
 │  └─ app.js               ← carrito, filtros, checkout (se incrusta en cada página)
 ├─ tools/
 │  ├─ feed_sync.py         ← descarga catálogo + imágenes del proveedor
-│  ├─ catalog.py           ← normaliza el catálogo y procesa las imágenes
-│  ├─ build.py             ← genera todas las páginas HTML, sitemap y OG
-│  └─ margins_xlsx.py      ← genera el Excel de márgenes
+│  ├─ pricing.py           ← audita precios y packs, genera el Excel de auditoría
+│  ├─ catalog.py           ← normaliza el catálogo, compone imágenes de pack
+│  ├─ build.py             ← genera todas las páginas HTML, sitemap, OG y precios de servidor
+│  └─ margins_xlsx.py      ← Excel de márgenes (modelo base)
 ├─ assets/img/             ← fotos de producto, miniaturas y OG
 ├─ supabase/               ← esquema SQL + funciones Edge (Stripe)
 └─ docs/                   ← pendientes, guía de Stripe/Supabase y Excel de márgenes
@@ -67,15 +70,18 @@ grankha/
 # 1) descarga del proveedor (token en variable de entorno, nunca en el repo)
 AIKU_TOKEN='tu_token' python3 tools/feed_sync.py
 
-# 2) normaliza catálogo y procesa imágenes
+# 2) audita precios y recalcula márgenes y packs
+python3 tools/pricing.py
+
+# 3) normaliza catálogo y procesa imágenes (incluye packs)
 python3 tools/catalog.py --raw data/raw
 
-# 3) regenera el sitio
+# 4) regenera el sitio
 python3 tools/build.py
 ```
 
-> Si añades productos nuevos, define su ficha (título comercial, talla, color, peso…) en la
-> tabla `SPECS` de `tools/catalog.py`. Los productos sin especificación se omiten con aviso.
+> Si añades productos nuevos, define su ficha comercial (nombre, precio, copy, audiencia)
+> en `data/pricing.json`. Los productos sin ficha se omiten con aviso.
 >
 > Staging del proveedor: `python3 tools/feed_sync.py --api https://api.aiku-sandbox.uk`
 > (el token de staging se resetea cada domingo a las 03:00 UTC).
@@ -90,12 +96,17 @@ GitHub Pages sirve la rama `main` en la raíz: los cambios están online en ~1 m
 
 ---
 
-## Pendiente (ver `docs/PENDIENTES.md`)
+## Cómo vender hoy
 
-1. **Datos fiscales** en `legal.html` (razón social, NIF, domicilio, teléfono) — antes de vender.
-2. **Stripe**: cuenta + desplegar funciones → pegar endpoint en `data/site.json`
-   (`docs/CONECTAR_STRIPE_SUPABASE.md`).
-3. **Supabase**: ejecutar `supabase/schema.sql` para registrar pedidos y suscriptores.
+Manual completo en **`docs/COMO_VENDER_YA.md`** (2 h de configuración para estar vendiendo):
+
+1. **Datos legales** (razón social, NIF, domicilio, teléfono) → a `legal.html`.
+2. **Stripe**: cuenta + funciones desplegadas + endpoint en `data/site.json`.
+3. **Supabase**: ejecutar `supabase/schema.sql` (pedidos, suscriptores, KPIs).
+4. **Flujo de pedidos**: manual (panel de AW Dropshipping) o automático con
+   `supabase/functions/fulfill-order`.
+5. **Seguimiento**: guardas el tracking en `orders.tracking_code` y el cliente recibe el
+   email con las plantillas de `docs/emails/`.
 
 Sin Stripe, el checkout ya funciona en modo «confirmar por email» con el desglose completo
 (referencia, artículos, IVA, envío y total), y sin Supabase la tienda opera igualmente.

@@ -402,3 +402,26 @@ html.js .reveal.is-in{opacity:1;transform:none}
 .pledge svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:1.3}
 .pledge .donate-note{margin:0;align-items:center}
 @media (max-width:560px){.pledge{grid-template-columns:1fr}}
+
+/* ---------- precios con precio anterior ---------- */
+.price .was,.pd__price .was{
+  font-size:.78rem;color:var(--muted);text-decoration:line-through;margin-left:8px;font-weight:500
+}
+.pd__price .was{font-size:1rem}
+.pd__price .now--big{font-size:clamp(1.7rem,3vw,2.2rem)}
+.pledge .donate-note{margin:0}
+
+/* ---------- iconos en filtros y subtítulos ---------- */
+.chip svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;
+  vertical-align:-2px;margin-right:6px}
+.card__sub svg{width:13px;height:13px;stroke:var(--muted-2);fill:none;stroke-width:1.4;flex:none}
+.tag--dark{letter-spacing:.12em}
+
+/* ---------- packs ---------- */
+.card[data-cat="packs"] .card__media{background:#0B0B0B}
+.card[data-cat="packs"] .card__media img{mix-blend-mode:normal}
+.notice .usp{border:0;margin-top:6px}
+.notice .usp li{border-bottom:0;padding:7px 0}
+.notice .usp svg{width:16px;height:16px;stroke:var(--ink);fill:none;stroke-width:1.4}
+#pd-pack .chip{display:inline-flex;align-items:center;gap:8px}
+#pd-pack .filters{margin-top:10px}

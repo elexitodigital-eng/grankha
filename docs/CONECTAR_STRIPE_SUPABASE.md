@@ -40,7 +40,12 @@ supabase secrets set SITE_URL=https://elexitodigital-eng.github.io/grankha
 # funciones
 supabase functions deploy create-checkout --no-verify-jwt
 supabase functions deploy stripe-webhook  --no-verify-jwt
+supabase functions deploy fulfill-order   --no-verify-jwt   # crea el pedido en AW Dropshipping
 ```
+
+> `create-checkout` usa `prices.json` (se regenera con `tools/build.py`) para recalcular los
+> importes en servidor: nadie puede manipular precios ni el envío cobrado desde el navegador.
+> También calcula la donación (5 % del beneficio real del pedido) y la guarda.
 
 Al terminar, la CLI imprime la URL de cada función, del estilo
 `https://abcdefgh.functions.supabase.co/create-checkout`.
@@ -98,7 +103,28 @@ select * from v_donation_fund;    -- importe reservado para investigación por m
 
 ## Pasar pedidos al proveedor (AW Dropshipping)
 
-Cuando tengas el pedido pagado, créalo en el panel de AW Dropshipping o vía API
-(`POST /dropshipping/order/client/{client_id}/store` + `PATCH .../submit`).
-Los pedidos guardados en Supabase tienen ya: referencia, artículos con SKU, dirección
-completa y método de envío, así que se vuelcan sin retocar nada.
+**Manual**: crea el pedido en el panel de AW con los SKU del pedido (los packs se piden por
+sus piezas; la ficha de cada pack en la web indica cuáles) y marca enviado.
+
+**Automático**: la función `fulfill-order` lo hace sola.
+
+```bash
+supabase secrets set AIKU_TOKEN='690|tu_token_del_canal'   # nunca en el repositorio
+supabase secrets set AIKU_API=https://api.aiku.io          # staging: https://api.aiku-sandbox.uk
+
+# prueba en seco (no crea nada, solo valida el pedido)
+curl -X POST "https://TU_REF.functions.supabase.co/fulfill-order?dry_run=1" -H 'Content-Type: application/json' -d '{}'
+
+# ejecución real de los pedidos pagados pendientes
+curl -X POST "https://TU_REF.functions.supabase.co/fulfill-order" -H 'Content-Type: application/json' -d '{}'
+```
+
+Los pedidos ya traen referencia, SKU, cantidades, dirección completa y método de envío.
+Cuando el proveedor despache, guarda el tracking:
+
+```sql
+update orders set tracking_code='XXXX', tracking_url='https://...', shipped_at=now()
+where reference='GRK-XXXXXX-XXXX';
+```
+
+y envía al cliente la plantilla `docs/emails/2-pedido-enviado.html`.

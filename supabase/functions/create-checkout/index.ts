@@ -19,6 +19,7 @@
 
 import Stripe from "https://esm.sh/stripe@16?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import PRICES from "./prices.json" assert { type: "json" };   // precios oficiales (se regeneran con tools/build.py)
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
 const supa = createClient(
@@ -26,7 +27,9 @@ const supa = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 const SITE_URL = Deno.env.get("SITE_URL") ?? "https://example.com";
-const DONATION_RATE = 0.05;   // % de los beneficios reservado a investigación
+const DONATION_RATE = 0.05;   // 5 % de los beneficios → investigación (ver docs/GRANKHA_Auditoria_Precios.xlsx)
+const RETURNS_DAYS = 30;
+const COSTS: Record<string, number> = (PRICES as any).costs ?? {};
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -49,13 +52,36 @@ Deno.serve(async (req) => {
   if (!order?.lines?.length || !order?.customer?.email) {
     return json({ error: "Pedido incompleto" }, 400);
   }
-  const subtotal = round(order.lines.reduce(
-    (s: number, l: any) => s + l.unit_price * l.qty, 0));
-  // el cliente nunca fija el precio: lo recalculamos en servidor
+
+  // PRECIOS OFICIALES: el cliente no puede alterar importes ni el envío cobrado.
+  const priceOf = (sku: string): number => {
+    const entry = (PRICES as any)[sku];
+    if (!entry) throw new Error(`SKU desconocido: ${sku}`);
+    return Number(entry.price);
+  };
+  let subtotal = 0;
+  let cogs = 0;
+  for (const l of order.lines) {
+    const official = priceOf(l.sku) * Number(l.qty);
+    subtotal += official;
+    l.unit_price = priceOf(l.sku);          // se sobreescribe con el precio oficial
+    l.line_total = round(official);
+    cogs += (COSTS[l.sku] ?? 0) * Number(l.qty);
+  }
+  subtotal = round(subtotal);
+  const shippingCharged = Math.max(0, Number(order.shipping_price ?? 0));
+  const allowedShipping = [0, 3.95, 5.95, 6.95, 7.95, 13.95, 14.95];
+  if (!allowedShipping.includes(round(shippingCharged))) {
+    return json({ error: "Gastos de envío no válidos" }, 400);
+  }
   order.subtotal = subtotal;
-  order.total = round(subtotal + (order.shipping_price ?? 0));
+  order.shipping_price = round(shippingCharged);
+  order.total = round(subtotal + shippingCharged);
   order.vat_included = round(subtotal - subtotal / 1.21);
-  order.donation = round(subtotal / 1.21 * DONATION_RATE);
+  // la donación es el 5 % del beneficio real del pedido (no del precio)
+  const grossBenefit = round(subtotal / 1.21 - cogs);
+  order.donation = grossBenefit > 0 ? round(grossBenefit * DONATION_RATE) : 0;
+  order.cogs = round(cogs);
   order.reference = order.reference ?? `GRK-${Date.now().toString(36).toUpperCase()}`;
 
   // ------------------------------------------------------ Stripe Checkout -
@@ -86,8 +112,13 @@ Deno.serve(async (req) => {
       line_items,
       customer_email: order.customer.email,
       client_reference_id: order.reference,
-      metadata: { reference: order.reference },
+      metadata: {
+        reference: order.reference,
+        donation: String(order.donation),
+        cogs: String(order.cogs),
+      },
       shipping_address_collection: { allowed_countries: ["ES", "PT", "FR", "DE", "IT", "NL", "BE", "IE", "AT", "LU"] },
+      payment_intent_data: { description: `GRANKHA ${order.reference}` },
       success_url: `${SITE_URL}/carrito.html?pedido=${order.reference}&estado=ok`,
       cancel_url: `${SITE_URL}/carrito.html?estado=cancelado`,
     });

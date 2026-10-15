@@ -1,0 +1,415 @@
+{
+ "meta": {
+  "vat": 0.21,
+  "supplier_shipping_per_order": 4.95,
+  "packaging_per_order": 0.6,
+  "returns_rate": 0.03,
+  "returns_cost": 8.0,
+  "donation_rate": 0.05,
+  "target_contribution_per_order": 6.0,
+  "stripe_pct": 0.015,
+  "stripe_fix": 0.25,
+  "cac_target": 5.0,
+  "notes": "Coste de envío del proveedor: confirmar tarifa real en AW Dropshipping. Los precios incluyen IVA (21 %).",
+  "avg_cogs_ratio": 0.4747,
+  "avg_contrib_1u": 8.16,
+  "avg_contrib_2u": 16.9,
+  "avg_pack_contrib": 16.41
+ },
+ "products": {
+  "PAWH-01": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -0.35
+  },
+  "PAWH-02": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -0.35
+  },
+  "PAWH-03": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -0.35
+  },
+  "PAWH-04": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -7.8
+  },
+  "PAWH-05": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -0.35
+  },
+  "PAWH-06": {
+   "contrib_1u": 8.57,
+   "contrib_2u": 15.4,
+   "margin_1u": 0.281,
+   "in_band": true,
+   "price_delta": -0.35
+  },
+  "PawL-01": {
+   "contrib_1u": 3.32,
+   "contrib_2u": 4.89,
+   "margin_1u": 0.1832,
+   "in_band": true,
+   "price_delta": -1.23
+  },
+  "PawL-02": {
+   "contrib_1u": 3.32,
+   "contrib_2u": 4.89,
+   "margin_1u": 0.1832,
+   "in_band": true,
+   "price_delta": -1.23
+  },
+  "PawL-03": {
+   "contrib_1u": 3.32,
+   "contrib_2u": 4.89,
+   "margin_1u": 0.1832,
+   "in_band": true,
+   "price_delta": -1.23
+  },
+  "PawL-04": {
+   "contrib_1u": 5.91,
+   "contrib_2u": 10.09,
+   "margin_1u": 0.2394,
+   "in_band": true,
+   "price_delta": -1.35
+  },
+  "PawL-05": {
+   "contrib_1u": 5.91,
+   "contrib_2u": 10.09,
+   "margin_1u": 0.2394,
+   "in_band": true,
+   "price_delta": -1.35
+  },
+  "PawL-06": {
+   "contrib_1u": 5.91,
+   "contrib_2u": 10.09,
+   "margin_1u": 0.2394,
+   "in_band": true,
+   "price_delta": -1.35
+  },
+  "PawL-07": {
+   "contrib_1u": 6.92,
+   "contrib_2u": 12.09,
+   "margin_1u": 0.2398,
+   "in_band": true,
+   "price_delta": -2.6
+  },
+  "PawL-08": {
+   "contrib_1u": 6.92,
+   "contrib_2u": 12.09,
+   "margin_1u": 0.2398,
+   "in_band": true,
+   "price_delta": -2.6
+  },
+  "PawL-09": {
+   "contrib_1u": 6.92,
+   "contrib_2u": 12.09,
+   "margin_1u": 0.2398,
+   "in_band": true,
+   "price_delta": -2.6
+  },
+  "PAWFB-01": {
+   "contrib_1u": 6.25,
+   "contrib_2u": 6.82,
+   "margin_1u": 0.5441,
+   "in_band": true,
+   "price_delta": 4.52
+  },
+  "PAWFB-02": {
+   "contrib_1u": 7.85,
+   "contrib_2u": 10.02,
+   "margin_1u": 0.5619,
+   "in_band": true,
+   "price_delta": 5.65
+  },
+  "PAWFB-03": {
+   "contrib_1u": 8.23,
+   "contrib_2u": 14.72,
+   "margin_1u": 0.3702,
+   "in_band": true,
+   "price_delta": 4.4
+  },
+  "PAWFB-04": {
+   "contrib_1u": 8.3,
+   "contrib_2u": 22.64,
+   "margin_1u": 0.2517,
+   "in_band": true,
+   "price_delta": 3.65
+  },
+  "PAWFB-05": {
+   "contrib_1u": 8.59,
+   "contrib_2u": 23.17,
+   "margin_1u": 0.2315,
+   "in_band": true,
+   "price_delta": -2.6
+  },
+  "PAWFB-06": {
+   "contrib_1u": 10.19,
+   "contrib_2u": 18.64,
+   "margin_1u": 0.4124,
+   "in_band": true,
+   "price_delta": 6.15
+  },
+  "PAWFB-07": {
+   "contrib_1u": 7.91,
+   "contrib_2u": 10.13,
+   "margin_1u": 0.5344,
+   "in_band": true,
+   "price_delta": 5.4
+  },
+  "PAWFB-08": {
+   "contrib_1u": 5.31,
+   "contrib_2u": 16.67,
+   "margin_1u": 0.1289,
+   "in_band": true,
+   "price_delta": -11.35
+  },
+  "PAWFB-09": {
+   "contrib_1u": 12.38,
+   "contrib_2u": 19.08,
+   "margin_1u": 0.7927,
+   "in_band": true,
+   "price_delta": 1.38
+  },
+  "PawB-01": {
+   "contrib_1u": 8.76,
+   "contrib_2u": 15.78,
+   "margin_1u": 0.3037,
+   "in_band": true,
+   "price_delta": -0.1
+  },
+  "PawB-02": {
+   "contrib_1u": 8.29,
+   "contrib_2u": 22.63,
+   "margin_1u": 0.2235,
+   "in_band": true,
+   "price_delta": -0.1
+  },
+  "PawB-03": {
+   "contrib_1u": 5.98,
+   "contrib_2u": 17.28,
+   "margin_1u": 0.1814,
+   "in_band": true,
+   "price_delta": -1.35
+  },
+  "PawB-04": {
+   "contrib_1u": 10.77,
+   "contrib_2u": 26.26,
+   "margin_1u": 0.2463,
+   "in_band": true,
+   "price_delta": -7.55
+  },
+  "PawB-05": {
+   "contrib_1u": 11.07,
+   "contrib_2u": 20.4,
+   "margin_1u": 0.3534,
+   "in_band": true,
+   "price_delta": -2.45
+  },
+  "PawB-06": {
+   "contrib_1u": 11.07,
+   "contrib_2u": 20.4,
+   "margin_1u": 0.3534,
+   "in_band": true,
+   "price_delta": 2.9
+  },
+  "PawB-07": {
+   "contrib_1u": 7.88,
+   "contrib_2u": 21.24,
+   "margin_1u": 0.2123,
+   "in_band": true,
+   "price_delta": -0.1
+  },
+  "PawB-08": {
+   "contrib_1u": 11.71,
+   "contrib_2u": 28.21,
+   "margin_1u": 0.2491,
+   "in_band": true,
+   "price_delta": -0.6
+  },
+  "PawB-09": {
+   "contrib_1u": 7.59,
+   "contrib_2u": 21.22,
+   "margin_1u": 0.2301,
+   "in_band": true,
+   "price_delta": 2.4
+  },
+  "PawB-10": {
+   "contrib_1u": 9.42,
+   "contrib_2u": 24.87,
+   "margin_1u": 0.2429,
+   "in_band": true,
+   "price_delta": 1.9
+  },
+  "PawB-11": {
+   "contrib_1u": 9.77,
+   "contrib_2u": 25.59,
+   "margin_1u": 0.2757,
+   "in_band": true,
+   "price_delta": 2.9
+  },
+  "PawB-12": {
+   "contrib_1u": 10.89,
+   "contrib_2u": 27.03,
+   "margin_1u": 0.2641,
+   "in_band": true,
+   "price_delta": 2.4
+  },
+  "PawB-13": {
+   "contrib_1u": 9.42,
+   "contrib_2u": 24.87,
+   "margin_1u": 0.2537,
+   "in_band": true,
+   "price_delta": 2.4
+  },
+  "PawB-14": {
+   "contrib_1u": 12.48,
+   "contrib_2u": 31.0,
+   "margin_1u": 0.2609,
+   "in_band": true,
+   "price_delta": 0.4
+  }
+ },
+ "packs": {
+  "PACK-01": {
+   "price": 66.9,
+   "component_sum": 71.8,
+   "saving": 4.9,
+   "component_cost": 37.38,
+   "discount": 0.0682,
+   "contribution": 9.97,
+   "margin": 0.1803,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PAWH-06",
+     "qty": 1
+    },
+    {
+     "sku": "PawL-09",
+     "qty": 1
+    }
+   ]
+  },
+  "PACK-02": {
+   "price": 62.9,
+   "component_sum": 66.8,
+   "saving": 3.9,
+   "component_cost": 34.38,
+   "discount": 0.0584,
+   "contribution": 9.74,
+   "margin": 0.1874,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PAWH-02",
+     "qty": 1
+    },
+    {
+     "sku": "PawL-05",
+     "qty": 1
+    }
+   ]
+  },
+  "PACK-03": {
+   "price": 78.9,
+   "component_sum": 86.7,
+   "saving": 7.8,
+   "component_cost": 36.6,
+   "discount": 0.09,
+   "contribution": 19.95,
+   "margin": 0.306,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PAWFB-08",
+     "qty": 1
+    },
+    {
+     "sku": "PAWFB-09",
+     "qty": 1
+    },
+    {
+     "sku": "PAWFB-07",
+     "qty": 1
+    }
+   ]
+  },
+  "PACK-04": {
+   "price": 66.9,
+   "component_sum": 71.8,
+   "saving": 4.9,
+   "component_cost": 32.19,
+   "discount": 0.0682,
+   "contribution": 14.9,
+   "margin": 0.2695,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PawB-02",
+     "qty": 1
+    },
+    {
+     "sku": "PAWFB-03",
+     "qty": 1
+    }
+   ]
+  },
+  "PACK-05": {
+   "price": 84.9,
+   "component_sum": 91.8,
+   "saving": 6.9,
+   "component_cost": 42.75,
+   "discount": 0.0752,
+   "contribution": 18.71,
+   "margin": 0.2666,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PawB-10",
+     "qty": 1
+    },
+    {
+     "sku": "PAWFB-05",
+     "qty": 1
+    }
+   ]
+  },
+  "PACK-06": {
+   "price": 80.9,
+   "component_sum": 87.7,
+   "saving": 6.8,
+   "component_cost": 32.7,
+   "discount": 0.0775,
+   "contribution": 25.2,
+   "margin": 0.3769,
+   "ok": true,
+   "components": [
+    {
+     "sku": "PAWFB-08",
+     "qty": 1
+    },
+    {
+     "sku": "PAWFB-09",
+     "qty": 2
+    }
+   ]
+  }
+ },
+ "free_shipping_avg_contribution": 7.32,
+ "aov_target": 41.85
+}

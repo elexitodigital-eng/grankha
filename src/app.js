@@ -110,10 +110,21 @@
   }
   function shippingFor(id, subtotal) {
     var o = shippingOptions().filter(function (s) { return s.id === id; })[0] || shippingOptions()[0];
-    if (!o) return { id: "none", name: "Envío", price: 0 };
-    var price = o.price;
-    if (o.free_from && subtotal >= o.free_from) price = 0;
-    return { id: o.id, name: o.name, price: price, eta: o.eta, free_from: o.free_from };
+    if (!o) return { id: "none", name: "Envío", price: 0, next: null };
+    var price = 0, next = null;
+    if (o.tiers && o.tiers.length) {
+      price = o.tiers[0].price;
+      o.tiers.forEach(function (t) {
+        if (subtotal >= t.min) price = t.price;
+      });
+      // siguiente tramo al que aspira el cliente (para el aviso del carrito)
+      var pend = o.tiers.filter(function (t) { return subtotal < t.min; });
+      if (pend.length) next = { min: pend[0].min, price: pend[0].price };
+    } else {
+      price = o.price || 0;
+      if (o.free_from && subtotal >= o.free_from) price = 0;
+    }
+    return { id: o.id, name: o.name, price: price, eta: o.eta, next: next, tiers: o.tiers };
   }
   function totals(lines, shipId) {
     var subtotal = 0, units = 0;
@@ -189,17 +200,19 @@
   function initShop() {
     var grid = $("#shop-grid");
     if (!grid) return;
-    var state = { cat: "todo", sort: "destacados", q: "" };
+    var state = { cat: "todo", sort: "destacados", q: "", aud: "todos" };
     var cards = $$(".card[data-cat]", grid);
 
     function apply() {
       var shown = 0;
       cards.forEach(function (c) {
         var okCat = state.cat === "todo" || c.getAttribute("data-cat") === state.cat;
-        var okCol = true, q = state.q.trim().toLowerCase();
+        var aud = c.getAttribute("data-aud") || "ambos";
+        var okAud = state.aud === "todos" || aud === "ambos" || aud === state.aud;
+        var q = state.q.trim().toLowerCase();
         var hay = (c.getAttribute("data-search") || "").toLowerCase();
         var okQ = !q || hay.indexOf(q) !== -1;
-        if (okCat && okCol && okQ) { c.classList.remove("hide"); shown++; }
+        if (okCat && okAud && okQ) { c.classList.remove("hide"); shown++; }
         else c.classList.add("hide");
       });
       var none = $("#shop-empty");
@@ -229,6 +242,14 @@
         apply();
       });
     });
+    $$("[data-aud]").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        $$("[data-aud]").forEach(function (c) { c.classList.remove("is-on"); });
+        chip.classList.add("is-on");
+        state.aud = chip.getAttribute("data-aud");
+        apply();
+      });
+    });
     var sel = $("#shop-sort");
     if (sel) sel.addEventListener("change", function () { state.sort = sel.value; sort(); });
     var search = $("#shop-search");
@@ -238,8 +259,13 @@
     var m = location.search.match(/[?&]cat=([^&]+)/);
     if (m) {
       var chip = $('[data-filter="' + m[1] + '"]');
-      if (chip) { chip.click(); }
-    } else { sort(); apply(); }
+      if (chip) chip.click();
+    }
+    var mAud = location.search.match(/[?&]aud=([^&]+)/);
+    if (mAud) {
+      var chipA = $('[data-aud="' + mAud[1] + '"]');
+      if (chipA) chipA.click();
+    }
     sort(); apply();
   }
 
@@ -273,6 +299,7 @@
           '<div>' +
             '<a class="line__t" href="' + p.url + '">' + esc(p.title) + '</a>' +
             '<div class="line__s">' + esc(p.subtitle || "") + '</div>' +
+            (p.packOf ? '<div class="line__s">Incluye: ' + esc(p.packOf) + '</div>' : '') +
             '<div class="line__s mono">' + eur(p.price) + ' ud. · IVA incl.</div>' +
             '<button class="line__rm" data-rm="' + p.slug + '">Quitar</button>' +
           '</div>' +
@@ -294,6 +321,10 @@
         '<div class="sum-row"><span>Subtotal (' + t.units + ' art.)</span><span class="mono">' + eur(t.subtotal) + '</span></div>' +
         '<div class="sum-row"><span>Envío · ' + esc(t.ship.name) + '</span><span class="mono">' +
           (t.ship.price === 0 ? "Gratis" : eur(t.ship.price)) + '</span></div>' +
+        (t.ship.next && t.ship.next.price < t.ship.price
+          ? '<div class="free-bar">Añade <b>' + eur(t.ship.next.min - t.subtotal) +
+            '</b> más y el envío baja a ' + (t.ship.next.price === 0 ? 'gratis' : eur(t.ship.next.price)) + '</div>'
+          : '') +
         '<div class="sum-row"><span>IVA incluido (21%)</span><span class="mono">' + eur(t.vat) + '</span></div>' +
         '<div class="sum-row sum-row--total"><span>Total</span><span class="mono">' + eur(t.total) + '</span></div>' +
         freeBar(t.subtotal) +
@@ -302,13 +333,13 @@
 
       shipBox.innerHTML = '<div class="field"><label for="ship-sel">Método de envío</label>' +
         '<div class="ship-pick">' + shippingOptions().map(function (o) {
-          var free = o.free_from && t.subtotal >= o.free_from;
-          var price = free ? 0 : o.price;
+          var s2 = shippingFor(o.id, t.subtotal);
+          var gr = (o.tiers || []).filter(function (x) { return x.price === 0; })[0];
           return '<label class="ship-opt' + (o.id === shipId ? " is-on" : "") + '">' +
             '<input type="radio" name="ship" value="' + o.id + '"' + (o.id === shipId ? " checked" : "") + '>' +
             '<span><b>' + esc(o.name) + '</b><br><span class="small">' + esc(o.eta || "") +
-            (o.free_from ? ' · gratis desde ' + eur(o.free_from) : '') + '</span></span>' +
-            '<span class="mono" style="margin-left:auto;white-space:nowrap">' + (price === 0 ? "Gratis" : eur(price)) + '</span>' +
+            (gr ? ' · envío gratis desde ' + eur(gr.min) : '') + '</span></span>' +
+            '<span class="mono" style="margin-left:auto;white-space:nowrap">' + (s2.price === 0 ? "Gratis" : eur(s2.price)) + '</span>' +
           '</label>';
         }).join("") + '</div></div>' +
         '<p class="small mt-s">' + esc((CFG.shipping && CFG.shipping.note) || "") + '</p>';
@@ -333,7 +364,7 @@
     }
 
     function freeBar(subtotal) {
-      var free = (CFG.shipping && CFG.shipping.freeFromPeninsular) || 49;
+      var free = (CFG.shipping && CFG.shipping.freeFromPeninsular) || 39;
       if (subtotal >= free) return '<div class="free-bar">✓ Envío gratuito (península) aplicado</div>';
       var falta = free - subtotal, pct = Math.min(100, (subtotal / free) * 100);
       return '<div class="free-bar">Te faltan <b>' + eur(falta) + '</b> para el envío gratuito en península' +
@@ -362,7 +393,9 @@
           lines: lines.map(function (l) {
             var p = byslug[l.slug];
             return {
-              sku: p.sku, slug: p.slug, name: p.title + " · " + (p.subtitle || ""),
+              sku: p.sku, slug: p.slug, kind: p.kind || "product",
+              name: p.title + " · " + (p.subtitle || ""),
+              components: p.components || null,          // los packs se piden por sus piezas
               qty: l.qty, unit_price: p.price, line_total: +(p.price * l.qty).toFixed(2),
               weight_g: p.weight_g || 0
             };
@@ -444,6 +477,21 @@
     var root = $("#pd");
     if (!root) return;
     var slug = root.getAttribute("data-slug");
+    // los packs avisan de cuánto ahorra el cliente
+    var box = $("#pd-pack");
+    if (box) {
+      var sku = root.getAttribute("data-sku");
+      var packs = (window.GRANKHA_CATALOG || []).filter(function (p) { return p.kind === "pack"; });
+      var conmigo = (window.GRANKHA_PACKS || []).filter(function (p) {
+        return (p.components || []).some(function (c) { return c.sku === sku; });
+      });
+      if (conmigo.length) {
+        box.innerHTML = '<p class="small mb-m">Este artículo forma parte de estos packs:</p><div class="filters">' +
+          conmigo.map(function (p) {
+            return '<a class="chip" href="' + p.slug + '.html">' + p.name + ' · ahorras ' + eur(p.saving) + '</a>';
+          }).join("") + '</div>';
+      }
+    }
 
     // variantes: si es un arnés, enlaza variantes del mismo modelo/talla
     $$("[data-variant]").forEach(function (a) {

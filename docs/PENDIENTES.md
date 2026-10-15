@@ -1,5 +1,7 @@
 # GRANKHA · Qué queda por hacer
 
+> Para el plan de puesta en marcha paso a paso, usa **COMO_VENDER_YA.md**. Este archivo es la lista de pendientes técnicos.
+
 La tienda está **completa y publicada**: catálogo real, fichas, carrito, checkout, envíos,
 IVA, páginas legales y SEO. Estos son los únicos puntos que dependen de datos o cuentas
 que solo tú puedes proporcionar.
@@ -63,8 +65,9 @@ Sin Supabase, la web funciona al 100 %; solo pierdes el registro centralizado de
 
 ## 4. Marketing y operación (recomendado)
 
-- [ ] Sustituir las imágenes de marca (`assets/img/hero.jpg`, `memorial.jpg`) por fotos
-      propias si algún día las tienes. Las actuales son generadas y encajan con la estética.
+- [ ] Sustituir la foto de `assets/img/khalid.jpg` por **una foto real de khalid** cuando la tengas
+      (mantén el formato cuadrado y el blanco y negro para que encaje). El resto de imágenes
+      generadas (hero con perro y gato) están listas para producción.
 - [ ] Instagram / TikTok de la marca y enlazarlos en el footer.
 - [ ] Google Search Console: `https://elexitodigital-eng.github.io/grankha/sitemap.xml`.
 - [ ] Google Merchant Center (Shopping): los datos estructurados ya están puestos.
@@ -77,14 +80,15 @@ Sin Supabase, la web funciona al 100 %; solo pierdes el registro centralizado de
 
 ## 5. Decisiones que dependen de tus números
 
-- [ ] **Envío gratis a partir de 49 €**: está puesto en el sitio. Ajusta el umbral en
-      `data/site.json` según lo que veas en `docs/GRANKHA_Margenes_IVA_Envios.xlsx`.
-- [ ] **Precios**: mantengo el PVP que has fijado (el 100 % sobre coste del proveedor).
-      Ojo: en pedidos de 1 unidad de artículos baratos el margen real es bajo (~12 %)
-      porque el envío del proveedor y la comisión fija se comen el beneficio. Recomendado
-      empujar packs (arnés + correa) y el umbral de envío gratis.
-- [ ] **% destinado a investigación**: he puesto 5 % del beneficio como reserva en el
-      simulador y en la base de datos. Confírmame el porcentaje real y lo ajusto.
+- [x] **Envío gratis desde 39 €** con tramos (20 € → 3,95 €; mínimo → 5,95 €). Configurado en
+      `data/site.json` → `shipping.options[].tiers`. Si la tarifa real del proveedor sube,
+      ajustar aquí y regenerar.
+- [x] **Precios auditados** contra el mercado (octubre 2026): 8 referencias subidas, 11 ajustadas
+      a la baja, 19 validadas. Detalle por producto en `docs/GRANKHA_Auditoria_Precios.xlsx`.
+- [x] **Donación 5 %** de los beneficios, reservada pedido a pedido (Supabase `orders.donation`).
+- [x] **6 packs** con 5,8-9 % de descuento y contribución de 10-30 € por pedido.
+- [ ] **Tarifa real de envío del proveedor** (estimada en 4,95 € + 1,10 €/kg): confirmar en el panel.
+- [ ] **Plazos reales** de preparación y entrega del proveedor (la web muestra 3-8 días).
 - [ ] Canarias/Ceuta/Melilla: revisar con el proveedor si el envío incluye aduanas.
 
 ---
