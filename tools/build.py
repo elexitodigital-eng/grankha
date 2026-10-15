@@ -276,7 +276,7 @@ def card(p, rank=None):
   <div class="card__body">
     <span class="card__col">{esc(col_label)}</span>
     <a class="card__title" href="{href}">{esc(p['name'])}</a>
-    <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span>{esc(sub)}</span>
+    <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span><span class="card__subt">{esc(sub)}</span></span>
     <div class="card__foot">
       <span class="price">{price_block(p)}<small>IVA incl.</small></span>
       <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} a la cesta">{SVG['cart']}</button>
