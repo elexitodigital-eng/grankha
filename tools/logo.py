@@ -23,7 +23,26 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "assets/img"
+SRC = ROOT / "assets/src"          # aquí vive el original que nos pasa el cliente
 CANDIDATOS = ["logo-src.png", "logo-src.jpg", "logo-src.jpeg", "logo-src.webp", "logo-src.svg.png"]
+
+
+def buscar_origen():
+    """Localiza el logo original: primero en assets/src/ y luego en assets/img/.
+
+    El original nunca se pisa: los PNG generados van solo a assets/img/.
+    Si no hay fichero con nombre conocido, se acepta cualquier imagen de assets/src/.
+    """
+    for base in (SRC, IMG):
+        for c in CANDIDATOS:
+            p = base / c
+            if p.exists():
+                return p
+    if SRC.exists():
+        for ext in ("png", "jpg", "jpeg", "webp"):
+            for p in sorted(SRC.glob(f"*.{ext}")):
+                return p
+    return None
 
 
 def monograma(size=512):
@@ -104,10 +123,7 @@ def main():
     if len(sys.argv) > 1:
         ruta = Path(sys.argv[1])
     else:
-        for c in CANDIDATOS:
-            if (IMG / c).exists():
-                ruta = IMG / c
-                break
+        ruta = buscar_origen()
 
     if ruta and ruta.exists():
         src = Image.open(ruta)
