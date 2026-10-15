@@ -463,3 +463,18 @@ html.js .reveal.is-in{opacity:1;transform:none}
   .gallery__nav{width:36px;height:36px;top:calc(50% - 18px);font-size:1.15rem}
   .gallery__bar .small{display:none}
 }
+
+/* ==========================================================================
+   Logo circular a la izquierda del nombre (cabecera y pie)
+   ========================================================================== */
+.wordmark{display:inline-flex;align-items:center;gap:10px}
+.wordmark span{letter-spacing:.34em;font-weight:600}
+.wordmark__logo{width:34px;height:34px;border-radius:50%;background:#fff;flex:none;
+  object-fit:cover;box-shadow:0 0 0 1px var(--line-strong);display:block;
+  transition:transform .5s var(--ease)}
+.wordmark:hover .wordmark__logo{transform:rotate(-6deg) scale(1.04)}
+.foot .wordmark__logo,.footer .wordmark__logo{width:30px;height:30px;box-shadow:0 0 0 1px rgba(255,255,255,.28)}
+@media (max-width:560px){
+  .wordmark__logo{width:30px;height:30px}
+  .wordmark span{letter-spacing:.22em}
+}

@@ -111,10 +111,14 @@ CFG = {
     "donation": {"public_text": DON_TEXT},   # solo la frase genérica
 }
 
-FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
-           "%3Crect width='64' height='64' fill='%230B0B0B'/%3E%3Ctext x='32' y='45' font-family="
-           "'Helvetica,Arial,sans-serif' font-size='38' font-weight='600' fill='white' "
-           "text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E")
+# Favicon e iconos: los genera tools/logo.py a partir del logo de la marca
+def favicon_tags():
+    return (
+        '<link rel="icon" href="favicon.ico" sizes="any">\n'
+        '<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">\n'
+        '<link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon.png">\n'
+        '<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">'
+    )
 
 SVG = {
     "cart": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h2.2l2.1 10.3a2 2 0 0 0 2 1.7h7.9a2 2 0 0 0 2-1.6L21 8H6.2"/><circle cx="10" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>',
@@ -161,7 +165,7 @@ def head(title, desc, path, og="assets/img/hero.jpg", og_type="website", jsonld=
 <meta name="theme-color" content="#0B0B0B">
 <script>document.documentElement.className+=" js";</script>
 <link rel="canonical" href="{BASE}/{path}">
-<link rel="icon" href="{FAVICON}">
+{favicon_tags()}
 <meta property="og:site_name" content="{esc(SITE['name'])}">
 <meta property="og:locale" content="es_ES">
 <meta property="og:type" content="{og_type}">
@@ -189,7 +193,7 @@ def header(active=""):
     return f"""<div class="announce">Envío gratis en península desde {eur(FREE_FROM)} · Devoluciones {RETURNS} días · <a href="compromiso.html">GRANKHA por la salud animal</a></div>
 <header class="site-head">
   <div class="wrap site-head__in">
-    <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio">GRANKHA</a>
+    <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio"><img class="wordmark__logo" src="assets/img/logo.png" srcset="assets/img/logo.png 1x, assets/img/logo@2x.png 2x" alt="" width="34" height="34" fetchpriority="high" decoding="async"><span>GRANKHA</span></a>
     <nav class="nav" aria-label="Navegación principal">{nav}</nav>
     <div class="head-actions">
       <a class="icon-btn" href="carrito.html" aria-label="Ver carrito">
@@ -206,8 +210,8 @@ def footer():
   <div class="wrap">
     <div class="footer__cols">
       <div>
-        <a class="wordmark" href="index.html" style="color:#fff">GRANKHA</a>
-        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas. En memoria de Khalid, un gato blanco inolvidable.</p>
+        <a class="wordmark" href="index.html" style="color:#fff"><img class="wordmark__logo" src="assets/img/logo.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>GRANKHA</span></a>
+        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios irá destinado a la investigación del cáncer y las enfermedades raras en mascotas. En memoria de Khalid, un gato blanco inolvidable.</p>
         <div class="pays"><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span><span>Pago seguro</span></div>
       </div>
       <div><h4>Tienda</h4><ul>{cats}<li><a href="tienda.html">Ver todo</a></li></ul></div>
@@ -298,7 +302,7 @@ def build_index():
       <div class="hero__copy">
         <p class="kicker">Colección PAW · Perros y gatos</p>
         <h1 class="h1">Accesorios con<br>propósito.</h1>
-        <p class="lede">Arneses, correas, camas, comederos y fuentes de diseño limpio para los que siempre están a tu lado —sean de cuatro patas y ladren, o de cuatro patas y ronroneen—. Y una promesa: <strong>un porcentaje de los beneficios</strong> se destinará a la investigación del cáncer y las enfermedades raras en mascotas.</p>
+        <p class="lede">Arneses, correas, camas, comederos y fuentes de diseño limpio para los que siempre están a tu lado —sean de cuatro patas y ladren, o de cuatro patas y ronroneen—. Y una promesa: <strong>un porcentaje de los beneficios irá destinado a la investigación del cáncer y las enfermedades raras en mascotas</strong>.</p>
         <div class="hero__cta">
           <a class="btn" href="tienda.html">Ver la colección</a>
           <a class="btn btn--ghost" href="tienda.html?cat=packs">Ver packs con descuento</a>
@@ -372,7 +376,7 @@ def build_index():
       </figure>
       <div class="reveal">
         <p class="kicker kicker--light">Compromiso y corazón</p>
-        <blockquote>«Khalid era un gato blanco. Sordo de nacimiento y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió: ningún dueño debería cargar con ese dolor solo, ni ninguna mascota debería padecerlo.»</blockquote>
+        <blockquote>«Khalid era un gato blanco. Era sordo de nacimiento y por ello mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo.»</blockquote>
         <p>Esta web no es solo un escaparate de productos: es un legado personal nacido del amor y la pérdida. Por eso, <strong>un porcentaje de los beneficios de GRANKHA</strong> irá destinado directamente a la investigación del cáncer y las enfermedades raras en nuestras mascotas.</p>
         <div class="donate-note">{SVG['ribbon']}<div><b>GRANKHA por la salud animal</b><br>
         <span style="font-size:.88rem">Khalid sigue en el ADN de esta marca, impulsándonos a cuidar de los tuyos como él cuidó de mí.</span></div></div>
@@ -580,7 +584,7 @@ def build_product(p):
   <section class="memorial" style="padding-block:clamp(40px,6vw,72px)">
     <div class="wrap pledge">
       <div class="donate-note" style="margin:0">{SVG['ribbon']}<div><b>GRANKHA por la salud animal</b><br>
-        <span style="font-size:.88rem">Un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
+        <span style="font-size:.88rem">Un porcentaje de los beneficios irá destinado a la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
       <div>
         <h3 class="h3" style="margin-bottom:10px;color:#fff">Esta compra también investiga.</h3>
         <p>Cada pedido reserva una parte del beneficio para proyectos de investigación veterinaria. Khalid, un gato blanco que perdimos por un cáncer de colon, es la razón. <a href="compromiso.html" style="color:#fff;text-decoration:underline">Nuestra historia</a>.</p>
@@ -716,8 +720,8 @@ def build_compromiso():
     <div class="wrap">
       <p class="kicker">Compromiso y corazón</p>
       <h1 class="h2" style="font-size:clamp(2.2rem,6vw,4.4rem)">In memoriam: Khalid.</h1>
-      <p class="lede mt-m">Khalid era un gato blanco. Sordo de nacimiento, y el compañero más cariñoso que he tenido.
-      En GRANKHA creemos que el diseño solo tiene sentido si sirve para proteger aquello que amamos.</p>
+      <p class="lede mt-m">Khalid era un gato blanco. Era sordo de nacimiento y por ello mi amigo inseparable y el compañero más cariñoso que he tenido. Perderle por un cáncer de colon me rompió; nadie debería cargar con ese dolor ni ninguna mascota debería padecerlo.</p>
+      <p class="lede mt-s">En GRANKHA creemos que el diseño solo tiene sentido si sirve para proteger aquello que amamos.</p>
     </div>
   </section>
 

@@ -30,7 +30,18 @@ M = PR["meta"]
 PRODS = PR["products"]
 
 IVA = M["vat"]
-SHIP = M["supplier_shipping_per_order"]
+# Tarifa REAL de AW Dropship España (aw-dropship.es/shipping, 15/10/2026), SIN IVA.
+# Tramos por peso total del pedido: [kg máx, precio €].
+SHIP_TIERS = M["supplier_shipping_tiers"]
+BOX_G = M.get("order_box_g", 100)
+
+
+def supplier_shipping(weight_kg, zone="ES-PEN"):
+    """Coste real de envío que nos cobra AW para un pedido de ese peso."""
+    for max_kg, price in SHIP_TIERS[zone]:
+        if weight_kg <= max_kg:
+            return price
+    return SHIP_TIERS[zone][-1][1]
 PACK_C = M["packaging_per_order"]
 RET_R, RET_C = M["returns_rate"], M["returns_cost"]
 DON = M["donation_rate"]
@@ -65,7 +76,7 @@ def product_contribution(sku, qty=1, shipping_charged=0.0, donation_rate=None):
     don = gross_benefit * (DON if donation_rate is None else donation_rate) if gross_benefit > 0 else 0
     stripe = (pvp * qty + shipping_charged) * SP + SF
     weight_kg = max(0.05, p["weight_g"] * qty / 1000)
-    ship_cost = SHIP + max(0.0, weight_kg - 2) * 1.10  # +1,10 €/kg extra (estimado)
+    ship_cost = supplier_shipping(weight_kg + BOX_G / 1000)
     costs = ship_cost + PACK_C + stripe + RET_R * RET_C + don
     return dict(pvp=pvp, net=net, cogs=cogs, gross=gross_benefit, donation=don,
                 stripe=stripe, ship=ship_cost, packaging=PACK_C,
@@ -79,7 +90,7 @@ def order_contribution(pvp_total, cogs_total, weight_kg, shipping_charged=0.0, d
     gross = net - cogs_total
     don = gross * (DON if donation_rate is None else donation_rate) if gross > 0 else 0
     stripe = (pvp_total + shipping_charged) * SP + SF
-    ship = SHIP + max(0.0, weight_kg - 2) * 1.10
+    ship = supplier_shipping(weight_kg + BOX_G / 1000)
     costs = ship + PACK_C + stripe + RET_R * RET_C + don
     return dict(pvp=pvp_total, net=net, cogs=cogs_total, gross=gross, donation=don, stripe=stripe,
                 ship=ship, packaging=PACK_C, returns=RET_R * RET_C, weight_kg=weight_kg,
@@ -95,7 +106,7 @@ def basket_contribution(lines, shipping_charged=0.0, donation_rate=None):
     pvp = sum(PRODS[s]["price"] * q for s, q in lines)
     stripe = (pvp + shipping_charged) * SP + SF
     weight_kg = max(0.05, sum(CAT[s]["weight_g"] * q for s, q in lines) / 1000)
-    ship = SHIP + max(0.0, weight_kg - 2) * 1.10
+    ship = supplier_shipping(weight_kg + BOX_G / 1000)
     costs = ship + PACK_C + stripe + RET_R * RET_C + don
     return dict(pvp=pvp, net=net, cogs=cogs, gross=gross, donation=don, stripe=stripe,
                 ship=ship, packaging=PACK_C, returns=RET_R * RET_C, weight_kg=weight_kg,
@@ -272,28 +283,31 @@ for i, w in enumerate([10, 26, 60, 14, 12, 13, 12, 14, 13, 10, 10, 11], 1):
 ws4 = wb.create_sheet("Envío gratis")
 ws4["A1"] = "Umbral de envío gratis: qué deja cada tramo"; ws4["A1"].font = TITLE
 ws4["A2"] = ("Tramo propuesto: menos de 20 € → 5,95 €; de 20 a 39 € → 3,95 €; desde 39 € → gratis. "
-             "Cubrimos así el coste real del envío del proveedor en los pedidos pequeños.")
+             "Coste real del proveedor: tarifa AW 2,95 € (≤1 kg) / 4,00 € (1-5 kg) / 6,50 € (>5 kg), sin IVA.")
 ws4["A2"].font = SUB
 hdr = ["Tramo de cesta", "Envío cobrado", "Pedidos esperados", "Ingreso neto", "Coste producto (media 47,5 %)",
        "Envío proveedor", "Otros costes", "Donación", "Contribución", "Margen"]
 for i, c in enumerate(hdr, 1):
     cell = ws4.cell(row=4, column=i, value=c); cell.fill = HEAD; cell.font = HEADF; cell.alignment = WRAP
-cesta = [(14.90, 5.95, 0.20), (24.90, 5.95, 0.15), (32.90, 3.95, 0.15), (39.90, 0.0, 0.15),
-         (54.90, 0.0, 0.15), (69.90, 0.0, 0.10), (89.90, 0.0, 0.10)]
+# (PVP cesta, envío cobrado, peso del pedido en kg, cuota de pedidos)
+cesta = [(14.90, 5.95, 0.30, 0.20), (24.90, 5.95, 0.60, 0.15), (32.90, 3.95, 0.90, 0.15),
+         (39.90, 0.0, 1.10, 0.15), (54.90, 0.0, 1.40, 0.15), (69.90, 0.0, 1.80, 0.10),
+         (89.90, 0.0, 2.20, 0.10)]
 r = 5
-for pvp, ship_charged, peso in cesta:
+for pvp, ship_charged, peso, cuota in cesta:
     net = pvp / (1 + IVA)
     cogs = pvp * avg_cogs_ratio
     don = (net - cogs) * DON if net > cogs else 0
     stripe = (pvp + ship_charged) * SP + SF
     otros = PACK_C + stripe + RET_R * RET_C
-    contrib = net - cogs - SHIP - otros - don + ship_charged
+    ship = supplier_shipping(peso + BOX_G / 1000)
+    contrib = net - cogs - ship - otros - don + ship_charged
     ws4.cell(row=r, column=1, value=f"{pvp:.2f} €").font = BOLD
     ws4.cell(row=r, column=2, value=ship_charged).number_format = EUR
-    ws4.cell(row=r, column=3, value=peso).number_format = PCT
+    ws4.cell(row=r, column=3, value=cuota).number_format = PCT
     ws4.cell(row=r, column=4, value=net).number_format = EUR
     ws4.cell(row=r, column=5, value=cogs).number_format = EUR
-    ws4.cell(row=r, column=6, value=SHIP).number_format = EUR
+    ws4.cell(row=r, column=6, value=ship).number_format = EUR
     ws4.cell(row=r, column=7, value=otros).number_format = EUR
     ws4.cell(row=r, column=8, value=don).number_format = EUR
     ws4.cell(row=r, column=9, value=contrib).number_format = EUR
@@ -301,11 +315,12 @@ for pvp, ship_charged, peso in cesta:
     ws4.cell(row=r, column=10, value=contrib / net if net else 0).number_format = PCT
     r += 1
 ws4.cell(row=r + 1, column=1, value="Ticket medio objetivo (con packs y envío gratis desde 39 €)").font = BOLD
-ws4.cell(row=r + 1, column=9, value=sum(p * w for p, _, w in cesta)).number_format = EUR
+ws4.cell(row=r + 1, column=9, value=sum(p * cuota for p, _, _, cuota in cesta)).number_format = EUR
 ws4.cell(row=r + 2, column=1, value="Contribución media por pedido con esa mezcla").font = BOLD
 ws4.cell(row=r + 3, column=1, value=("Con este umbral la mayoría de pedidos llevan 2 artículos o un pack. "
-                                     "Revisa el tramo real en tu proveedor: si te cobra más de 4,95 € por envío, "
-                                     "sube los tramos pequeños.")).font = SUB
+                                     "El coste real verificado en AW Dropship España es de 2,95 € (hasta 1 kg), "
+                                     "4,00 € (1-5 kg) y 6,50 € (más de 5 kg), sin IVA: cobrar 5,95 € en los "
+                                     "pedidos pequeños cubre el envío y deja margen.")).font = SUB
 for i, w in enumerate([34, 13, 16, 12, 22, 14, 12, 11, 13, 9], 1):
     ws4.column_dimensions[get_column_letter(i)].width = w
 
@@ -329,7 +344,7 @@ for rate in cenarios:
         gross = net - cogs
         don = gross * rate
         stripe = pvp * SP + SF
-        contrib = net - cogs - SHIP - PACK_C - stripe - RET_R * RET_C - don
+        contrib = net - cogs - supplier_shipping(1.2 + BOX_G / 1000) - PACK_C - stripe - RET_R * RET_C - don
         ws5.cell(row=r, column=2 + vals.__len__(), value=contrib).number_format = EUR
         vals.append(contrib)
     ok = all(v > 4 for v in vals)
@@ -349,9 +364,11 @@ ws6 = wb.create_sheet("Objetivo mensual")
 ws6["A1"] = "Cuánto necesitas vender al mes"; ws6["A1"].font = TITLE
 ws6["A2"] = "Con la mezcla esperada de cestas (ticket medio calculado en la hoja de envíos)."
 ws6["A2"].font = SUB
-aov = sum(p * w for p, _, w in cesta)
-contrib_medio = sum((p / (1 + IVA) - p * avg_cogs_ratio - SHIP - PACK_C - ((p) * SP + SF) - RET_R * RET_C
-                     - max(0, (p / (1 + IVA) - p * avg_cogs_ratio)) * DON) * w for p, _, w in cesta)
+aov = sum(p * cuota for p, _, _, cuota in cesta)
+contrib_medio = sum((p / (1 + IVA) - p * avg_cogs_ratio
+                     - supplier_shipping(peso + BOX_G / 1000) - PACK_C - (p * SP + SF) - RET_R * RET_C
+                     - max(0, (p / (1 + IVA) - p * avg_cogs_ratio)) * DON) * cuota
+                    for p, _, peso, cuota in cesta)
 filas = [
     ("Ticket medio objetivo (AOV)", aov, EUR),
     ("Contribución media por pedido", contrib_medio, EUR),

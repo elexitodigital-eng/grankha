@@ -51,8 +51,9 @@ supuestos = [
      "Canarias, Ceuta y Melilla: sin IVA (IGIC/IPSI se liquida en destino)."),
     ("Comisión Stripe (tarjeta europea)", 0.015, PCT, "Stripe España: 1,5 % + 0,25 € en tarjetas europeas."),
     ("Comisión fija Stripe por transacción", 0.25, EUR, ""),
-    ("Coste de envío del proveedor por pedido", 5.00, EUR,
-     "Ajusta con la tarifa real de AW Dropshipping (varía por peso y destino)."),
+    ("Coste de envío del proveedor (tarifa real AW, por pedido)", 2.95, EUR,
+     "VERIFICADO en aw-dropship.es/shipping (15/10/2026): 2,95 € hasta 1 kg · 4,00 € de 1 a 5 kg · "
+     "6,50 € más de 5 kg. Sin IVA (deducible)."),
     ("Coste de embalaje / manipulación por pedido", 0.60, EUR, ""),
     ("% de beneficios destinado a investigación", 0.05, PCT,
      "Compromiso GRANKHA: se reserva sobre los beneficios."),
@@ -106,7 +107,7 @@ r = 5
 for p in PRODUCTS:
     f = lambda col: f"{col}{r}"
     ws2.cell(row=r, column=1, value=p["sku"])
-    ws2.cell(row=r, column=2, value=p["title"])
+    ws2.cell(row=r, column=2, value=p.get("name") or p.get("title"))
     ws2.cell(row=r, column=3, value=p["subtitle"])
     ws2.cell(row=r, column=4, value=p["catName"])
     ws2.cell(row=r, column=5, value=p["weight_g"])
@@ -153,7 +154,7 @@ by_sku = {p["sku"]: p for p in PRODUCTS}
 r = 5
 for sku in demo:
     p = by_sku[sku]
-    ws3[f"A{r}"] = f"{sku} · {p['title']} · {p['subtitle']}"
+    ws3[f"A{r}"] = f"{sku} · {p.get('name') or p.get('title')} · {p['subtitle']}"
     ws3[f"B{r}"] = 1; ws3[f"B{r}"].fill = EDIT
     ws3[f"C{r}"] = p["price"]; ws3[f"C{r}"].number_format = EUR
     ws3[f"D{r}"] = p["cost"]; ws3[f"D{r}"].number_format = EUR
@@ -167,7 +168,7 @@ ws3[f"F{r}"] = f"=SUM(F5:F{r-1})"; ws3[f"F{r}"].number_format = EUR; ws3[f"F{r}"
 r += 1
 ship_row = r
 ws3[f"D{r}"] = "Envío cobrado al cliente"
-ws3[f"E{r}"] = SITE["shipping"]["options"][0]["price"]; ws3[f"E{r}"].number_format = EUR
+ws3[f"E{r}"] = SITE["shipping"]["options"][0]["tiers"][0]["price"]; ws3[f"E{r}"].number_format = EUR
 ws3[f"E{r}"].fill = EDIT
 r += 1
 ws3[f"D{r}"] = "TOTAL COBRADO"; ws3[f"D{r}"].font = BOLD

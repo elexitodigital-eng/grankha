@@ -1,1360 +1,1437 @@
 {
- "meta": {
-  "vat": 0.21,
-  "supplier_shipping_per_order": 4.95,
-  "packaging_per_order": 0.6,
-  "returns_rate": 0.03,
-  "returns_cost": 8.0,
-  "donation_rate": 0.05,
-  "target_contribution_per_order": 6.0,
-  "stripe_pct": 0.015,
-  "stripe_fix": 0.25,
-  "cac_target": 5.0,
-  "notes": "Coste de envío del proveedor: confirmar tarifa real en AW Dropshipping. Los precios incluyen IVA (21 %)."
- },
- "products": {
-  "PAWH-01": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "XS (2-4 kg) · Rosa suave · Cuarzo rosa",
-   "slug": "arnes-de-paso-guardian-xs-rosa-suave",
-   "color": "Rosa suave",
-   "colorHex": "#E3C3C7",
-   "price": 36.9,
-   "prev_price": 37.25,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rosa suave con un colgante de cuarzo rosa engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+  "meta": {
+    "vat": 0.21,
+    "packaging_per_order": 0.6,
+    "returns_rate": 0.03,
+    "returns_cost": 8.0,
+    "donation_rate": 0.05,
+    "target_contribution_per_order": 6.0,
+    "stripe_pct": 0.015,
+    "stripe_fix": 0.25,
+    "cac_target": 5.0,
+    "notes": "Costes verificados: envío del proveedor por tramos de peso (tarifa pública AW 15/10/2026), pesos reales del feed (peso de paquete por artículo), embalaje, devoluciones 3 % × 8 €, Stripe 1,5 % + 0,25 € y donación interna del 5 % del beneficio bruto. Precios de venta con IVA 21 %.",
+    "supplier_shipping_tiers": {
+      "ES-PEN": [
+        [
+          1,
+          2.95
+        ],
+        [
+          5,
+          4.0
+        ],
+        [
+          9999,
+          6.5
+        ]
+      ],
+      "PT": [
+        [
+          1,
+          3.5
+        ],
+        [
+          5,
+          4.5
+        ],
+        [
+          9999,
+          10.5
+        ]
+      ],
+      "EU-Z3": [
+        [
+          1,
+          6.95
+        ],
+        [
+          5,
+          7.95
+        ],
+        [
+          9999,
+          10.5
+        ]
+      ],
+      "EU-Z4": [
+        [
+          1,
+          8.15
+        ],
+        [
+          2,
+          12.15
+        ],
+        [
+          5,
+          18.65
+        ],
+        [
+          9999,
+          18.65
+        ]
+      ],
+      "EU-Z5": [
+        [
+          1,
+          16.45
+        ],
+        [
+          2,
+          27.9
+        ],
+        [
+          9999,
+          27.9
+        ]
+      ]
+    },
+    "order_box_g": 100,
+    "supplier_shipping_source": "Tarifa pública de AW Dropship España (aw-dropship.es/shipping), consultada el 15/10/2026. Importes SIN IVA (IVA soportado deducible). Zona 1 = España península y Baleares. Canarias/Ceuta/Melilla: exentas de IVA, aduana a cargo del destinatario y tarifa no publicada → confirmar en el panel de AW."
   },
-  "PAWH-02": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "XS (2-4 kg) · Lavanda · Amatista",
-   "slug": "arnes-de-paso-guardian-xs-lavanda",
-   "color": "Lavanda",
-   "colorHex": "#CBC3E3",
-   "price": 36.9,
-   "prev_price": 37.25,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En lavanda con un colgante de amatista engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+  "products": {
+    "PAWH-01": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "XS (2-4 kg) · Rosa suave · Cuarzo rosa",
+      "slug": "arnes-de-paso-guardian-xs-rosa-suave",
+      "color": "Rosa suave",
+      "colorHex": "#E3C3C7",
+      "price": 36.9,
+      "prev_price": 37.25,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rosa suave con un colgante de cuarzo rosa engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PAWH-02": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "XS (2-4 kg) · Lavanda · Amatista",
+      "slug": "arnes-de-paso-guardian-xs-lavanda",
+      "color": "Lavanda",
+      "colorHex": "#CBC3E3",
+      "price": 36.9,
+      "prev_price": 37.25,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En lavanda con un colgante de amatista engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PAWH-03": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "XS (2-4 kg) · Rock Grey · Obsidiana negra",
+      "slug": "arnes-de-paso-guardian-xs-rock-grey",
+      "color": "Rock Grey",
+      "colorHex": "#8E8E8E",
+      "price": 36.9,
+      "prev_price": 37.25,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rock grey con un colgante de obsidiana negra engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PAWH-04": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "S (4-8 kg) · Rosa suave · Cuarzo rosa",
+      "slug": "arnes-de-paso-guardian-s-rosa-suave",
+      "color": "Rosa suave",
+      "colorHex": "#E3C3C7",
+      "price": 36.9,
+      "prev_price": 44.7,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rosa suave con un colgante de cuarzo rosa engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PAWH-05": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "S (4-8 kg) · Lavanda · Amatista",
+      "slug": "arnes-de-paso-guardian-s-lavanda",
+      "color": "Lavanda",
+      "colorHex": "#CBC3E3",
+      "price": 36.9,
+      "prev_price": 37.25,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En lavanda con un colgante de amatista engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PAWH-06": {
+      "kind": "product",
+      "audience": "perro",
+      "collection": "Guardian",
+      "name": "Arnés de paso Guardian",
+      "subtitle": "S (4-8 kg) · Gris roca · Obsidiana negra",
+      "slug": "arnes-de-paso-guardian-s-gris-roca",
+      "color": "Gris roca",
+      "colorHex": "#8E8E8E",
+      "price": 36.9,
+      "prev_price": 37.25,
+      "market_lo": 12.0,
+      "market_hi": 42.0,
+      "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
+      "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
+      "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
+      "tags": [
+        "Malla reflectante",
+        "Perros pequeños"
+      ],
+      "audience_label": "Perros · 2-8 kg",
+      "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En gris roca con un colgante de obsidiana negra engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
+      "bullets": [
+        "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
+        "Malla reflectante: te ven antes cuando paseas al anochecer",
+        "Cuatro puntos de ajuste y cierres de clip reforzados",
+        "Colgante de piedra natural engarzado a mano",
+        "Interior acolchado que evita roces en el pecho y las axilas",
+        "Lavable a mano en agua fría"
+      ],
+      "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
+    },
+    "PawL-01": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Pocket Pod",
+      "name": "Correa Pocket Pod",
+      "subtitle": "Rosa · 1,5 m",
+      "slug": "correa-pocket-pod-rosa",
+      "color": "Rosa",
+      "colorHex": "#E3A7B4",
+      "price": 21.9,
+      "prev_price": 23.13,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En rosa.",
+      "bullets": [
+        "1,5 m: la distancia justa para acera y ciudad",
+        "Carcasa redondeada que encaja en la mano y en el bolsillo",
+        "Mosquetón metálico giratorio 360°, no se enreda",
+        "Cinta resistente de secado rápido · se limpia con un paño",
+        "Apta para perros pequeños y gatos acostumbrados al arnés"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-02": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Pocket Pod",
+      "name": "Correa Pocket Pod",
+      "subtitle": "Verde · 1,5 m",
+      "slug": "correa-pocket-pod-verde",
+      "color": "Verde",
+      "colorHex": "#5C8A6A",
+      "price": 21.9,
+      "prev_price": 23.13,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En verde.",
+      "bullets": [
+        "1,5 m: la distancia justa para acera y ciudad",
+        "Carcasa redondeada que encaja en la mano y en el bolsillo",
+        "Mosquetón metálico giratorio 360°, no se enreda",
+        "Cinta resistente de secado rápido · se limpia con un paño",
+        "Apta para perros pequeños y gatos acostumbrados al arnés"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-03": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Pocket Pod",
+      "name": "Correa Pocket Pod",
+      "subtitle": "Blanco · 1,5 m",
+      "slug": "correa-pocket-pod-blanco",
+      "color": "Blanco",
+      "colorHex": "#F2F2F0",
+      "price": 21.9,
+      "prev_price": 23.13,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En blanco.",
+      "bullets": [
+        "1,5 m: la distancia justa para acera y ciudad",
+        "Carcasa redondeada que encaja en la mano y en el bolsillo",
+        "Mosquetón metálico giratorio 360°, no se enreda",
+        "Cinta resistente de secado rápido · se limpia con un paño",
+        "Apta para perros pequeños y gatos acostumbrados al arnés"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-04": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Mini Mango",
+      "name": "Correa Mini Mango",
+      "subtitle": "Amarillo · 3 m",
+      "slug": "correa-mini-mango-amarillo",
+      "color": "Amarillo",
+      "colorHex": "#E5C13F",
+      "price": 29.9,
+      "prev_price": 31.25,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en amarillo que no parece la correa de siempre.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-05": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Mini Mango",
+      "name": "Correa Mini Mango",
+      "subtitle": "Ciruela · 3 m",
+      "slug": "correa-mini-mango-ciruela",
+      "color": "Ciruela",
+      "colorHex": "#6E3B5E",
+      "price": 29.9,
+      "prev_price": 31.25,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en ciruela que no parece la correa de siempre.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-06": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Mini Mango",
+      "name": "Correa Mini Mango",
+      "subtitle": "Durazno · 3 m",
+      "slug": "correa-mini-mango-durazno",
+      "color": "Durazno",
+      "colorHex": "#EFB398",
+      "price": 29.9,
+      "prev_price": 31.25,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en durazno que no parece la correa de siempre.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-07": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Elephant",
+      "name": "Correa Elephant",
+      "subtitle": "Azul · 2 m",
+      "slug": "correa-elephant-azul",
+      "color": "Azul",
+      "colorHex": "#3F6E9E",
+      "price": 34.9,
+      "prev_price": 37.5,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en azul con mosquetón giratorio 360°.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-08": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Elephant",
+      "name": "Correa Elephant",
+      "subtitle": "Marrón · 2 m",
+      "slug": "correa-elephant-marrón",
+      "color": "Marrón",
+      "colorHex": "#6B4A33",
+      "price": 34.9,
+      "prev_price": 37.5,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en marrón con mosquetón giratorio 360°.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PawL-09": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Elephant",
+      "name": "Correa Elephant",
+      "subtitle": "Gris · 2 m",
+      "slug": "correa-elephant-gris",
+      "color": "Gris",
+      "colorHex": "#9A9A9A",
+      "price": 34.9,
+      "prev_price": 37.5,
+      "market_lo": 8.0,
+      "market_hi": 35.0,
+      "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
+      "vs_market": "alineada con el mercado medio-alto, con diseño propio",
+      "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
+      "tags": [
+        "Uso diario",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en gris con mosquetón giratorio 360°.",
+      "bullets": [
+        "Retráctil: libertad controlada con el pulgar",
+        "Freno progresivo y bloqueo de recorrido",
+        "Mango ergonómico antideslizante",
+        "Mosquetón metálico reforzado 360°",
+        "Apta para perros pequeños y medianos"
+      ],
+      "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
+    },
+    "PAWFB-01": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero estilo cobre",
+      "subtitle": "Ø 18 cm · Acero inoxidable 304",
+      "slug": "comedero-estilo-cobre-18-cm",
+      "color": "Cobre",
+      "colorHex": "#B87333",
+      "price": 13.9,
+      "prev_price": 9.38,
+      "market_lo": 8.0,
+      "market_hi": 20.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 304",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Comedero de acero inoxidable 304 con acabado cobre pulido y huellas en relieve. Una alternativa decorativa al cuenco de plástico: se queda bonito en el suelo de la cocina y es apto para contacto con alimentos. 18 cm de diámetro.",
+      "bullets": [
+        "Acero inoxidable 304, apto para alimento y agua",
+        "Acabado cobre pulido con huellas en relieve",
+        "Base estable que no se desplaza al comer",
+        "Apto para lavavajillas",
+        "18 cm de diámetro · para perros pequeños y gatos"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-02": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero estilo cobre grande",
+      "subtitle": "Ø 22 cm · Acero inoxidable 304",
+      "slug": "comedero-estilo-cobre-22-cm",
+      "color": "Cobre",
+      "colorHex": "#B87333",
+      "price": 16.9,
+      "prev_price": 11.25,
+      "market_lo": 10.0,
+      "market_hi": 24.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 304",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "El mismo comedero de cobre pulido en 22 cm, para gatos grandes, perros pequeños o raciones más generosas de agua. Acero inoxidable 304 y base que no se desliza.",
+      "bullets": [
+        "Acero inoxidable 304, apto para alimento y agua",
+        "22 cm: agua para todo el día",
+        "Acabado cobre pulido con huellas en relieve",
+        "Base estable antideslizante",
+        "Fácil de limpiar a mano"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-03": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero de acero con soporte de madera",
+      "subtitle": "Ø 12 cm · Acero 201 + madera natural",
+      "slug": "comedero-acero-soporte-madera-12-cm",
+      "color": "Madera",
+      "colorHex": "#C7A97D",
+      "price": 26.9,
+      "prev_price": 22.5,
+      "market_lo": 18.0,
+      "market_hi": 32.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 201 + madera natural",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Zona de comida ordenada: cuenco de acero inoxidable 201 sobre soporte de madera natural. Eleva el cuenco a la altura del hocico, evita que arrastre el plato por el suelo y recoge las salpicaduras. 12 cm de diámetro.",
+      "bullets": [
+        "Cuenco de acero 201 de quita y pon (fácil de lavar)",
+        "Soporte de madera natural tratada",
+        "Altura que cuida la postura al comer",
+        "Recoge migas y salpicaduras",
+        "12 cm · perros pequeños y gatos"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-04": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero doble con soporte de madera",
+      "subtitle": "2 × 12 cm · Acero 201 + madera",
+      "slug": "comedero-doble-soporte-madera",
+      "color": "Madera",
+      "colorHex": "#C7A97D",
+      "price": 39.9,
+      "prev_price": 36.25,
+      "market_lo": 25.0,
+      "market_hi": 45.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 201 + madera natural",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Agua y comida juntas en una sola estación: dos cuencos de acero inoxidable 201 sobre un soporte de madera natural. Menos platos por el suelo y una zona de alimentación que se ve ordenada. 2 × 12 cm.",
+      "bullets": [
+        "Dos cuencos de acero 201 extraíbles",
+        "Soporte de madera natural con patas antideslizantes",
+        "Comida y agua en una sola estación",
+        "Ideal para gatos y perros pequeños",
+        "Fácil de limpiar"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-05": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero doble grande con soporte de madera",
+      "subtitle": "2 × 13 cm · Acero 201 + madera",
+      "slug": "comedero-doble-grande-soporte-madera",
+      "color": "Madera",
+      "colorHex": "#C7A97D",
+      "price": 44.9,
+      "prev_price": 47.5,
+      "market_lo": 28.0,
+      "market_hi": 50.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 201 + madera natural",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Versión grande de la estación doble: dos cuencos de 13 cm sobre madera natural, para perros medianos, hogares con dos mascotas o raciones generosas.",
+      "bullets": [
+        "Dos cuencos grandes de acero 201",
+        "Soporte de madera natural estable",
+        "Perfecto para dos mascotas o raciones grandes",
+        "Cuenco elevado, mejor postura",
+        "Cuenco extraíble para limpiar"
+      ],
+      "rationale": "Estaba por encima del mercado: se ajusta para poder vender.",
+      "why": null
+    },
+    "PAWFB-06": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hogar",
+      "name": "Comedero de cerámica con soporte de madera",
+      "subtitle": "Ø 14 cm · Cerámica + madera",
+      "slug": "comedero-ceramica-soporte-madera",
+      "color": "Madera",
+      "colorHex": "#C7A97D",
+      "price": 29.9,
+      "prev_price": 23.75,
+      "market_lo": 18.0,
+      "market_hi": 35.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 201 + madera natural",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Cuenco de cerámica vidriada en tono crema sobre soporte de madera clara. La cerámica pesa, no se desliza y mantiene mejor la temperatura del agua; el conjunto queda como una pieza más de la casa. 14 cm.",
+      "bullets": [
+        "Cerámica vidriada: pesada, estable y sin olores",
+        "Soporte de madera natural clara",
+        "Mantiene el agua más fresca que el plástico",
+        "Estética de interior, no de tienda de animales",
+        "14 cm · lavable a mano"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-07": {
+      "kind": "product",
+      "audience": "gato",
+      "collection": "Hogar",
+      "name": "Comedero para gatos con soporte",
+      "subtitle": "Acero inoxidable 304 · cara de gato",
+      "slug": "comedero-gatos-soporte",
+      "color": "Madera",
+      "colorHex": "#C7A97D",
+      "price": 17.9,
+      "prev_price": 12.5,
+      "market_lo": 10.0,
+      "market_hi": 22.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "en la banda media-alta del mercado",
+      "material": "Acero inoxidable 304",
+      "tags": [
+        "Diseño de interior",
+        "Perros y gatos"
+      ],
+      "audience_label": "Gatos",
+      "desc": "Un comedero que hace sonreír: al vaciarse aparece una cara de gato con orejas y bigotes en relieve. Acero inoxidable 304 sobre soporte estable, con altura pensada para que el gato no forzar el cuello.",
+      "bullets": [
+        "Revela una cara de gato al vaciarse",
+        "Acero inoxidable 304 apto para alimentos",
+        "Soporte estable que evita vuelcos",
+        "Altura que cuida el cuello del gato",
+        "Apto para agua o pienso"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PAWFB-08": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hidratación",
+      "name": "Fuente de agua eléctrica 2,5 L",
+      "subtitle": "Acero inoxidable 304 · alimentación USB",
+      "slug": "fuente-de-agua-2-5-l",
+      "color": "Acero",
+      "colorHex": "#B9BCC0",
+      "price": 49.9,
+      "prev_price": 61.25,
+      "market_lo": 25.0,
+      "market_hi": 55.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "por encima del cuenco básico (es una pieza de diseño) y por debajo de la fuente premium de marca",
+      "material": "Acero inoxidable 304",
+      "tags": [
+        "Fuente de agua",
+        "Gatos y perros"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Los gatos beben más cuando el agua se mueve: es instinto. Esta fuente de 2,5 litros mantiene el agua en circulación constante y filtrada durante varios días, con bomba silenciosa y depósito de acero inoxidable 304.",
+      "bullets": [
+        "2,5 L: varios días sin rellenar",
+        "Agua en movimiento: beben más y previene problemas renales",
+        "Acero inoxidable 304, más higiénico que el plástico",
+        "Bomba silenciosa (se nota el agua, no el motor)",
+        "Alimentación USB · apta para gatos y perros pequeños"
+      ],
+      "rationale": "Estaba por encima del mercado: se ajusta para poder vender.",
+      "why": "Pensada para gatos: la hidratación es el punto débil de su salud renal."
+    },
+    "PAWFB-09": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Hidratación",
+      "name": "Filtros de repuesto para fuente",
+      "subtitle": "Pack de 4 · compatible con la fuente GRANKHA",
+      "slug": "filtros-repuesto-fuente-pack-4",
+      "color": "Acero",
+      "colorHex": "#B9BCC0",
+      "price": 18.9,
+      "prev_price": 17.52,
+      "market_lo": 10.0,
+      "market_hi": 22.0,
+      "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
+      "vs_market": "por encima del cuenco básico (es una pieza de diseño) y por debajo de la fuente premium de marca",
+      "material": "Acero inoxidable 201 + madera natural",
+      "tags": [
+        "Recambio",
+        "Compra recurrente"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Pack de 4 filtros de carbón activado para la fuente de 2,5 L. El agua sigue limpia y sabrosa, y el mantenimiento se reduce a cambiar el filtro cada pocas semanas.",
+      "bullets": [
+        "Pack de 4 filtros de carbón activado",
+        "Compatible con la fuente GRANKHA de 2,5 L",
+        "Agua más limpia y sin olores",
+        "Sustitución en segundos, sin herramientas",
+        "Compra recurrente: no te quedes sin recambio"
+      ],
+      "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
+      "why": null
+    },
+    "PawB-01": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Teddy",
+      "subtitle": "Pequeña · 60 × 45 × 17 cm · Peluche marrón",
+      "slug": "cama-teddy-pequena",
+      "color": "Peluche marrón",
+      "colorHex": "#8A6B4F",
+      "price": 34.9,
+      "prev_price": 35.0,
+      "market_lo": 18,
+      "market_hi": 40,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Cama de peluche texturizado con centro acolchado y bordes elevados donde apoyar la cabeza. Suave al tacto, cálida en invierno y con base que mantiene la forma. 60 × 45 × 17 cm.",
+      "bullets": [
+        "Peluche texturizado muy suave",
+        "Bordes elevados: sensación de refugio",
+        "Centro acolchado que no se aplasta",
+        "Base antideslizante",
+        "Lavable a mano en frío · 60 × 45 × 17 cm"
+      ],
+      "rationale": "Precio validado frente al mercado."
+    },
+    "PawB-02": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Teddy",
+      "subtitle": "Mediana · 70 × 55 × 18 cm · Peluche marrón",
+      "slug": "cama-teddy-mediana",
+      "color": "Peluche marrón",
+      "colorHex": "#8A6B4F",
+      "price": 44.9,
+      "prev_price": 45.0,
+      "market_lo": 22,
+      "market_hi": 50,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "La Teddy en tamaño mediano: 70 × 55 cm para que estire las patas o se acurruque contra el borde. Peluche texturizado y relleno mullido que aguanta el uso diario.",
+      "bullets": [
+        "70 × 55 × 18 cm, ideal para perros pequeños-medianos y gatos grandes",
+        "Peluche texturizado muy suave",
+        "Bordes elevados para apoyar la cabeza",
+        "Base antideslizante",
+        "Lavable a mano en frío"
+      ],
+      "rationale": "Precio validado frente al mercado."
+    },
+    "PawB-03": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama acolchada caqui",
+      "subtitle": "Pequeña · 60 × 50 × 15 cm · Verde caqui",
+      "slug": "cama-acolchada-pequena-verde",
+      "color": "Verde caqui",
+      "colorHex": "#8A6B4F",
+      "price": 39.9,
+      "prev_price": 41.25,
+      "market_lo": 18,
+      "market_hi": 42,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Cama de tejido acolchado en verde caqui, sobria y fácil de encajar en cualquier salón. Base generosa y laterales elevados que dan sensación de recogimiento. 60 × 50 × 15 cm.",
+      "bullets": [
+        "Tejido acolchado resistente y fácil de limpiar",
+        "Laterales elevados para recostarse",
+        "Color caqui que no desentona en el salón",
+        "Base antideslizante",
+        "60 × 50 × 15 cm"
+      ],
+      "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
+    },
+    "PawB-04": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama acolchada caqui",
+      "subtitle": "Mediana · 70 × 60 × 15 cm · Caqui beige",
+      "slug": "cama-acolchada-mediana-caqui",
+      "color": "Caqui beige",
+      "colorHex": "#8A6B4F",
+      "price": 52.9,
+      "prev_price": 60.45,
+      "market_lo": 25,
+      "market_hi": 60,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Versión mediana de la cama acolchada, en beige caqui. 70 × 60 cm de superficie para estirarse entero o compartir con un compañero felino.",
+      "bullets": [
+        "70 × 60 × 15 cm: espacio de sobra para estirarse",
+        "Tejido acolchado de tacto suave",
+        "Laterales mullidos para apoyar el cuello",
+        "Transpirable, apta para todo el año",
+        "Base antideslizante"
+      ],
+      "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
+    },
+    "PawB-05": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Lucky Elephant",
+      "subtitle": "60 × 50 × 14 cm · Estampado rojo",
+      "slug": "cama-lucky-elephant-roja",
+      "color": "Estampado rojo",
+      "colorHex": "#8A6B4F",
+      "price": 37.9,
+      "prev_price": 40.35,
+      "market_lo": 18,
+      "market_hi": 42,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Elefantes de la suerte y geometría sobre fondo crema cálido: una cama con carácter para quien no quiere otra cosa gris. 60 × 50 × 14 cm.",
+      "bullets": [
+        "Estampado original de elefantes (no lo verás en todas las casas)",
+        "Base acolchada y laterales bajos",
+        "Tejido resistente al uso diario",
+        "Fácil de aspirar y limpiar",
+        "60 × 50 × 14 cm"
+      ],
+      "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
+    },
+    "PawB-06": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Lucky Elephant",
+      "subtitle": "60 × 50 × 14 cm · Estampado verde",
+      "slug": "cama-lucky-elephant-verde",
+      "color": "Estampado verde",
+      "colorHex": "#8A6B4F",
+      "price": 37.9,
+      "prev_price": 35.0,
+      "market_lo": 18,
+      "market_hi": 42,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "La Lucky Elephant en verde intenso, con el mismo estampado de elefantes decorados. Un punto de color sin estridencias en el suelo de casa.",
+      "bullets": [
+        "Estampado original de elefantes en verde",
+        "Base acolchada, bordes bajos",
+        "Combina con interiores neutros o de color",
+        "Fácil de limpiar",
+        "60 × 50 × 14 cm"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-07": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama sofá",
+      "subtitle": "Pequeña · 50 × 50 × 26 cm · Rayas marrones",
+      "slug": "cama-sofa-pequena",
+      "color": "Rayas marrones",
+      "colorHex": "#8A6B4F",
+      "price": 44.9,
+      "prev_price": 45.0,
+      "market_lo": 20,
+      "market_hi": 48,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Un mini sofá con respaldo alto, reposabrazos redondeados y frontal rebajado para entrar y salir sin saltar. Incluye almohada pequeña a juego. 50 × 50 × 26 cm.",
+      "bullets": [
+        "Forma de sofá con respaldo alto: se apoyan y se sienten protegidos",
+        "Incluye almohada a juego",
+        "Frontal rebajado: fácil de entrar y salir",
+        "Fundas de tejido a rayas, tonos tierra",
+        "50 × 50 × 26 cm · el favorito de gatos y perros pequeños"
+      ],
+      "rationale": "Precio validado frente al mercado."
+    },
+    "PawB-08": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama sofá",
+      "subtitle": "Mediana · 60 × 60 × 28 cm · Rayas marrones",
+      "slug": "cama-sofa-mediana",
+      "color": "Rayas marrones",
+      "colorHex": "#8A6B4F",
+      "price": 56.9,
+      "prev_price": 57.5,
+      "market_lo": 25,
+      "market_hi": 60,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "El sofá en tamaño mediano: 60 × 60 cm, respaldo alto y cojín a juego. Pensado para perros medianos que se acurrucan o para dos gatos que comparten trono.",
+      "bullets": [
+        "60 × 60 × 28 cm: amplio y mullido",
+        "Respaldo alto y reposabrazos acolchados",
+        "Incluye cojín decorativo a juego",
+        "Tejido a rayas en tonos marrones",
+        "Estructura que mantiene la forma"
+      ],
+      "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
+    },
+    "PawB-09": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Corona Real",
+      "subtitle": "Mediana · 50 × 50 × 26 cm · Arena y gris",
+      "slug": "cama-corona-real-mediana",
+      "color": "Arena y gris",
+      "colorHex": "#8A6B4F",
+      "price": 39.9,
+      "prev_price": 37.5,
+      "market_lo": 20,
+      "market_hi": 45,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Una cama con forma de corona: puntas altas alrededor y cojín interior suave en gris. Exterior en tono arena, discreto; el guiño divertido se lo queda la silueta. 50 × 50 × 26 cm.",
+      "bullets": [
+        "Forma de corona con puntas altas",
+        "Interior gris suave y exterior arena neutro",
+        "Muy fotogénica (aviso: sale en todas las fotos)",
+        "Relleno que mantiene la forma",
+        "50 × 50 × 26 cm · gatos y perros pequeños"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-10": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Corona Real",
+      "subtitle": "Grande · 50 × 50 × 26 cm · Negro y gris",
+      "slug": "cama-corona-real-grande",
+      "color": "Negro y gris",
+      "colorHex": "#8A6B4F",
+      "price": 46.9,
+      "prev_price": 45.0,
+      "market_lo": 22,
+      "market_hi": 50,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "La Corona Real en negro y gris: el contraste monocromo que encaja con la estética de la casa y con cualquier interior. Puntas altas, interior gris mullido. 50 × 50 × 26 cm.",
+      "bullets": [
+        "Negro exterior + gris interior: puro blanco y negro",
+        "Puntas de corona altas y rellenas",
+        "Interior mullido que mantiene la forma",
+        "Base estable",
+        "50 × 50 × 26 cm"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-11": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Patita",
+      "subtitle": "Mediana · 60 cm · Felpa beige",
+      "slug": "cama-patita-mediana",
+      "color": "Felpa beige",
+      "colorHex": "#8A6B4F",
+      "price": 42.9,
+      "prev_price": 40.0,
+      "market_lo": 18,
+      "market_hi": 45,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Una cama con forma de huella: centro acolchado rodeado por cuatro dedos elevados con almohadillas en contraste. Felpa larga, de esas en las que se hunden. 60 cm.",
+      "bullets": [
+        "Forma de huella con dedos elevados",
+        "Felpa larga, muy suave al tacto",
+        "Almohadillas en contraste marrón",
+        "Centro generosamente acolchado",
+        "60 cm · gatos y perros pequeños"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-12": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama Patita",
+      "subtitle": "Grande · 70 cm · Felpa beige",
+      "slug": "cama-patita-grande",
+      "color": "Felpa beige",
+      "colorHex": "#8A6B4F",
+      "price": 49.9,
+      "prev_price": 47.5,
+      "market_lo": 22,
+      "market_hi": 52,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "La Patita en grande, 70 cm, para que quepan estirados o compartan siesta. Felpa larga con dedos elevados y centro mullido.",
+      "bullets": [
+        "70 cm: espacio para estirarse",
+        "Felpa larga y cálida",
+        "Dedos elevados que sujetan la cabeza",
+        "Relleno que no se apelmaza",
+        "Fácil de aspirar"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-13": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama tienda (iglú)",
+      "subtitle": "48 × 48 × 40 cm · Verde y naranja",
+      "slug": "cama-tienda-48-verde",
+      "color": "Verde y naranja",
+      "colorHex": "#8A6B4F",
+      "price": 44.9,
+      "prev_price": 42.5,
+      "market_lo": 22,
+      "market_hi": 48,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "Una tienda cerrada para los que necesitan su propio rincón: mantiene el calor, aísla del ruido y da a los gatos —y a los perros nerviosos— un escondite donde relajarse. 48 × 48 × 40 cm con entrada arqueada amplia.",
+      "bullets": [
+        "Cerrada: sensación de refugio y calor",
+        "Ideal para gatos y perros que buscan su espacio",
+        "Entrada arqueada amplia y estable",
+        "Se dobla para guardarla o llevarla",
+        "48 × 48 × 40 cm"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    },
+    "PawB-14": {
+      "kind": "product",
+      "audience": "ambos",
+      "collection": "Descanso",
+      "name": "Cama tienda (iglú)",
+      "subtitle": "58 × 58 × 48 cm · Beige y naranja",
+      "slug": "cama-tienda-58-beige",
+      "color": "Beige y naranja",
+      "colorHex": "#8A6B4F",
+      "price": 57.9,
+      "prev_price": 57.5,
+      "market_lo": 25,
+      "market_hi": 58,
+      "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
+      "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
+      "material": "Poliéster con relleno de fibra, base antideslizante",
+      "tags": [
+        "Lavable",
+        "Perros y gatos"
+      ],
+      "audience_label": "Perros y gatos",
+      "desc": "La cama tienda en grande: 58 × 58 × 48 cm para perros medianos o para gatos que quieren su propio piso. Interior mullido, exterior en beige y naranja.",
+      "bullets": [
+        "58 × 58 × 48 cm: refugio para perros medianos o varias mascotas",
+        "Interior mullido y cálido",
+        "Aísla del ruido y de la luz",
+        "Entrada amplia, estructura que se mantiene",
+        "Se dobla para guardar"
+      ],
+      "rationale": "Sube dentro de la banda: el producto lo soporta."
+    }
   },
-  "PAWH-03": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "XS (2-4 kg) · Rock Grey · Obsidiana negra",
-   "slug": "arnes-de-paso-guardian-xs-rock-grey",
-   "color": "Rock Grey",
-   "colorHex": "#8E8E8E",
-   "price": 36.9,
-   "prev_price": 37.25,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (2-4 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rock grey con un colgante de obsidiana negra engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
-  },
-  "PAWH-04": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "S (4-8 kg) · Rosa suave · Cuarzo rosa",
-   "slug": "arnes-de-paso-guardian-s-rosa-suave",
-   "color": "Rosa suave",
-   "colorHex": "#E3C3C7",
-   "price": 36.9,
-   "prev_price": 44.7,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En rosa suave con un colgante de cuarzo rosa engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
-  },
-  "PAWH-05": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "S (4-8 kg) · Lavanda · Amatista",
-   "slug": "arnes-de-paso-guardian-s-lavanda",
-   "color": "Lavanda",
-   "colorHex": "#CBC3E3",
-   "price": 36.9,
-   "prev_price": 37.25,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En lavanda con un colgante de amatista engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
-  },
-  "PAWH-06": {
-   "kind": "product",
-   "audience": "perro",
-   "collection": "Guardian",
-   "name": "Arnés de paso Guardian",
-   "subtitle": "S (4-8 kg) · Gris roca · Obsidiana negra",
-   "slug": "arnes-de-paso-guardian-s-gris-roca",
-   "color": "Gris roca",
-   "colorHex": "#8E8E8E",
-   "price": 36.9,
-   "prev_price": 37.25,
-   "market_lo": 12.0,
-   "market_hi": 42.0,
-   "market_note": "Ruffwear Front Range 34-42 €; Julius K-9 12-42 €; arneses económicos 8-20 €",
-   "vs_market": "por debajo de las marcas premium, por encima del arnés de supermercado",
-   "material": "Poliéster resistente con malla reflectante, herrajes metálicos y relleno acolchado",
-   "tags": [
-    "Malla reflectante",
-    "Perros pequeños"
-   ],
-   "audience_label": "Perros · 2-8 kg",
-   "desc": "Arnés de paso acolchado con malla reflectante, pensado para perros pequeños (4-8 kg). Se pone en segundos —no hay que pasar la cabeza por ningún sitio— y reparte la presión sobre el pecho en lugar del cuello. En gris roca con un colgante de obsidiana negra engarzado a mano: un detalle de joyería en un accesorio de paseo diario.",
-   "bullets": [
-    "Diseño de paso: se coloca en segundos, sin pasar por la cabeza",
-    "Malla reflectante: te ven antes cuando paseas al anochecer",
-    "Cuatro puntos de ajuste y cierres de clip reforzados",
-    "Colgante de piedra natural engarzado a mano",
-    "Interior acolchado que evita roces en el pecho y las axilas",
-    "Lavable a mano en agua fría"
-   ],
-   "rationale": "El coste del proveedor (18,63 €) es el 50 % de su PVP. Bajar de 36,90 € deja el pedido de una unidad sin beneficio real: revisa docs/GRANKHA_Auditoria_Precios.xlsx."
-  },
-  "PawL-01": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Pocket Pod",
-   "name": "Correa Pocket Pod",
-   "subtitle": "Rosa · 1,5 m",
-   "slug": "correa-pocket-pod-rosa",
-   "color": "Rosa",
-   "colorHex": "#E3A7B4",
-   "price": 21.9,
-   "prev_price": 23.13,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En rosa.",
-   "bullets": [
-    "1,5 m: la distancia justa para acera y ciudad",
-    "Carcasa redondeada que encaja en la mano y en el bolsillo",
-    "Mosquetón metálico giratorio 360°, no se enreda",
-    "Cinta resistente de secado rápido · se limpia con un paño",
-    "Apta para perros pequeños y gatos acostumbrados al arnés"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-02": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Pocket Pod",
-   "name": "Correa Pocket Pod",
-   "subtitle": "Verde · 1,5 m",
-   "slug": "correa-pocket-pod-verde",
-   "color": "Verde",
-   "colorHex": "#5C8A6A",
-   "price": 21.9,
-   "prev_price": 23.13,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En verde.",
-   "bullets": [
-    "1,5 m: la distancia justa para acera y ciudad",
-    "Carcasa redondeada que encaja en la mano y en el bolsillo",
-    "Mosquetón metálico giratorio 360°, no se enreda",
-    "Cinta resistente de secado rápido · se limpia con un paño",
-    "Apta para perros pequeños y gatos acostumbrados al arnés"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-03": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Pocket Pod",
-   "name": "Correa Pocket Pod",
-   "subtitle": "Blanco · 1,5 m",
-   "slug": "correa-pocket-pod-blanco",
-   "color": "Blanco",
-   "colorHex": "#F2F2F0",
-   "price": 21.9,
-   "prev_price": 23.13,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa compacta de 1,5 m con carcasa redondeada que se adapta a la mano y no abulta en el bolsillo. Pensada para paseos urbanos y calles concurridas, donde quieres a tu mascota cerca y controlada. En blanco.",
-   "bullets": [
-    "1,5 m: la distancia justa para acera y ciudad",
-    "Carcasa redondeada que encaja en la mano y en el bolsillo",
-    "Mosquetón metálico giratorio 360°, no se enreda",
-    "Cinta resistente de secado rápido · se limpia con un paño",
-    "Apta para perros pequeños y gatos acostumbrados al arnés"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-04": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Mini Mango",
-   "name": "Correa Mini Mango",
-   "subtitle": "Amarillo · 3 m",
-   "slug": "correa-mini-mango-amarillo",
-   "color": "Amarillo",
-   "colorHex": "#E5C13F",
-   "price": 29.9,
-   "prev_price": 31.25,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en amarillo que no parece la correa de siempre.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-05": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Mini Mango",
-   "name": "Correa Mini Mango",
-   "subtitle": "Ciruela · 3 m",
-   "slug": "correa-mini-mango-ciruela",
-   "color": "Ciruela",
-   "colorHex": "#6E3B5E",
-   "price": 29.9,
-   "prev_price": 31.25,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en ciruela que no parece la correa de siempre.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-06": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Mini Mango",
-   "name": "Correa Mini Mango",
-   "subtitle": "Durazno · 3 m",
-   "slug": "correa-mini-mango-durazno",
-   "color": "Durazno",
-   "colorHex": "#EFB398",
-   "price": 29.9,
-   "prev_price": 31.25,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 3 m con mango ergonómico y freno de pulgar progresivo: le das libertad y la recuperas al instante. Ligera, resistente y con un acabado en durazno que no parece la correa de siempre.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-07": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Elephant",
-   "name": "Correa Elephant",
-   "subtitle": "Azul · 2 m",
-   "slug": "correa-elephant-azul",
-   "color": "Azul",
-   "colorHex": "#3F6E9E",
-   "price": 34.9,
-   "prev_price": 37.5,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en azul con mosquetón giratorio 360°.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-08": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Elephant",
-   "name": "Correa Elephant",
-   "subtitle": "Marrón · 2 m",
-   "slug": "correa-elephant-marrón",
-   "color": "Marrón",
-   "colorHex": "#6B4A33",
-   "price": 34.9,
-   "prev_price": 37.5,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en marrón con mosquetón giratorio 360°.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PawL-09": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Elephant",
-   "name": "Correa Elephant",
-   "subtitle": "Gris · 2 m",
-   "slug": "correa-elephant-gris",
-   "color": "Gris",
-   "colorHex": "#9A9A9A",
-   "price": 34.9,
-   "prev_price": 37.5,
-   "market_lo": 8.0,
-   "market_hi": 35.0,
-   "market_note": "Correas de mano: 8-20 € · retráctiles: 12-25 € (Flexi, Trixie) · premium: 25-40 €",
-   "vs_market": "alineada con el mercado medio-alto, con diseño propio",
-   "material": "Cinta de nailon resistente, carcasa de ABS reforzado y mosquetón metálico",
-   "tags": [
-    "Uso diario",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Correa retráctil de 2 m con el mango más grande y curvado de la colección: se agarra con toda la mano, ideal si caminas rápido, si hace frío o si tu compañero tira. Acabado en gris con mosquetón giratorio 360°.",
-   "bullets": [
-    "Retráctil: libertad controlada con el pulgar",
-    "Freno progresivo y bloqueo de recorrido",
-    "Mango ergonómico antideslizante",
-    "Mosquetón metálico reforzado 360°",
-    "Apta para perros pequeños y medianos"
-   ],
-   "rationale": "El PVP original (23-37 €) no se sostenía frente al mercado. Ajustado sin destruir margen."
-  },
-  "PAWFB-01": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero estilo cobre",
-   "subtitle": "Ø 18 cm · Acero inoxidable 304",
-   "slug": "comedero-estilo-cobre-18-cm",
-   "color": "Cobre",
-   "colorHex": "#B87333",
-   "price": 13.9,
-   "prev_price": 9.38,
-   "market_lo": 8.0,
-   "market_hi": 20.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 304",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Comedero de acero inoxidable 304 con acabado cobre pulido y huellas en relieve. Una alternativa decorativa al cuenco de plástico: se queda bonito en el suelo de la cocina y es apto para contacto con alimentos. 18 cm de diámetro.",
-   "bullets": [
-    "Acero inoxidable 304, apto para alimento y agua",
-    "Acabado cobre pulido con huellas en relieve",
-    "Base estable que no se desplaza al comer",
-    "Apto para lavavajillas",
-    "18 cm de diámetro · para perros pequeños y gatos"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-02": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero estilo cobre grande",
-   "subtitle": "Ø 22 cm · Acero inoxidable 304",
-   "slug": "comedero-estilo-cobre-22-cm",
-   "color": "Cobre",
-   "colorHex": "#B87333",
-   "price": 16.9,
-   "prev_price": 11.25,
-   "market_lo": 10.0,
-   "market_hi": 24.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 304",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "El mismo comedero de cobre pulido en 22 cm, para gatos grandes, perros pequeños o raciones más generosas de agua. Acero inoxidable 304 y base que no se desliza.",
-   "bullets": [
-    "Acero inoxidable 304, apto para alimento y agua",
-    "22 cm: agua para todo el día",
-    "Acabado cobre pulido con huellas en relieve",
-    "Base estable antideslizante",
-    "Fácil de limpiar a mano"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-03": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero de acero con soporte de madera",
-   "subtitle": "Ø 12 cm · Acero 201 + madera natural",
-   "slug": "comedero-acero-soporte-madera-12-cm",
-   "color": "Madera",
-   "colorHex": "#C7A97D",
-   "price": 26.9,
-   "prev_price": 22.5,
-   "market_lo": 18.0,
-   "market_hi": 32.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 201 + madera natural",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Zona de comida ordenada: cuenco de acero inoxidable 201 sobre soporte de madera natural. Eleva el cuenco a la altura del hocico, evita que arrastre el plato por el suelo y recoge las salpicaduras. 12 cm de diámetro.",
-   "bullets": [
-    "Cuenco de acero 201 de quita y pon (fácil de lavar)",
-    "Soporte de madera natural tratada",
-    "Altura que cuida la postura al comer",
-    "Recoge migas y salpicaduras",
-    "12 cm · perros pequeños y gatos"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-04": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero doble con soporte de madera",
-   "subtitle": "2 × 12 cm · Acero 201 + madera",
-   "slug": "comedero-doble-soporte-madera",
-   "color": "Madera",
-   "colorHex": "#C7A97D",
-   "price": 39.9,
-   "prev_price": 36.25,
-   "market_lo": 25.0,
-   "market_hi": 45.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 201 + madera natural",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Agua y comida juntas en una sola estación: dos cuencos de acero inoxidable 201 sobre un soporte de madera natural. Menos platos por el suelo y una zona de alimentación que se ve ordenada. 2 × 12 cm.",
-   "bullets": [
-    "Dos cuencos de acero 201 extraíbles",
-    "Soporte de madera natural con patas antideslizantes",
-    "Comida y agua en una sola estación",
-    "Ideal para gatos y perros pequeños",
-    "Fácil de limpiar"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-05": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero doble grande con soporte de madera",
-   "subtitle": "2 × 13 cm · Acero 201 + madera",
-   "slug": "comedero-doble-grande-soporte-madera",
-   "color": "Madera",
-   "colorHex": "#C7A97D",
-   "price": 44.9,
-   "prev_price": 47.5,
-   "market_lo": 28.0,
-   "market_hi": 50.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 201 + madera natural",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Versión grande de la estación doble: dos cuencos de 13 cm sobre madera natural, para perros medianos, hogares con dos mascotas o raciones generosas.",
-   "bullets": [
-    "Dos cuencos grandes de acero 201",
-    "Soporte de madera natural estable",
-    "Perfecto para dos mascotas o raciones grandes",
-    "Cuenco elevado, mejor postura",
-    "Cuenco extraíble para limpiar"
-   ],
-   "rationale": "Estaba por encima del mercado: se ajusta para poder vender.",
-   "why": null
-  },
-  "PAWFB-06": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hogar",
-   "name": "Comedero de cerámica con soporte de madera",
-   "subtitle": "Ø 14 cm · Cerámica + madera",
-   "slug": "comedero-ceramica-soporte-madera",
-   "color": "Madera",
-   "colorHex": "#C7A97D",
-   "price": 29.9,
-   "prev_price": 23.75,
-   "market_lo": 18.0,
-   "market_hi": 35.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 201 + madera natural",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Cuenco de cerámica vidriada en tono crema sobre soporte de madera clara. La cerámica pesa, no se desliza y mantiene mejor la temperatura del agua; el conjunto queda como una pieza más de la casa. 14 cm.",
-   "bullets": [
-    "Cerámica vidriada: pesada, estable y sin olores",
-    "Soporte de madera natural clara",
-    "Mantiene el agua más fresca que el plástico",
-    "Estética de interior, no de tienda de animales",
-    "14 cm · lavable a mano"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-07": {
-   "kind": "product",
-   "audience": "gato",
-   "collection": "Hogar",
-   "name": "Comedero para gatos con soporte",
-   "subtitle": "Acero inoxidable 304 · cara de gato",
-   "slug": "comedero-gatos-soporte",
-   "color": "Madera",
-   "colorHex": "#C7A97D",
-   "price": 17.9,
-   "prev_price": 12.5,
-   "market_lo": 10.0,
-   "market_hi": 22.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "en la banda media-alta del mercado",
-   "material": "Acero inoxidable 304",
-   "tags": [
-    "Diseño de interior",
-    "Perros y gatos"
-   ],
-   "audience_label": "Gatos",
-   "desc": "Un comedero que hace sonreír: al vaciarse aparece una cara de gato con orejas y bigotes en relieve. Acero inoxidable 304 sobre soporte estable, con altura pensada para que el gato no forzar el cuello.",
-   "bullets": [
-    "Revela una cara de gato al vaciarse",
-    "Acero inoxidable 304 apto para alimentos",
-    "Soporte estable que evita vuelcos",
-    "Altura que cuida el cuello del gato",
-    "Apto para agua o pienso"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PAWFB-08": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hidratación",
-   "name": "Fuente de agua eléctrica 2,5 L",
-   "subtitle": "Acero inoxidable 304 · alimentación USB",
-   "slug": "fuente-de-agua-2-5-l",
-   "color": "Acero",
-   "colorHex": "#B9BCC0",
-   "price": 49.9,
-   "prev_price": 61.25,
-   "market_lo": 25.0,
-   "market_hi": 55.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "por encima del cuenco básico (es una pieza de diseño) y por debajo de la fuente premium de marca",
-   "material": "Acero inoxidable 304",
-   "tags": [
-    "Fuente de agua",
-    "Gatos y perros"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Los gatos beben más cuando el agua se mueve: es instinto. Esta fuente de 2,5 litros mantiene el agua en circulación constante y filtrada durante varios días, con bomba silenciosa y depósito de acero inoxidable 304.",
-   "bullets": [
-    "2,5 L: varios días sin rellenar",
-    "Agua en movimiento: beben más y previene problemas renales",
-    "Acero inoxidable 304, más higiénico que el plástico",
-    "Bomba silenciosa (se nota el agua, no el motor)",
-    "Alimentación USB · apta para gatos y perros pequeños"
-   ],
-   "rationale": "Estaba por encima del mercado: se ajusta para poder vender.",
-   "why": "Pensada para gatos: la hidratación es el punto débil de su salud renal."
-  },
-  "PAWFB-09": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Hidratación",
-   "name": "Filtros de repuesto para fuente",
-   "subtitle": "Pack de 4 · compatible con la fuente GRANKHA",
-   "slug": "filtros-repuesto-fuente-pack-4",
-   "color": "Acero",
-   "colorHex": "#B9BCC0",
-   "price": 18.9,
-   "prev_price": 17.52,
-   "market_lo": 10.0,
-   "market_hi": 22.0,
-   "market_note": "Cuencos simples 1,5-6 € · cuencos de diseño 10-25 € · fuentes 2-3 L con bomba 32-45 € (ManoMano), Catit Flower 3 L 53 € · packs de filtros 10-22 €",
-   "vs_market": "por encima del cuenco básico (es una pieza de diseño) y por debajo de la fuente premium de marca",
-   "material": "Acero inoxidable 201 + madera natural",
-   "tags": [
-    "Recambio",
-    "Compra recurrente"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Pack de 4 filtros de carbón activado para la fuente de 2,5 L. El agua sigue limpia y sabrosa, y el mantenimiento se reduce a cambiar el filtro cada pocas semanas.",
-   "bullets": [
-    "Pack de 4 filtros de carbón activado",
-    "Compatible con la fuente GRANKHA de 2,5 L",
-    "Agua más limpia y sin olores",
-    "Sustitución en segundos, sin herramientas",
-    "Compra recurrente: no te quedes sin recambio"
-   ],
-   "rationale": "Estaba por debajo del mercado: sube sin perder competitividad.",
-   "why": null
-  },
-  "PawB-01": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Teddy",
-   "subtitle": "Pequeña · 60 × 45 × 17 cm · Peluche marrón",
-   "slug": "cama-teddy-pequena",
-   "color": "Peluche marrón",
-   "colorHex": "#8A6B4F",
-   "price": 34.9,
-   "prev_price": 35.0,
-   "market_lo": 18,
-   "market_hi": 40,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Cama de peluche texturizado con centro acolchado y bordes elevados donde apoyar la cabeza. Suave al tacto, cálida en invierno y con base que mantiene la forma. 60 × 45 × 17 cm.",
-   "bullets": [
-    "Peluche texturizado muy suave",
-    "Bordes elevados: sensación de refugio",
-    "Centro acolchado que no se aplasta",
-    "Base antideslizante",
-    "Lavable a mano en frío · 60 × 45 × 17 cm"
-   ],
-   "rationale": "Precio validado frente al mercado."
-  },
-  "PawB-02": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Teddy",
-   "subtitle": "Mediana · 70 × 55 × 18 cm · Peluche marrón",
-   "slug": "cama-teddy-mediana",
-   "color": "Peluche marrón",
-   "colorHex": "#8A6B4F",
-   "price": 44.9,
-   "prev_price": 45.0,
-   "market_lo": 22,
-   "market_hi": 50,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "La Teddy en tamaño mediano: 70 × 55 cm para que estire las patas o se acurruque contra el borde. Peluche texturizado y relleno mullido que aguanta el uso diario.",
-   "bullets": [
-    "70 × 55 × 18 cm, ideal para perros pequeños-medianos y gatos grandes",
-    "Peluche texturizado muy suave",
-    "Bordes elevados para apoyar la cabeza",
-    "Base antideslizante",
-    "Lavable a mano en frío"
-   ],
-   "rationale": "Precio validado frente al mercado."
-  },
-  "PawB-03": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama acolchada caqui",
-   "subtitle": "Pequeña · 60 × 50 × 15 cm · Verde caqui",
-   "slug": "cama-acolchada-pequena-verde",
-   "color": "Verde caqui",
-   "colorHex": "#8A6B4F",
-   "price": 39.9,
-   "prev_price": 41.25,
-   "market_lo": 18,
-   "market_hi": 42,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Cama de tejido acolchado en verde caqui, sobria y fácil de encajar en cualquier salón. Base generosa y laterales elevados que dan sensación de recogimiento. 60 × 50 × 15 cm.",
-   "bullets": [
-    "Tejido acolchado resistente y fácil de limpiar",
-    "Laterales elevados para recostarse",
-    "Color caqui que no desentona en el salón",
-    "Base antideslizante",
-    "60 × 50 × 15 cm"
-   ],
-   "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
-  },
-  "PawB-04": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama acolchada caqui",
-   "subtitle": "Mediana · 70 × 60 × 15 cm · Caqui beige",
-   "slug": "cama-acolchada-mediana-caqui",
-   "color": "Caqui beige",
-   "colorHex": "#8A6B4F",
-   "price": 52.9,
-   "prev_price": 60.45,
-   "market_lo": 25,
-   "market_hi": 60,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Versión mediana de la cama acolchada, en beige caqui. 70 × 60 cm de superficie para estirarse entero o compartir con un compañero felino.",
-   "bullets": [
-    "70 × 60 × 15 cm: espacio de sobra para estirarse",
-    "Tejido acolchado de tacto suave",
-    "Laterales mullidos para apoyar el cuello",
-    "Transpirable, apta para todo el año",
-    "Base antideslizante"
-   ],
-   "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
-  },
-  "PawB-05": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Lucky Elephant",
-   "subtitle": "60 × 50 × 14 cm · Estampado rojo",
-   "slug": "cama-lucky-elephant-roja",
-   "color": "Estampado rojo",
-   "colorHex": "#8A6B4F",
-   "price": 37.9,
-   "prev_price": 40.35,
-   "market_lo": 18,
-   "market_hi": 42,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Elefantes de la suerte y geometría sobre fondo crema cálido: una cama con carácter para quien no quiere otra cosa gris. 60 × 50 × 14 cm.",
-   "bullets": [
-    "Estampado original de elefantes (no lo verás en todas las casas)",
-    "Base acolchada y laterales bajos",
-    "Tejido resistente al uso diario",
-    "Fácil de aspirar y limpiar",
-    "60 × 50 × 14 cm"
-   ],
-   "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
-  },
-  "PawB-06": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Lucky Elephant",
-   "subtitle": "60 × 50 × 14 cm · Estampado verde",
-   "slug": "cama-lucky-elephant-verde",
-   "color": "Estampado verde",
-   "colorHex": "#8A6B4F",
-   "price": 37.9,
-   "prev_price": 35.0,
-   "market_lo": 18,
-   "market_hi": 42,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "La Lucky Elephant en verde intenso, con el mismo estampado de elefantes decorados. Un punto de color sin estridencias en el suelo de casa.",
-   "bullets": [
-    "Estampado original de elefantes en verde",
-    "Base acolchada, bordes bajos",
-    "Combina con interiores neutros o de color",
-    "Fácil de limpiar",
-    "60 × 50 × 14 cm"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-07": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama sofá",
-   "subtitle": "Pequeña · 50 × 50 × 26 cm · Rayas marrones",
-   "slug": "cama-sofa-pequena",
-   "color": "Rayas marrones",
-   "colorHex": "#8A6B4F",
-   "price": 44.9,
-   "prev_price": 45.0,
-   "market_lo": 20,
-   "market_hi": 48,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Un mini sofá con respaldo alto, reposabrazos redondeados y frontal rebajado para entrar y salir sin saltar. Incluye almohada pequeña a juego. 50 × 50 × 26 cm.",
-   "bullets": [
-    "Forma de sofá con respaldo alto: se apoyan y se sienten protegidos",
-    "Incluye almohada a juego",
-    "Frontal rebajado: fácil de entrar y salir",
-    "Fundas de tejido a rayas, tonos tierra",
-    "50 × 50 × 26 cm · el favorito de gatos y perros pequeños"
-   ],
-   "rationale": "Precio validado frente al mercado."
-  },
-  "PawB-08": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama sofá",
-   "subtitle": "Mediana · 60 × 60 × 28 cm · Rayas marrones",
-   "slug": "cama-sofa-mediana",
-   "color": "Rayas marrones",
-   "colorHex": "#8A6B4F",
-   "price": 56.9,
-   "prev_price": 57.5,
-   "market_lo": 25,
-   "market_hi": 60,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "El sofá en tamaño mediano: 60 × 60 cm, respaldo alto y cojín a juego. Pensado para perros medianos que se acurrucan o para dos gatos que comparten trono.",
-   "bullets": [
-    "60 × 60 × 28 cm: amplio y mullido",
-    "Respaldo alto y reposabrazos acolchados",
-    "Incluye cojín decorativo a juego",
-    "Tejido a rayas en tonos marrones",
-    "Estructura que mantiene la forma"
-   ],
-   "rationale": "Estaba por encima de lo que el mercado paga por esta cama: ajustado a la banda real."
-  },
-  "PawB-09": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Corona Real",
-   "subtitle": "Mediana · 50 × 50 × 26 cm · Arena y gris",
-   "slug": "cama-corona-real-mediana",
-   "color": "Arena y gris",
-   "colorHex": "#8A6B4F",
-   "price": 39.9,
-   "prev_price": 37.5,
-   "market_lo": 20,
-   "market_hi": 45,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Una cama con forma de corona: puntas altas alrededor y cojín interior suave en gris. Exterior en tono arena, discreto; el guiño divertido se lo queda la silueta. 50 × 50 × 26 cm.",
-   "bullets": [
-    "Forma de corona con puntas altas",
-    "Interior gris suave y exterior arena neutro",
-    "Muy fotogénica (aviso: sale en todas las fotos)",
-    "Relleno que mantiene la forma",
-    "50 × 50 × 26 cm · gatos y perros pequeños"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-10": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Corona Real",
-   "subtitle": "Grande · 50 × 50 × 26 cm · Negro y gris",
-   "slug": "cama-corona-real-grande",
-   "color": "Negro y gris",
-   "colorHex": "#8A6B4F",
-   "price": 46.9,
-   "prev_price": 45.0,
-   "market_lo": 22,
-   "market_hi": 50,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "La Corona Real en negro y gris: el contraste monocromo que encaja con la estética de la casa y con cualquier interior. Puntas altas, interior gris mullido. 50 × 50 × 26 cm.",
-   "bullets": [
-    "Negro exterior + gris interior: puro blanco y negro",
-    "Puntas de corona altas y rellenas",
-    "Interior mullido que mantiene la forma",
-    "Base estable",
-    "50 × 50 × 26 cm"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-11": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Patita",
-   "subtitle": "Mediana · 60 cm · Felpa beige",
-   "slug": "cama-patita-mediana",
-   "color": "Felpa beige",
-   "colorHex": "#8A6B4F",
-   "price": 42.9,
-   "prev_price": 40.0,
-   "market_lo": 18,
-   "market_hi": 45,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Una cama con forma de huella: centro acolchado rodeado por cuatro dedos elevados con almohadillas en contraste. Felpa larga, de esas en las que se hunden. 60 cm.",
-   "bullets": [
-    "Forma de huella con dedos elevados",
-    "Felpa larga, muy suave al tacto",
-    "Almohadillas en contraste marrón",
-    "Centro generosamente acolchado",
-    "60 cm · gatos y perros pequeños"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-12": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama Patita",
-   "subtitle": "Grande · 70 cm · Felpa beige",
-   "slug": "cama-patita-grande",
-   "color": "Felpa beige",
-   "colorHex": "#8A6B4F",
-   "price": 49.9,
-   "prev_price": 47.5,
-   "market_lo": 22,
-   "market_hi": 52,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "La Patita en grande, 70 cm, para que quepan estirados o compartan siesta. Felpa larga con dedos elevados y centro mullido.",
-   "bullets": [
-    "70 cm: espacio para estirarse",
-    "Felpa larga y cálida",
-    "Dedos elevados que sujetan la cabeza",
-    "Relleno que no se apelmaza",
-    "Fácil de aspirar"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-13": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama tienda (iglú)",
-   "subtitle": "48 × 48 × 40 cm · Verde y naranja",
-   "slug": "cama-tienda-48-verde",
-   "color": "Verde y naranja",
-   "colorHex": "#8A6B4F",
-   "price": 44.9,
-   "prev_price": 42.5,
-   "market_lo": 22,
-   "market_hi": 48,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "Una tienda cerrada para los que necesitan su propio rincón: mantiene el calor, aísla del ruido y da a los gatos —y a los perros nerviosos— un escondite donde relajarse. 48 × 48 × 40 cm con entrada arqueada amplia.",
-   "bullets": [
-    "Cerrada: sensación de refugio y calor",
-    "Ideal para gatos y perros que buscan su espacio",
-    "Entrada arqueada amplia y estable",
-    "Se dobla para guardarla o llevarla",
-    "48 × 48 × 40 cm"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
-  },
-  "PawB-14": {
-   "kind": "product",
-   "audience": "ambos",
-   "collection": "Descanso",
-   "name": "Cama tienda (iglú)",
-   "subtitle": "58 × 58 × 48 cm · Beige y naranja",
-   "slug": "cama-tienda-58-beige",
-   "color": "Beige y naranja",
-   "colorHex": "#8A6B4F",
-   "price": 57.9,
-   "prev_price": 57.5,
-   "market_lo": 25,
-   "market_hi": 58,
-   "market_note": "Camas básicas 15-35 € · camas acolchadas de marca 40-70 € (Ferplast, Trixie, hammocks) · camas de diseño 50-90 €",
-   "vs_market": "banda media-alta: por encima del textil de supermercado, por debajo de las marcas de referencia",
-   "material": "Poliéster con relleno de fibra, base antideslizante",
-   "tags": [
-    "Lavable",
-    "Perros y gatos"
-   ],
-   "audience_label": "Perros y gatos",
-   "desc": "La cama tienda en grande: 58 × 58 × 48 cm para perros medianos o para gatos que quieren su propio piso. Interior mullido, exterior en beige y naranja.",
-   "bullets": [
-    "58 × 58 × 48 cm: refugio para perros medianos o varias mascotas",
-    "Interior mullido y cálido",
-    "Aísla del ruido y de la luz",
-    "Entrada amplia, estructura que se mantiene",
-    "Se dobla para guardar"
-   ],
-   "rationale": "Sube dentro de la banda: el producto lo soporta."
+  "packs": {
+    "PACK-01": {
+      "name": "Pack Paseo Guardian S",
+      "audience": "perro",
+      "slug": "pack-paseo-guardian-s",
+      "components": [
+        [
+          "PAWH-06",
+          1
+        ],
+        [
+          "PawL-09",
+          1
+        ]
+      ],
+      "discount": 0.068,
+      "desc": "Arnés de paso Guardian talla S (gris roca, colgante de obsidiana) y correa retráctil Elephant a juego. El conjunto completo para los paseos diarios, coordinado en color y herrajes.",
+      "bullets": [
+        "Arnés Guardian S (4-8 kg) con colgante de obsidiana",
+        "Correa retráctil Elephant de 2 m en gris",
+        "Conjunto coordinado: no tienes que elegir combinación",
+        "Arnés y correa coordinados: no tienes que elegir combinación",
+        "Supera los 39 €: envío gratis"
+      ]
+    },
+    "PACK-02": {
+      "name": "Pack Paseo Guardian XS",
+      "audience": "perro",
+      "slug": "pack-paseo-guardian-xs",
+      "components": [
+        [
+          "PAWH-02",
+          1
+        ],
+        [
+          "PawL-05",
+          1
+        ]
+      ],
+      "discount": 0.058,
+      "desc": "Arnés de paso Guardian talla XS (lavanda, con amatista) y correa retráctil Mini Mango en ciruela. Pensado para cachorros y perros de 2-4 kg.",
+      "bullets": [
+        "Arnés Guardian XS (2-4 kg) con colgante de amatista",
+        "Correa retráctil Mini Mango de 3 m en ciruela",
+        "Tallas y colores ya coordinados",
+        "Todo coordinado de fábrica: colores y tallas que encajan",
+        "Supera los 39 €: envío gratis"
+      ]
+    },
+    "PACK-03": {
+      "name": "Pack Primeros Días Gato",
+      "audience": "gato",
+      "slug": "pack-primeros-dias-gato",
+      "components": [
+        [
+          "PAWFB-08",
+          1
+        ],
+        [
+          "PAWFB-09",
+          1
+        ],
+        [
+          "PAWFB-07",
+          1
+        ]
+      ],
+      "discount": 0.078,
+      "desc": "Fuente de agua de 2,5 L, pack de 4 filtros de repuesto y comedero de gato con cara escondida. Todo lo que necesita un gato para beber y comer mejor, en un solo pedido.",
+      "bullets": [
+        "Fuente de agua 2,5 L de acero inoxidable 304",
+        "4 filtros de carbón activado de repuesto",
+        "Comedero para gatos con soporte y cara de gato",
+        "El combo que más mejora la salud de un gato: la hidratación",
+        "El conjunto que más mejora la hidratación de un gato"
+      ]
+    },
+    "PACK-04": {
+      "name": "Pack Descanso",
+      "audience": "ambos",
+      "slug": "pack-descanso",
+      "components": [
+        [
+          "PawB-02",
+          1
+        ],
+        [
+          "PAWFB-03",
+          1
+        ]
+      ],
+      "discount": 0.068,
+      "desc": "Cama Teddy mediana (70 × 55 cm) y comedero de acero con soporte de madera. Zona de descanso y zona de comida coordinadas en tonos naturales.",
+      "bullets": [
+        "Cama Teddy mediana de peluche texturizado",
+        "Comedero de acero con soporte de madera natural",
+        "Dos rincones de la casa resueltos de una vez",
+        "Vale igual para un perro o para un gato",
+        "Dos rincones de la casa resueltos de una vez"
+      ]
+    },
+    "PACK-05": {
+      "name": "Pack Hogar Real",
+      "audience": "ambos",
+      "slug": "pack-hogar-real",
+      "components": [
+        [
+          "PawB-10",
+          1
+        ],
+        [
+          "PAWFB-05",
+          1
+        ]
+      ],
+      "discount": 0.075,
+      "desc": "Cama Corona Real negra y gris más estación de comedero doble grande con soporte de madera. El rincón de la mascota con más presencia de la colección.",
+      "bullets": [
+        "Cama Corona Real grande (negro y gris)",
+        "Comedero doble grande de acero con soporte de madera",
+        "A juego con la estética blanco y negro de casa",
+        "Apto para gatos y perros medianos",
+        "Conjunto coordinado en blanco y negro, a juego con la casa"
+      ]
+    },
+    "PACK-06": {
+      "name": "Pack Hidratación",
+      "audience": "ambos",
+      "slug": "pack-hidratacion",
+      "components": [
+        [
+          "PAWFB-08",
+          1
+        ],
+        [
+          "PAWFB-09",
+          2
+        ]
+      ],
+      "discount": 0.071,
+      "desc": "Fuente de agua de 2,5 L más 8 filtros de repuesto (dos packs). Compras la fuente y tienes recambios para muchos meses sin volver a pensarlo.",
+      "bullets": [
+        "Fuente de agua 2,5 L de acero inoxidable 304",
+        "8 filtros de carbón activado (2 packs de 4)",
+        "Recambios para meses: no te quedas sin agua limpia",
+        "Ideal para gatos y perros pequeños",
+        "Recambios suficientes para meses de agua limpia"
+      ]
+    }
   }
- },
- "packs": {
-  "PACK-01": {
-   "name": "Pack Paseo Guardian S",
-   "audience": "perro",
-   "slug": "pack-paseo-guardian-s",
-   "components": [
-    [
-     "PAWH-06",
-     1
-    ],
-    [
-     "PawL-09",
-     1
-    ]
-   ],
-   "discount": 0.068,
-   "desc": "Arnés de paso Guardian talla S (gris roca, colgante de obsidiana) y correa retráctil Elephant a juego. El conjunto completo para los paseos diarios, coordinado en color y herrajes.",
-   "bullets": [
-    "Arnés Guardian S (4-8 kg) con colgante de obsidiana",
-    "Correa retráctil Elephant de 2 m en gris",
-    "Conjunto coordinado: no tienes que elegir combinación",
-    "Arnés y correa coordinados: no tienes que elegir combinación",
-    "Supera los 39 €: envío gratis"
-   ]
-  },
-  "PACK-02": {
-   "name": "Pack Paseo Guardian XS",
-   "audience": "perro",
-   "slug": "pack-paseo-guardian-xs",
-   "components": [
-    [
-     "PAWH-02",
-     1
-    ],
-    [
-     "PawL-05",
-     1
-    ]
-   ],
-   "discount": 0.058,
-   "desc": "Arnés de paso Guardian talla XS (lavanda, con amatista) y correa retráctil Mini Mango en ciruela. Pensado para cachorros y perros de 2-4 kg.",
-   "bullets": [
-    "Arnés Guardian XS (2-4 kg) con colgante de amatista",
-    "Correa retráctil Mini Mango de 3 m en ciruela",
-    "Tallas y colores ya coordinados",
-    "Todo coordinado de fábrica: colores y tallas que encajan",
-    "Supera los 39 €: envío gratis"
-   ]
-  },
-  "PACK-03": {
-   "name": "Pack Primeros Días Gato",
-   "audience": "gato",
-   "slug": "pack-primeros-dias-gato",
-   "components": [
-    [
-     "PAWFB-08",
-     1
-    ],
-    [
-     "PAWFB-09",
-     1
-    ],
-    [
-     "PAWFB-07",
-     1
-    ]
-   ],
-   "discount": 0.078,
-   "desc": "Fuente de agua de 2,5 L, pack de 4 filtros de repuesto y comedero de gato con cara escondida. Todo lo que necesita un gato para beber y comer mejor, en un solo pedido.",
-   "bullets": [
-    "Fuente de agua 2,5 L de acero inoxidable 304",
-    "4 filtros de carbón activado de repuesto",
-    "Comedero para gatos con soporte y cara de gato",
-    "El combo que más mejora la salud de un gato: la hidratación",
-    "El conjunto que más mejora la hidratación de un gato"
-   ]
-  },
-  "PACK-04": {
-   "name": "Pack Descanso",
-   "audience": "ambos",
-   "slug": "pack-descanso",
-   "components": [
-    [
-     "PawB-02",
-     1
-    ],
-    [
-     "PAWFB-03",
-     1
-    ]
-   ],
-   "discount": 0.068,
-   "desc": "Cama Teddy mediana (70 × 55 cm) y comedero de acero con soporte de madera. Zona de descanso y zona de comida coordinadas en tonos naturales.",
-   "bullets": [
-    "Cama Teddy mediana de peluche texturizado",
-    "Comedero de acero con soporte de madera natural",
-    "Dos rincones de la casa resueltos de una vez",
-    "Vale igual para un perro o para un gato",
-    "Dos rincones de la casa resueltos de una vez"
-   ]
-  },
-  "PACK-05": {
-   "name": "Pack Hogar Real",
-   "audience": "ambos",
-   "slug": "pack-hogar-real",
-   "components": [
-    [
-     "PawB-10",
-     1
-    ],
-    [
-     "PAWFB-05",
-     1
-    ]
-   ],
-   "discount": 0.075,
-   "desc": "Cama Corona Real negra y gris más estación de comedero doble grande con soporte de madera. El rincón de la mascota con más presencia de la colección.",
-   "bullets": [
-    "Cama Corona Real grande (negro y gris)",
-    "Comedero doble grande de acero con soporte de madera",
-    "A juego con la estética blanco y negro de casa",
-    "Apto para gatos y perros medianos",
-    "Conjunto coordinado en blanco y negro, a juego con la casa"
-   ]
-  },
-  "PACK-06": {
-   "name": "Pack Hidratación",
-   "audience": "ambos",
-   "slug": "pack-hidratacion",
-   "components": [
-    [
-     "PAWFB-08",
-     1
-    ],
-    [
-     "PAWFB-09",
-     2
-    ]
-   ],
-   "discount": 0.071,
-   "desc": "Fuente de agua de 2,5 L más 8 filtros de repuesto (dos packs). Compras la fuente y tienes recambios para muchos meses sin volver a pensarlo.",
-   "bullets": [
-    "Fuente de agua 2,5 L de acero inoxidable 304",
-    "8 filtros de carbón activado (2 packs de 4)",
-    "Recambios para meses: no te quedas sin agua limpia",
-    "Ideal para gatos y perros pequeños",
-    "Recambios suficientes para meses de agua limpia"
-   ]
-  }
- }
 }

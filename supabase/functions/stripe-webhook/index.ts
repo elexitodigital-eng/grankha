@@ -13,6 +13,7 @@
 
 import Stripe from "https://esm.sh/stripe@16?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { emailPedidoRecibido, sendEmail } from "../_shared/email.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
 const supa = createClient(
@@ -40,6 +41,19 @@ Deno.serve(async (req) => {
       await supa.from("orders")
         .update({ status: "paid", stripe_payment_intent: String(s.payment_intent ?? "") })
         .eq("stripe_session_id", s.id);
+
+      // ---- correo 1: "pedido recibido", con todos los datos de la compra ----
+      const { data: o } = await supa.from("orders")
+        .select("reference, customer, subtotal, shipping_price, shipping_method, total, order_items(name, sku, qty, unit_price)")
+        .eq("stripe_session_id", s.id).maybeSingle();
+      const email = o?.customer?.email ?? s.customer_details?.email ?? "";
+      if (o && email) {
+        const { subject, html } = emailPedidoRecibido({
+          ...o,
+          lines: (o.order_items ?? []).map((l: any) => ({ name: l.name, sku: l.sku, qty: l.qty, price: Number(l.unit_price) })),
+        });
+        await sendEmail(email, subject, html);
+      }
       break;
     }
     case "charge.refunded": {

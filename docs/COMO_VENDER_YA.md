@@ -99,12 +99,30 @@ contraseña de la base de datos en un gestor de contraseñas.
 Aquí está la clave de tu pregunta: **tú no tocas el producto**, lo envía el proveedor
 directamente a la dirección del cliente. Así funciona:
 
-### 4.1 Tarifas de envío del proveedor 🔴 CONFIRMAR HOY
+### 4.1 Tarifas de envío del proveedor ✅ VERIFICADO
 
-El simulador usa **4,95 € por pedido + 1,10 €/kg extra** como estimación. Tienes que
-confirmarlo en el panel de AW Dropshipping (productos → costes de envío por destino).
-Si la tarifa real es mayor, los tramos de envío de la web deben subir: dime la cifra y
-ajusto los tres tramos en 2 minutos.
+Consultado en la web pública de AW Dropship España (aw-dropship.es/shipping) el 15/10/2026.
+**Importes sin IVA** (el IVA soportado es deducible) y **por pedido completo**, según su peso:
+
+| Zona | Destino | 0-1 kg | 1-5 kg | +5 kg | Plazo |
+|---|---|---|---|---|---|
+| 1 | España península y Baleares | **2,95 €** | **4,00 €** | 6,50 € | 1-3 días laborables |
+| 2 | Portugal continental | 3,50 € | 4,50 € | 10,50 € | 2-4 días laborables |
+| 3 | Francia, Alemania, Austria, Bélgica, Italia, Luxemburgo, Países Bajos | 6,95 € | 7,95 € | 10,50 € | 4-5 días |
+| 4 | Chequia, Dinamarca, Polonia, Eslovenia, Eslovaquia | 8,15 € | 12,15 € | 18,65 € | 4-6 días |
+| 5 | Bulgaria, Estonia, Finlandia, Croacia, Hungría, Irlanda, Lituania, Serbia, Rumanía, Suecia | 16,45 € | 27,90 € | — | 6-7 días |
+
+Qué significa para ti:
+
+- Un pedido normal (arnés, correa, comedero, fuente) pesa **menos de 1 kg** → el envío te cuesta **2,95 €**.
+- Los packs y las camas pueden pasar de 1 kg → **4,00 €**. Nada de tu catálogo llega a 5 kg.
+- Lo que cobramos al cliente (5,95 € / 3,95 € / gratis desde 39 €) **cubre de sobra** el coste real, y en los
+  pedidos pequeños incluso deja margen.
+- El peso de cada artículo es el real del feed de AW (peso de paquete) + 100 g de caja por pedido. Está todo
+  en `docs/GRANKHA_Beneficio_Real_Por_Producto.xlsx`.
+- Canarias, Ceuta y Melilla: AW las sirve **sin IVA y con aduana a cargo del destinatario**, y su tarifa no está
+  publicada. Los 14,95 € que cobramos pueden quedarse cortos: pregunta el precio exacto en tu panel antes de
+  vender a esas zonas (o desactívalas en el checkout).
 
 ### 4.2 Cómo se tramita cada pedido
 
@@ -163,6 +181,48 @@ donde se cuenta exactamente este proceso (y se pide la referencia GRK- para aten
   y lo dejo configurado con tus plantillas.
 
 ---
+
+## PASO 4-bis · Cómo le llegan los correos al cliente (explicado sin tecnicismos)
+
+Un cliente compra y tiene que recibir **dos correos**. Ninguno se escribe a mano si no quieres:
+
+**Correo 1 · «Pedido recibido»** — con el resumen de la compra, la dirección de envío y el total.
+
+- **Automático (con Stripe):** el cliente paga en la web → Stripe avisa al webhook (`stripe-webhook`) → ese
+  webhook marca el pedido como pagado y llama a `_shared/email.ts`, que envía el correo con todos los datos.
+  Tú no tocas nada; llega en segundos.
+- **Manual (hoy, sin Stripe):** el pedido te llega al email de la tienda → abres
+  `docs/emails/1-pedido-recibido.html`, rellenas los huecos (referencia, líneas, total, dirección) y lo envías
+  desde tu correo. Dos minutos.
+
+**Correo 2 · «Tu pedido va de camino»** — con el **número de seguimiento** y un botón para ver dónde está.
+
+- El seguimiento lo genera AW cuando expide el paquete (normalmente 1-2 días laborables después).
+- **Automático:** la función `notify-tracking` pregunta a AW por los pedidos pagados que aún no tienen aviso
+  enviado y, en cuanto aparece el número, manda el correo. Se puede programar para que se ejecute solo cada
+  30 minutos (pg_cron). Ese correo lleva el número y un botón que abre el seguimiento
+  (`17track.net` si no tenemos la URL directa de la agencia).
+- **Manual:** cuando AW te dé el número, lanza una sola orden y el correo sale solo:
+  ```bash
+  curl -X POST https://<proyecto>.functions.supabase.co/notify-tracking \
+    -H "Content-Type: application/json" \
+    -d '{"reference":"GRK-261015-4E7O","tracking_code":"PQ123456789ES"}'
+  ```
+  O si prefieres enviarlo desde tu correo: `docs/emails/2-pedido-enviado.html`.
+
+**Qué hay que configurar una sola vez** (5 minutos, y elige proveedor):
+
+```bash
+supabase functions deploy notify-tracking --no-verify-jwt
+supabase secrets set EMAIL_PROVIDER=brevo BREVO_API_KEY=xkeysib-... EMAIL_FROM="GRANKHA <hola@grankha.com>"
+# o, si prefieres Resend:
+supabase secrets set EMAIL_PROVIDER=resend RESEND_API_KEY=re_... EMAIL_FROM="GRANKHA <hola@grankha.com>"
+```
+
+Si aún no hay claves, las funciones **no fallan**: escriben el correo en el log (modo simulación), así que puedes
+probar el flujo entero antes de decidir. Diferencia rápida: **Brevo** tiene plan gratis de 300 correos/día y
+factura española; **Resend** es más cómodo de configurar pero 100/día y sin factura española. Para tu volumen,
+cualquiera de los dos sobra.
 
 ## PASO 5 · Poner los datos legales en la web (5 min)
 

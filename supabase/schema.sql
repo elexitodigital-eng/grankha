@@ -22,7 +22,11 @@ create table if not exists public.orders (
   shipping_method   text,
   customer        jsonb not null,
   notes             text,
-  raw_payload       jsonb
+  raw_payload       jsonb,
+  tracking_code     text,
+  tracking_url      text,
+  tracking_email_sent_at timestamptz,     -- cuándo se avisó al cliente del envío
+  supplier_order_id text
 );
 
 create index if not exists orders_created_at_idx on public.orders (created_at desc);

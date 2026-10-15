@@ -8,7 +8,10 @@
 <meta name="theme-color" content="#0B0B0B">
 <script>document.documentElement.className+=" js";</script>
 <link rel="canonical" href="https://elexitodigital-eng.github.io/grankha/pack-descanso.html">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230B0B0B'/%3E%3Ctext x='32' y='45' font-family='Helvetica,Arial,sans-serif' font-size='38' font-weight='600' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <meta property="og:site_name" content="GRANKHA">
 <meta property="og:locale" content="es_ES">
 <meta property="og:type" content="product">
@@ -483,12 +486,27 @@ html.js .reveal.is-in{opacity:1;transform:none}
   .gallery__nav{width:36px;height:36px;top:calc(50% - 18px);font-size:1.15rem}
   .gallery__bar .small{display:none}
 }
+
+/* ==========================================================================
+   Logo circular a la izquierda del nombre (cabecera y pie)
+   ========================================================================== */
+.wordmark{display:inline-flex;align-items:center;gap:10px}
+.wordmark span{letter-spacing:.34em;font-weight:600}
+.wordmark__logo{width:34px;height:34px;border-radius:50%;background:#fff;flex:none;
+  object-fit:cover;box-shadow:0 0 0 1px var(--line-strong);display:block;
+  transition:transform .5s var(--ease)}
+.wordmark:hover .wordmark__logo{transform:rotate(-6deg) scale(1.04)}
+.foot .wordmark__logo,.footer .wordmark__logo{width:30px;height:30px;box-shadow:0 0 0 1px rgba(255,255,255,.28)}
+@media (max-width:560px){
+  .wordmark__logo{width:30px;height:30px}
+  .wordmark span{letter-spacing:.22em}
+}
 </style>
 </head>
 <body><div class="announce">Envío gratis en península desde 39,00 € · Devoluciones 30 días · <a href="compromiso.html">GRANKHA por la salud animal</a></div>
 <header class="site-head">
   <div class="wrap site-head__in">
-    <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio">GRANKHA</a>
+    <a class="wordmark" href="index.html" aria-label="GRANKHA, inicio"><img class="wordmark__logo" src="assets/img/logo.png" srcset="assets/img/logo.png 1x, assets/img/logo@2x.png 2x" alt="" width="34" height="34" fetchpriority="high" decoding="async"><span>GRANKHA</span></a>
     <nav class="nav" aria-label="Navegación principal"><a href="tienda.html">Tienda</a><a href="tienda.html?cat=packs" aria-current="page">Packs</a><a href="tienda.html?aud=perro">Perros</a><a href="tienda.html?aud=gato">Gatos</a><a href="compromiso.html">Compromiso</a></nav>
     <div class="head-actions">
       <a class="icon-btn" href="carrito.html" aria-label="Ver carrito">
@@ -573,7 +591,7 @@ html.js .reveal.is-in{opacity:1;transform:none}
   <section class="memorial" style="padding-block:clamp(40px,6vw,72px)">
     <div class="wrap pledge">
       <div class="donate-note" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3.3 0 6 2.5 6 5.6 0 4-3.4 6.6-4.6 10.4h-2.8C9.4 15.2 6 12.6 6 8.6 6 5.5 8.7 3 12 3z"/><path d="M9.5 8.5l5 5M14.5 8.5l-5 5"/></svg><div><b>GRANKHA por la salud animal</b><br>
-        <span style="font-size:.88rem">Un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
+        <span style="font-size:.88rem">Un porcentaje de los beneficios irá destinado a la investigación del cáncer y las enfermedades raras en mascotas.</span></div></div>
       <div>
         <h3 class="h3" style="margin-bottom:10px;color:#fff">Esta compra también investiga.</h3>
         <p>Cada pedido reserva una parte del beneficio para proyectos de investigación veterinaria. Khalid, un gato blanco que perdimos por un cáncer de colon, es la razón. <a href="compromiso.html" style="color:#fff;text-decoration:underline">Nuestra historia</a>.</p>
@@ -651,8 +669,8 @@ html.js .reveal.is-in{opacity:1;transform:none}
   <div class="wrap">
     <div class="footer__cols">
       <div>
-        <a class="wordmark" href="index.html" style="color:#fff">GRANKHA</a>
-        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios se destinará a la investigación del cáncer y las enfermedades raras en mascotas. En memoria de Khalid, un gato blanco inolvidable.</p>
+        <a class="wordmark" href="index.html" style="color:#fff"><img class="wordmark__logo" src="assets/img/logo.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>GRANKHA</span></a>
+        <p class="footer__brand">Accesorios de diseño para perros y gatos, con una promesa: un porcentaje de los beneficios irá destinado a la investigación del cáncer y las enfermedades raras en mascotas. En memoria de Khalid, un gato blanco inolvidable.</p>
         <div class="pays"><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span><span>Pago seguro</span></div>
       </div>
       <div><h4>Tienda</h4><ul><li><a href="tienda.html?cat=arneses">Arneses</a></li><li><a href="tienda.html?cat=correas">Correas</a></li><li><a href="tienda.html?cat=camas">Camas</a></li><li><a href="tienda.html?cat=comederos">Comederos y fuentes</a></li><li><a href="tienda.html?cat=packs">Packs</a></li><li><a href="tienda.html">Ver todo</a></li></ul></div>
