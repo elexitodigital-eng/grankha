@@ -279,7 +279,7 @@ def card(p, rank=None):
     <span class="card__sub">{aud_icon}<span class="swatch" style="background:{p['colorHex']}"></span><span class="card__subt">{esc(sub)}</span></span>
     <div class="card__foot">
       <span class="price">{price_block(p)}<small>IVA incl.</small></span>
-      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} a la cesta">{SVG['cart']}</button>
+      <button class="mini-add" data-add="{p['slug']}" aria-label="Añadir {esc(p['name'])} a la cesta">{SVG['cart']}<span class="mini-add__txt">Añadir</span><span class="mini-add__ok">Añadido</span></button>
     </div>
   </div>
 </article>"""
@@ -315,7 +315,7 @@ def build_index():
         rep = next(p for p in PRODUCTS if p["cat"] == c and p["kind"] == "product")
         tiles += f"""<a class="cat-tile" href="tienda.html?cat={c}">
   <img src="{THUMB[rep['slug']]}" alt="{esc(name)}" width="600" height="750" loading="lazy" decoding="async">
-  <span class="cat-tile__cap"><b>{esc(name)}</b><span>{cat_count(c)} referencias · {esc(sub)}</span></span>
+  <span class="cat-tile__cap"><b>{esc(name)}</b><span>{cat_count(c)} productos · {esc(sub)}</span></span>
 </a>"""
     packs_home = [p for p in PACKS][:3]
     body = f"""{header("inicio")}
@@ -374,7 +374,7 @@ def build_index():
           <p class="kicker">Selección GRANKHA</p>
           <h2 class="h2">Lo más querido</h2>
         </div>
-        <a class="link-arrow" href="tienda.html">Ver las {len(PRODUCTS)} referencias</a>
+        <a class="link-arrow" href="tienda.html">Ver productos</a>
       </div>
       <div class="reveal">{products_grid(featured, ranks)}</div>
     </div>
@@ -463,7 +463,7 @@ def build_tienda():
     <div class="wrap">
       <p class="kicker">Tienda</p>
       <h1 class="h3" style="font-size:clamp(2rem,5vw,3.4rem)">La colección completa</h1>
-      <p class="lede mt-s">{len(PRODUCTS)} referencias para perros y gatos: {len(PROD)} productos y {len(PACKS)} packs con descuento. Precios con IVA incluido, envío gratis en península desde {eur(FREE_FROM)} y devoluciones durante {RETURNS} días.</p>
+      <p class="lede mt-s">{len(PROD)} productos y {len(PACKS)} packs con descuento para perros y gatos: Precios con IVA incluido, envío gratis en península desde {eur(FREE_FROM)} y devoluciones durante {RETURNS} días.</p>
     </div>
   </section>
   <section class="section section--tight" style="padding-top:0">
@@ -482,7 +482,7 @@ def build_tienda():
       </div>
       <div class="section-head" style="margin-bottom:18px;align-items:center">
         <div class="filters">{auds}</div>
-        <p class="small mb-0" id="shop-count">{len(PRODUCTS)} referencias</p>
+        <p class="small mb-0" id="shop-count">{len(PRODUCTS)} productos</p>
       </div>
       <div id="shop-grid">{products_grid(PRODUCTS)}</div>
       <div class="empty hide" id="shop-empty">

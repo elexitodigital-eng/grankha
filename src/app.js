@@ -263,6 +263,10 @@
           qty = box ? box.value : 1;
         }
         addToCart(btn.getAttribute("data-add"), qty);
+        /* confirmación en el propio botón: "Añadido" durante un segundo */
+        btn.classList.add("is-added");
+        clearTimeout(btn._ok);
+        btn._ok = setTimeout(function () { btn.classList.remove("is-added"); }, 1300);
       });
     });
   }
