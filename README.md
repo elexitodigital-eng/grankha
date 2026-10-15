@@ -114,3 +114,19 @@ Sin Stripe, el checkout ya funciona en modo «confirmar por email» con el desgl
 ---
 
 © GRANKHA · ZENQA LIFE · *GRANKHA por la salud animal*
+
+## Logo y favicon
+
+El logo vive en `assets/img/logo-src.png` y el sitio usa el resultado ya montado:
+círculo con fondo blanco (`assets/img/logo.png`, `logo@2x.png`) más `favicon.ico`,
+`favicon-32.png`, `favicon.png` y `apple-touch-icon.png`.
+
+Para cambiarlo, guarda la nueva imagen (por ejemplo en `assets/img/logo-src.png`) y ejecuta:
+
+```bash
+python3 tools/logo.py                 # o: python3 tools/logo.py ruta/a/tu-logo.png
+python3 tools/build.py
+```
+
+El script recorta el logo en marco circular con fondo blanco, limpia el tablero de
+transparencia si el PNG lo trae pintado, y genera todos los tamaños.

@@ -50,15 +50,44 @@ def monograma(size=512):
     return im.resize((size, size), Image.LANCZOS)
 
 
-def circular(src: Image.Image, size: int) -> Image.Image:
-    """Centra, recorta en cuadrado, pone fondo blanco y aplica el marco circular."""
-    src = src.convert("RGBA")
-    side = min(src.size)
-    left = (src.width - side) // 2
-    top = (src.height - side) // 2
-    src = src.crop((left, top, left + side, top + side))
+def limpiar(src: Image.Image) -> Image.Image:
+    """Deja solo el dibujo en negro sobre transparencia.
 
-    # fondo blanco detrás (por si el logo venía con transparencia o fondo oscuro)
+    Muchos PNG llevan el tablero de transparencia 'pintado' como píxeles blancos
+    y gris claro: aquí se convierte en transparencia real (por tabla de niveles,
+    rápido incluso con imágenes de 4000 px) y el trazo negro se conserva con sus
+    bordes suavizados."""
+    from PIL import ImageChops
+    src = src.convert("RGBA")
+    lut = []
+    for lum in range(256):
+        if lum <= 140:
+            k = 1.0
+        elif lum >= 238:
+            k = 0.0
+        else:
+            k = (238 - lum) / 98.0
+        a = int(round(255 * k))
+        lut.append(0 if a < 28 else a)      # el damero (243 y 253) desaparece
+    alfa = ImageChops.multiply(src.convert("L").point(lut), src.getchannel("A"))
+    out = Image.new("RGBA", src.size, (17, 17, 17, 255))
+    out.putalpha(alfa)
+    caja = out.getbbox()
+    return out.crop(caja) if caja else out
+
+
+def circular(src: Image.Image, size: int, margen=0.07) -> Image.Image:
+    """Centra, recorta en cuadrado, pone fondo blanco y aplica el marco circular."""
+    src = limpiar(src)
+    if margen:
+        # caja cuadrada alrededor del dibujo + aire para que el círculo no lo corte
+        lado = max(src.size)
+        aire = int(lado * margen)
+        lienzo = Image.new("RGBA", (lado + 2 * aire, lado + 2 * aire), (0, 0, 0, 0))
+        lienzo.alpha_composite(src, ((lienzo.width - src.width) // 2, (lienzo.height - src.height) // 2))
+        src = lienzo
+
+    # fondo blanco detrás (el marco circular es blanco, como pediste)
     base = Image.new("RGBA", src.size, (255, 255, 255, 255))
     base.alpha_composite(src)
 
