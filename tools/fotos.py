@@ -25,6 +25,11 @@ PRODUCTS_JSON = RAIZ / "data" / "products.json"
 # caja (y0, y1, x0, x1) donde va serigrafiada la marca sobre la tela del arnés
 CAJA_ARnes = (645, 785, 530, 680)
 
+# Quitar la marca del proveedor (la tarjeta y el logo "AW") de las fotos.
+# APAGADO a propósito: el cliente pidió dejar las fotos como estaban, con su
+# marca. Solo se activa si se pide:  python3 tools/fotos.py --quitar-marca
+QUITAR_MARCA = False
+
 # rango del color piel, para la etiqueta de las camas
 COLOR_PIEL = {"h": (0, 25), "s": (40, 255), "v": (60, 255)}
 
@@ -500,21 +505,20 @@ def limpiar_foto(path: Path, slug: str, aviso=None):
         return None
     card = _card_mask(src)
     img = src.copy()
-    # la tarjeta de cartón solo la llevan las fotos de los arneses
-    if card is not None and slug.startswith("arnes"):
-        img = limpiar_tarjeta(img, card, src)
-    else:
-        card = None
-    if slug.startswith("arnes"):
-        # la impresión del pecho ("Paw AW") es de muy bajo contraste sobre el
-        # propio tejido: se deja tal cual, borrarla dejaba una mancha lisa
-        pass
-    elif slug.startswith("correa"):
-        if _cuerpo_claro(img):
-            img = limpiar_marca_saturada(img)   # la placa de color
-            img = limpiar_marca_clara(img)      # y la impresión que lleva encima
+    if QUITAR_MARCA:
+        # la tarjeta de cartón solo la llevan las fotos de los arneses
+        if card is not None and slug.startswith("arnes"):
+            img = limpiar_tarjeta(img, card, src)
         else:
-            img = limpiar_marca_clara(img)
+            card = None
+        if slug.startswith("correa"):
+            if _cuerpo_claro(img):
+                img = limpiar_marca_saturada(img)   # la placa de color
+                img = limpiar_marca_clara(img)      # y la impresión que lleva encima
+            else:
+                img = limpiar_marca_clara(img)
+    # la impresión del pecho de los arneses ("Paw AW") es de muy bajo contraste
+    # sobre el propio tejido: se deja tal cual, borrarla dejaba una mancha lisa
     # las camas llevan una etiqueta de piel con el logo bordado: es muy pequeña y
     # va en perspectiva en cada foto, así que se deja tal cual (pendiente)
     return img
@@ -529,7 +533,7 @@ def proceso(sku: str, slug: str, con_fondo=True, guardar=True, avisos=None):
         return False
     if con_fondo:
         a = alpha_producto(img)
-        if slug.startswith("arnes"):
+        if QUITAR_MARCA and slug.startswith("arnes"):
             # la tarjeta de cartón con la que el proveedor presenta el arnés no
             # debe salir en la foto: se quita de la máscara (el producto no)
             src = cv2.imread(str(path))
@@ -594,6 +598,8 @@ def componer_pack(pack, dir_tmp: Path):
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     con_fondo = "--sin-fondo" not in sys.argv
+    global QUITAR_MARCA
+    QUITAR_MARCA = "--quitar-marca" in sys.argv
     avisos = []
     hechos = 0
     for p in catalogo():
