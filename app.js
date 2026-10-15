@@ -125,7 +125,7 @@
       '</div>';
     }).join("");
     if (lines.length > visibles.length) {
-      html += '<p class="mini__s">y ' + (lines.length - visibles.length) + ' referencia(s) más en la cesta</p>';
+      html += '<p class="mini__s">y ' + (lines.length - visibles.length) + ' producto(s) más en la cesta</p>';
     }
     $("[data-mini-lines]", box).innerHTML = html;
     var tot = $("[data-mini-total]", box);
