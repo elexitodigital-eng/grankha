@@ -669,8 +669,8 @@
     panel.style.cssText = "position:fixed;inset:0;background:#fff;z-index:80;padding:84px var(--pad) 40px;overflow:auto";
     panel.innerHTML = '<button class="icon-btn" id="menu-close" aria-label="Cerrar" style="position:absolute;top:22px;right:var(--pad);font-size:1.5rem">×</button>' +
       '<nav style="display:grid;gap:6px;font-size:1.6rem;letter-spacing:-.02em">' +
-      ['index.html|Inicio', 'tienda.html|Tienda', 'compromiso.html|Compromiso',
-       'envios.html|Envíos y devoluciones', 'contacto.html|Contacto', 'legal.html|Legal']
+      ['tienda.html|Tienda', 'tienda.html?cat=packs|Packs', 'compromiso.html|Compromiso',
+       'contacto.html|Contacto']
         .map(function (i) {
           var parts = i.split("|");
           return '<a href="' + parts[0] + '" style="padding:12px 0;border-bottom:1px solid var(--line)">' + parts[1] + '</a>';

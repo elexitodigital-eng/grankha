@@ -1,18 +1,14 @@
-"""Normaliza las fotos de producto para que la rejilla se vea regular.
+"""Reencuadra y unifica las fotos de producto (utilidad, NO en uso).
 
-Qué hace, por foto:
-  1. mide el fondo (degradado + viñeta) y lo aplana
-  2. lleva el fondo de estudio al mismo tono claro en todas las fotos
-  3. centra el producto y lo deja al mismo tamaño dentro de la ficha
-  4. escribe ficha (900) y miniatura (380) partiendo del original
-
-No borra marcas, etiquetas ni tarjetas: solo encuadra y unifica el fondo.
-Los originales del proveedor no se tocan (`assets/src/products-original/`).
+OJO: ahora mismo la web publica los ORIGINALES del proveedor, tal cual salen
+de AW. Este script está aquí por si algun dia se quiere normalizar el fondo y
+el tamano de los productos en la rejilla, pero no forma parte del build: si se
+ejecuta, sobreescribe las fotos de assets/img/products y assets/img/thumbs.
+Los originales sin tocar estan en assets/src/products-original/ y en data/raw.
 
 Uso:
     python3 tools/reencuadre.py --probar    # hoja de control, sin escribir
     python3 tools/reencuadre.py             # aplica a todas las fotos
-    python3 tools/reencuadre.py --aire 0.1  # más aire (solo fotos con textura)
 """
 from pathlib import Path
 import json

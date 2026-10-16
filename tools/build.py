@@ -193,9 +193,8 @@ def header(active=""):
     nav = "".join([
         a("tienda.html", "Tienda", "tienda"),
         a("tienda.html?cat=packs", "Packs", "packs"),
-        a("tienda.html?aud=perro", "Perros", "perro"),
-        a("tienda.html?aud=gato", "Gatos", "gato"),
         a("compromiso.html", "Compromiso", "compromiso"),
+        a("contacto.html", "Contacto", "contacto"),
     ])
     return f"""<div class="announce">Envío gratis en península desde {eur(FREE_FROM)} · Devoluciones {RETURNS} días · <a href="compromiso.html">GRANKHA por la salud animal</a></div>
 <header class="site-head">
