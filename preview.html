@@ -353,9 +353,12 @@ select.chip{appearance:none;padding-right:34px;
 
 /* ---------- memorial / compromiso ---------- */
 .memorial{background:var(--ink);color:var(--paper);overflow:hidden}
-.memorial__in{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(28px,5vw,80px);align-items:center}
-.memorial__media{position:relative}
-.memorial__media img{width:100%;aspect-ratio:1/1;object-fit:cover;filter:grayscale(100%) contrast(1.05)}
+.memorial__in{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(28px,5vw,80px);align-items:stretch}
+.memorial__media{position:relative;display:flex;flex-direction:column;min-height:0}
+.memorial__media img{width:100%;flex:1 1 auto;min-height:0;object-fit:cover;object-position:52% 40%;
+  filter:grayscale(100%) contrast(1.05)}
+/* en la portada la foto llena el alto del texto y va ampliada hacia Khalid */
+.memorial__in .memorial__media img{width:82%;align-self:flex-start;height:100%;min-height:300px}
 .memorial__media figcaption{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
   color:var(--white-soft);margin-top:14px}
 .memorial blockquote{margin:0 0 26px;font-size:clamp(1.15rem,2.1vw,1.7rem);line-height:1.35;
@@ -518,6 +521,7 @@ html.js .reveal.is-in{opacity:1;transform:none}
   .hero__copy{padding:44px 0 34px}
   .hero__media{min-height:56vw;order:-1}
   .split,.split--rev,.memorial__in,.pd,.cart,.news,.footer__cols{grid-template-columns:1fr}
+  .memorial__in .memorial__media img{width:100%;height:auto;min-height:0;max-height:520px;flex:0 0 auto;aspect-ratio:4/5}
   .cats{grid-template-columns:repeat(2,1fr)}
   .pd__media,.summary{position:static}
   .footer__cols{gap:34px}
