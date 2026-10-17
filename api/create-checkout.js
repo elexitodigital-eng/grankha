@@ -137,6 +137,8 @@ module.exports = async (req, res) => {
     session = await stripe.checkout.sessions.create({
       mode: "payment",
       locale: "es",
+      // siempre en euros: la tienda vende en EUR y el cliente paga EUR
+      adaptive_pricing: { enabled: false },
       line_items,
       customer_email: email,
       client_reference_id: reference,

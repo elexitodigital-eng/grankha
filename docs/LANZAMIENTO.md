@@ -7,7 +7,7 @@ _Actualizado: 17 de octubre de 2026_
 | Pieza | Estado |
 |---|---|
 | **Web** | Desplegada en Vercel: **https://grankha-beta.vercel.app** (85 páginas, 0 enlaces rotos, 0 errores de JS) |
-| **Pago con tarjeta** | Stripe **en modo real** (`rk_live`). El carrito crea la sesión de pago y redirige a Stripe Checkout. Probado de punta a punta: la sesión se crea con el importe correcto (73,80 €) y el cliente aterriza en la pasarela. |
+| **Pago con tarjeta** | Stripe **en modo real** (`rk_live`). El carrito crea la sesión de pago y redirige a Stripe Checkout. Probado de punta a punta: la sesión se crea con el importe correcto (73,80 €) y el cliente aterriza en la pasarela. El precio se muestra **siempre en euros** (desactivado el precio adaptativo de Stripe). |
 | **Precios y envío** | Se recalculan **en el servidor**: el navegador no puede tocar importes. Zonas (península, Baleares, Canarias/Ceuta/Melilla, Portugal, UE) y tramos de envío gratis iguales que la web. Canarias sin IVA (IGIC/IPSI en destino). |
 | **Base de datos** | Supabase `ravvjwyjaxofidgueopc` con las tablas `orders`, `order_items`, `subscribers`, `contact_messages` + vistas de KPIs. RLS activo: el público solo puede dejar el email; los pedidos los escribe el servidor. |
 | **Pedidos guardados** | Cada compra se guarda como `pending` y pasa a **`paid`** cuando Stripe confirma el cobro (webhook verificado con firma: firma buena → 200, firma mala → 400). |
