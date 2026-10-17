@@ -381,6 +381,47 @@
   }
 
   /* -------------------------------------------------------------- carrito */
+  // Al volver de la pasarela: confirmación del pedido (o aviso de cancelado)
+  function initGracias() {
+    var q = location.search;
+    var ok = /[?&]estado=ok/.test(q);
+    var cancelado = /[?&]estado=cancelado/.test(q);
+    if (!ok && !cancelado) return;
+    var ref = (q.match(/[?&]pedido=([^&]+)/) || [])[1] || "";
+    var main = document.querySelector("main");
+    if (!main) return;
+
+    if (cancelado) {
+      var aviso = document.createElement("div");
+      aviso.className = "wrap";
+      aviso.style.padding = "24px 0 0";
+      aviso.innerHTML = '<div class="notice"><b>No se ha completado el pago.</b><br>' +
+        'Tu cesta sigue aquí y no se te ha cobrado nada. Puedes volver a intentarlo cuando quieras.</div>';
+      main.insertBefore(aviso, main.firstElementChild);
+      return;
+    }
+
+    // pedido pagado: limpiamos la cesta y damos la bienvenida
+    clearCart();
+    paintCount();
+    main.innerHTML =
+      '<section class="section section--tight"><div class="wrap" style="max-width:720px">' +
+        '<p class="kicker">Pedido confirmado</p>' +
+        '<h1 class="h2">Gracias de corazón.</h1>' +
+        '<p class="lede mt-s">Hemos recibido tu pago' + (ref ? ' del pedido <b>' + ref + '</b>' : '') +
+          '. Te acabamos de enviar el recibo por correo con todos los datos de la compra.</p>' +
+        '<div class="donate-note" style="margin:26px 0"><div><b>Qué pasa ahora</b><br>' +
+          '<span style="font-size:.9rem">1. Preparamos tu pedido y lo confirmamos con el almacén.<br>' +
+          '2. En cuanto salga, te escribimos con el enlace de seguimiento.<br>' +
+          '3. Lo recibes en 3-8 días laborables y tienes 30 días para devolverlo.</span></div></div>' +
+        '<p class="small">Si algo no cuadra, respóndenos a ese correo o escríbenos desde la página de contacto ' +
+          'con la referencia del pedido.</p>' +
+        '<div class="pd__buy"><a class="btn" href="tienda.html">Seguir comprando</a>' +
+        '<a class="btn btn--ghost" href="compromiso.html">Nuestra historia</a></div>' +
+      '</div></section>';
+    window.scrollTo(0, 0);
+  }
+
   function initCart() {
     var root = $("#cart-root");
     if (!root) return;
@@ -759,12 +800,33 @@
         if (!f.reportValidity()) return;
         var d = {};
         new FormData(f).forEach(function (v, k) { d[k] = v; });
-        var subject = "Consulta web GRANKHA" + (d.pedido ? " · " + d.pedido : "");
-        var body = "Nombre: " + (d.nombre || "") + "\nEmail: " + (d.email || "") +
-          (d.pedido ? "\nPedido: " + d.pedido : "") + "\n\n" + (d.mensaje || "");
-        location.href = "mailto:" + CFG.contactEmail + "?subject=" + encodeURIComponent(subject) +
-          "&body=" + encodeURIComponent(body);
-        toast("Abriendo tu correo para enviar el mensaje…");
+        var btn = f.querySelector("button[type=submit]") || f.querySelector("button");
+        if (btn) btn.disabled = true;
+
+        function fallback() {
+          var subject = "Consulta web GRANKHA" + (d.pedido ? " · " + d.pedido : "");
+          var body = "Nombre: " + (d.nombre || "") + "\nEmail: " + (d.email || "") +
+            (d.pedido ? "\nPedido: " + d.pedido : "") + "\n\n" + (d.mensaje || "");
+          location.href = "mailto:" + CFG.contactEmail + "?subject=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+          toast("Abriendo tu correo para enviar el mensaje…");
+          if (btn) btn.disabled = false;
+        }
+
+        // con backend, el mensaje queda guardado y nos llega por correo
+        var ep = CFG.contactEndpoint;
+        if (!ep) { fallback(); return; }
+        fetch(ep, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(d)
+        }).then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          f.reset();
+          toast("Mensaje enviado. Te contestamos en 24 h laborables.");
+        }).catch(function () {
+          fallback();
+        }).then(function () { if (btn) btn.disabled = false; });
       });
     });
   }
@@ -862,6 +924,7 @@
     initShop();
     initProduct();
     initCart();
+    initGracias();
     initMenu();
     initGallery();
     initMini();

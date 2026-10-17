@@ -1,0 +1,11 @@
+# lo que no hace falta subir a Vercel
+data/raw/
+docs/
+assets/src/
+src/
+tools/
+supabase/
+preview.html
+*.xlsx
+.git/
+node_modules/

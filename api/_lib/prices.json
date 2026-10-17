@@ -1,0 +1,224 @@
+{
+ "PAWH-01": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · XS (2-4 kg) · Rosa suave · Cuarzo rosa"
+ },
+ "PAWH-02": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · XS (2-4 kg) · Lavanda · Amatista"
+ },
+ "PAWH-03": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · XS (2-4 kg) · Rock Grey · Obsidiana negra"
+ },
+ "PAWH-04": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · S (4-8 kg) · Rosa suave · Cuarzo rosa"
+ },
+ "PAWH-05": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · S (4-8 kg) · Lavanda · Amatista"
+ },
+ "PAWH-06": {
+  "price": 36.9,
+  "name": "Arnés de paso Guardian · S (4-8 kg) · Gris roca · Obsidiana negra"
+ },
+ "PawL-07": {
+  "price": 34.9,
+  "name": "Correa Elephant · Azul · 2 m"
+ },
+ "PawL-08": {
+  "price": 34.9,
+  "name": "Correa Elephant · Marrón · 2 m"
+ },
+ "PawL-09": {
+  "price": 34.9,
+  "name": "Correa Elephant · Gris · 2 m"
+ },
+ "PawL-04": {
+  "price": 29.9,
+  "name": "Correa Mini Mango · Amarillo · 3 m"
+ },
+ "PawL-05": {
+  "price": 29.9,
+  "name": "Correa Mini Mango · Ciruela · 3 m"
+ },
+ "PawL-06": {
+  "price": 29.9,
+  "name": "Correa Mini Mango · Durazno · 3 m"
+ },
+ "PawL-01": {
+  "price": 21.9,
+  "name": "Correa Pocket Pod · Rosa · 1,5 m"
+ },
+ "PawL-02": {
+  "price": 21.9,
+  "name": "Correa Pocket Pod · Verde · 1,5 m"
+ },
+ "PawL-03": {
+  "price": 21.9,
+  "name": "Correa Pocket Pod · Blanco · 1,5 m"
+ },
+ "PawB-01": {
+  "price": 34.9,
+  "name": "Cama Teddy · Pequeña · 60 × 45 × 17 cm · Peluche marrón"
+ },
+ "PawB-05": {
+  "price": 37.9,
+  "name": "Cama Lucky Elephant · 60 × 50 × 14 cm · Estampado rojo"
+ },
+ "PawB-06": {
+  "price": 37.9,
+  "name": "Cama Lucky Elephant · 60 × 50 × 14 cm · Estampado verde"
+ },
+ "PawB-03": {
+  "price": 39.9,
+  "name": "Cama acolchada caqui · Pequeña · 60 × 50 × 15 cm · Verde caqui"
+ },
+ "PawB-09": {
+  "price": 39.9,
+  "name": "Cama Corona Real · Mediana · 50 × 50 × 26 cm · Arena y gris"
+ },
+ "PawB-11": {
+  "price": 42.9,
+  "name": "Cama Patita · Mediana · 60 cm · Felpa beige"
+ },
+ "PawB-02": {
+  "price": 44.9,
+  "name": "Cama Teddy · Mediana · 70 × 55 × 18 cm · Peluche marrón"
+ },
+ "PawB-07": {
+  "price": 44.9,
+  "name": "Cama sofá · Pequeña · 50 × 50 × 26 cm · Rayas marrones"
+ },
+ "PawB-13": {
+  "price": 44.9,
+  "name": "Cama tienda (iglú) · 48 × 48 × 40 cm · Verde y naranja"
+ },
+ "PawB-10": {
+  "price": 46.9,
+  "name": "Cama Corona Real · Grande · 50 × 50 × 26 cm · Negro y gris"
+ },
+ "PawB-12": {
+  "price": 49.9,
+  "name": "Cama Patita · Grande · 70 cm · Felpa beige"
+ },
+ "PawB-04": {
+  "price": 52.9,
+  "name": "Cama acolchada caqui · Mediana · 70 × 60 × 15 cm · Caqui beige"
+ },
+ "PawB-08": {
+  "price": 56.9,
+  "name": "Cama sofá · Mediana · 60 × 60 × 28 cm · Rayas marrones"
+ },
+ "PawB-14": {
+  "price": 57.9,
+  "name": "Cama tienda (iglú) · 58 × 58 × 48 cm · Beige y naranja"
+ },
+ "PAWFB-09": {
+  "price": 18.9,
+  "name": "Filtros de repuesto para fuente · Pack de 4 · compatible con la fuente GRANKHA"
+ },
+ "PAWFB-08": {
+  "price": 49.9,
+  "name": "Fuente de agua eléctrica 2,5 L · Acero inoxidable 304 · alimentación USB"
+ },
+ "PAWFB-01": {
+  "price": 13.9,
+  "name": "Comedero estilo cobre · Ø 18 cm · Acero inoxidable 304"
+ },
+ "PAWFB-02": {
+  "price": 16.9,
+  "name": "Comedero estilo cobre grande · Ø 22 cm · Acero inoxidable 304"
+ },
+ "PAWFB-07": {
+  "price": 17.9,
+  "name": "Comedero para gatos con soporte · Acero inoxidable 304 · cara de gato"
+ },
+ "PAWFB-03": {
+  "price": 26.9,
+  "name": "Comedero de acero con soporte de madera · Ø 12 cm · Acero 201 + madera natural"
+ },
+ "PAWFB-06": {
+  "price": 29.9,
+  "name": "Comedero de cerámica con soporte de madera · Ø 14 cm · Cerámica + madera"
+ },
+ "PAWFB-04": {
+  "price": 39.9,
+  "name": "Comedero doble con soporte de madera · 2 × 12 cm · Acero 201 + madera"
+ },
+ "PAWFB-05": {
+  "price": 44.9,
+  "name": "Comedero doble grande con soporte de madera · 2 × 13 cm · Acero 201 + madera"
+ },
+ "PACK-02": {
+  "price": 62.9,
+  "name": "Pack Paseo Guardian XS · Pack de 2 piezas"
+ },
+ "PACK-01": {
+  "price": 66.9,
+  "name": "Pack Paseo Guardian S · Pack de 2 piezas"
+ },
+ "PACK-04": {
+  "price": 66.9,
+  "name": "Pack Descanso · Pack de 2 piezas"
+ },
+ "PACK-03": {
+  "price": 78.9,
+  "name": "Pack Primeros Días Gato · Pack de 3 piezas"
+ },
+ "PACK-06": {
+  "price": 80.9,
+  "name": "Pack Hidratación · Pack de 2 piezas"
+ },
+ "PACK-05": {
+  "price": 84.9,
+  "name": "Pack Hogar Real · Pack de 2 piezas"
+ },
+ "costs": {
+  "PAWH-01": 18.63,
+  "PAWH-02": 18.63,
+  "PAWH-03": 18.63,
+  "PAWH-04": 18.63,
+  "PAWH-05": 18.63,
+  "PAWH-06": 18.63,
+  "PawL-07": 18.75,
+  "PawL-08": 18.75,
+  "PawL-09": 18.75,
+  "PawL-04": 15.75,
+  "PawL-05": 15.75,
+  "PawL-06": 15.75,
+  "PawL-01": 12.0,
+  "PawL-02": 12.0,
+  "PawL-03": 12.0,
+  "PawB-01": 16.81,
+  "PawB-05": 16.81,
+  "PawB-06": 16.81,
+  "PawB-03": 19.69,
+  "PawB-09": 18.0,
+  "PawB-11": 18.13,
+  "PawB-02": 21.31,
+  "PawB-07": 21.75,
+  "PawB-13": 20.13,
+  "PawB-10": 21.75,
+  "PawB-12": 22.63,
+  "PawB-04": 25.19,
+  "PawB-08": 27.44,
+  "PawB-14": 27.44,
+  "PAWFB-09": 2.1,
+  "PAWFB-08": 28.5,
+  "PAWFB-01": 4.5,
+  "PAWFB-02": 5.25,
+  "PAWFB-07": 6.0,
+  "PAWFB-03": 10.88,
+  "PAWFB-06": 11.25,
+  "PAWFB-04": 17.25,
+  "PAWFB-05": 21.0,
+  "PACK-02": 34.38,
+  "PACK-01": 37.38,
+  "PACK-04": 32.19,
+  "PACK-03": 36.6,
+  "PACK-06": 32.7,
+  "PACK-05": 42.75
+ }
+}

@@ -110,6 +110,7 @@ CFG = {
     "shipping": {k: v for k, v in SITE["shipping"].items()
                  if k in ("default", "freeFromPeninsular", "vat", "note", "options")},
     "checkout": {"endpoint": SITE["checkout"]["endpoint"]},
+    "contactEndpoint": SITE.get("contact_endpoint", ""),
     # si algún día hay proyecto Supabase, la newsletter se guarda de verdad
     "supabase": SITE.get("supabase", {}),
     "currency": SITE["currency"],
@@ -1066,6 +1067,11 @@ def build_extras():
     fn_dir.mkdir(parents=True, exist_ok=True)
     (fn_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs}, ensure_ascii=False, indent=1))
     print(f"  · supabase/.../prices.json ({len(prices)} referencias)")
+    # la misma lista usa la función de pago desplegada en Vercel
+    api_dir = ROOT / "api" / "_lib"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    (api_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs}, ensure_ascii=False, indent=1))
+    print(f"  · api/_lib/prices.json ({len(prices)} referencias)")
 
     # redirecciones desde los slugs anteriores (SEO)
     OLD = {
