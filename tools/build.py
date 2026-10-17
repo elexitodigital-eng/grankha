@@ -79,7 +79,9 @@ print("· cargando imágenes…")
 THUMB = {p["slug"]: f'assets/img/thumbs/{p["slug"]}.webp' for p in PRODUCTS}
 PHOTO = {p["slug"]: f'assets/img/products/{p["img"]}' for p in PRODUCTS}
 HERO = "assets/img/hero.jpg"
-KHALID = "assets/img/khalid.jpg"
+KHALID = "assets/img/khalid.jpg"                 # portada: la foto de la carita (retrato)
+KHALID_CUADRO = "assets/img/khalid-cuadrado.jpg"  # compromiso: cuadrado
+KHALID_TE_QUIERO = "assets/img/khalid-te-quiero.jpg"  # banda «Te quiero amigo»
 
 by_slug = {p["slug"]: p for p in PRODUCTS}
 by_sku = {p["sku"]: p for p in PRODUCTS}
@@ -402,7 +404,7 @@ def build_index():
   <section class="section memorial" id="compromiso">
     <div class="wrap memorial__in">
       <figure class="memorial__media reveal">
-        <img src="{KHALID}" alt="Khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000" loading="lazy" decoding="async">
+        <img src="{KHALID}" alt="Khalid, el gato blanco de pelo largo y ojos claros de la familia" width="881" height="1175" loading="lazy" decoding="async">
         <figcaption>Khalid</figcaption>
       </figure>
       <div class="reveal">
@@ -763,7 +765,7 @@ def build_compromiso():
   <section class="section" style="padding-top:0">
     <div class="wrap split">
       <figure class="memorial__media reveal" style="margin:0">
-        <img src="{KHALID}" alt="Khalid, un gato blanco de ojos claros, sentado junto a una ventana" width="1000" height="1000">
+        <img src="{KHALID_CUADRO}" alt="Khalid, el gato blanco de pelo largo y ojos claros de la familia" width="1005" height="1175">
         <figcaption style="color:var(--muted)">Khalid</figcaption>
       </figure>
       <div class="prose reveal">
@@ -773,6 +775,17 @@ def build_compromiso():
         <blockquote class="mt-m" style="margin:34px 0 0;padding-left:20px;border-left:2px solid var(--ink);font-size:clamp(1.1rem,1.9vw,1.5rem);letter-spacing:-.02em"><b>GRANKHA por la salud animal</b></blockquote>
         <p class="small mt-m">Khalid era un gato: la tienda nace de él, y por eso aquí encontrarás accesorios para gatos y para perros,
         sin favoritismos. Los gatos también salen a pasear, también necesitan beber, también duermen en coronas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight" style="padding-top:0">
+    <div class="wrap khalid-amigo">
+      <figure class="khalid-amigo__media reveal">
+        <img src="{KHALID_TE_QUIERO}" alt="Khalid, un gato blanco de pelo largo, mirando hacia arriba" width="799" height="1000" loading="lazy" decoding="async">
+      </figure>
+      <div class="khalid-amigo__copy reveal">
+        <p class="khalid-amigo__txt">Te quiero amigo,<br>esto va por ti.</p>
       </div>
     </div>
   </section>
