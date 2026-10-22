@@ -61,6 +61,21 @@ module.exports = async (req, res) => {
   try {
     if (event.type === "checkout.session.completed") {
       const s = event.data.object;
+
+      // Stripe puede entregar el mismo evento más de una vez (reintentos tras un
+      // 500 nuestro, o avisos duplicados). Miramos ANTES de tocar nada: si el
+      // correo al cliente ya salió, no lo repetimos. Si salió mal la vez anterior
+      // (order_email_sent_at vacío), reintentar sí interesa.
+      const { data: antes } = await supa.from("orders")
+        .select("reference, status, order_email_sent_at")
+        .eq("stripe_session_id", s.id)
+        .maybeSingle();
+      const yaAvisado = !!(antes && antes.order_email_sent_at);
+      if (yaAvisado) {
+        console.log(`[webhook duplicado] ${antes.reference} ya tenía la confirmación enviada · no se repiten los correos`);
+        return send(res, 200, { received: true, duplicado: true });
+      }
+
       const { data: o } = await supa.from("orders")
         .update({ status: "paid", stripe_payment_intent: String(s.payment_intent || "") })
         .eq("stripe_session_id", s.id)
