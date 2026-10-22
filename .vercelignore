@@ -1,5 +1,8 @@
 # lo que no hace falta subir a Vercel
-data/raw/
+# data/ ENTERO: contiene costes de proveedor, márgenes y el donation_rate.
+# Solo lo usa tools/build.py en local para generar el HTML estático; la web
+# publicada no lo necesita. Subirlo dejaba /data/pricing.json público.
+data/
 docs/
 assets/src/
 src/

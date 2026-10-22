@@ -98,7 +98,7 @@ module.exports = async (req, res) => {
           console.log(`[aviso venta] ${o.reference} → ${process.env.EMAIL_AVISO} · ${rInt.ok ? "OK " + (rInt.id || "") : "FALLO " + (rInt.error || "")}`);
         }
         // si el correo al cliente no salió, se anota en su propia columna (no en notes,
-        // que puede llevar el comentario del cliente) para reenviarlo desde /pedidos.html
+        // que puede llevar el comentario del cliente) para reenviarlo desde el panel (/api/panel)
         if (!rCli.ok) {
           await supa.from("orders")
             .update({ order_email_error: String(rCli.error || "desconocido").slice(0, 300) })

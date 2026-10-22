@@ -1,11 +1,16 @@
 // ============================================================================
 // GRANKHA · /api/admin — panel privado para gestionar los pedidos
 //
-// Todo lo que hace exige el token (ADMIN_TOKEN). Sin él, 401. La página
-// pedidos.html es solo la interfaz: no contiene ningún secreto.
+// Todo lo que hace exige la credencial (ADMIN_TOKEN). Sin ella devuelve 404
+// con el mismo cuerpo que cualquier otra ruta inexistente: desde fuera no se
+// distingue que aquí haya un endpoint de administración, ni se puede sondear
+// el token (no hay diferencia observable entre "falta" y "es incorrecto").
 //
-//   GET  /api/admin?token=…                      → lista de pedidos
-//   POST /api/admin { token, action, reference } →
+// La credencial viaja en una cookie HttpOnly que fija /api/panel?token=…
+// También se acepta por ?token= o en el cuerpo, para llamadas manuales.
+//
+//   GET  /api/admin                              → lista de pedidos
+//   POST /api/admin { action, reference, … }     →
 //        action "shipped"        marca enviado + manda el email de seguimiento
 //        action "resend-tracking" reenvía el email de seguimiento
 //        action "resend-order"    reenvía la confirmación de pedido al cliente
@@ -16,12 +21,12 @@
 const { createClient } = require("@supabase/supabase-js");
 const { sendEmail, mailReady, explainEmailError, fallbackFrom } = require("./_lib/mail");
 const { orderEmail, saleEmail, shippingEmail } = require("./_lib/emails");
+const { TOKEN, autorizado, noExiste } = require("./_lib/auth");
 
 const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false },
 });
 
-const TOKEN = process.env.ADMIN_TOKEN || "";
 const SELECT = `id, reference, created_at, status, currency, subtotal, shipping_price, vat_included,
                 total, donation, shipping_method, customer, notes, tracking_code, tracking_url,
                 tracking_carrier, tracking_eta, tracking_email_sent_at, shipped_at,
@@ -35,16 +40,6 @@ function send(res, status, body) {
   res.end(body === undefined ? "" : JSON.stringify(body));
 }
 
-// comparación en tiempo constante para no filtrar el token carácter a carácter
-function tokenOk(dado) {
-  const a = Buffer.from(String(dado || ""));
-  const b = Buffer.from(TOKEN);
-  if (!TOKEN || a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
-  return diff === 0;
-}
-
 async function getOrder(reference) {
   const { data, error } = await supa.from("orders").select(SELECT).eq("reference", reference).maybeSingle();
   if (error) throw new Error(error.message);
@@ -52,12 +47,13 @@ async function getOrder(reference) {
 }
 
 module.exports = async (req, res) => {
-  if (!TOKEN) return send(res, 500, { error: "ADMIN_TOKEN no está configurado en Vercel" });
+  if (!TOKEN) return noExiste(req, res);
+
+  const u = new URL(req.url, "http://x");
 
   // ------------------------------------------------------------ GET: listado
   if (req.method === "GET") {
-    const u = new URL(req.url, "http://x");
-    if (!tokenOk(u.searchParams.get("token"))) return send(res, 401, { error: "Token incorrecto" });
+    if (!autorizado(req, u, null).ok) return noExiste(req, res);
     const { data, error } = await supa.from("orders").select(SELECT)
       .order("created_at", { ascending: false }).limit(100);
     if (error) return send(res, 500, { error: error.message });
@@ -72,7 +68,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  if (req.method !== "POST") return send(res, 405, { error: "Método no permitido" });
+  if (req.method !== "POST") return noExiste(req, res);
 
   // ----------------------------------------------------------- POST: acciones
   // En Vercel el cuerpo ya viene parseado cuando Content-Type es application/json;
@@ -80,10 +76,10 @@ module.exports = async (req, res) => {
   let d = req.body;
   if (typeof d === "string" || Buffer.isBuffer(d)) {
     try { d = JSON.parse(Buffer.isBuffer(d) ? d.toString("utf8") : d); }
-    catch { return send(res, 400, { error: "JSON inválido" }); }
+    catch { return noExiste(req, res); }
   }
-  if (!d || typeof d !== "object") return send(res, 400, { error: "JSON inválido" });
-  if (!tokenOk(d.token)) return send(res, 401, { error: "Token incorrecto" });
+  if (!d || typeof d !== "object") return noExiste(req, res);
+  if (!autorizado(req, u, d).ok) return noExiste(req, res);
 
   const action = String(d.action || "");
 
@@ -102,7 +98,7 @@ module.exports = async (req, res) => {
     const r = await sendEmail(destino, "GRANKHA · prueba del panel de pedidos",
       `<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto">
          <h2 style="letter-spacing:-.02em">El correo de GRANKHA funciona.</h2>
-         <p>Este mensaje lo ha mandado el panel de pedidos (<code>/pedidos.html</code>) con el
+         <p>Este mensaje lo ha mandado el panel de pedidos (<code>/api/panel</code>) con el
          remitente configurado en producción.</p>
          <p>Si lo has recibido desde <b>grankha@roadshop.online</b>, el dominio ya está verificado
          en Resend y los tres correos de la tienda (pedido confirmado, aviso de venta y envío con

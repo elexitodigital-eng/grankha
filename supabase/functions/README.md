@@ -7,7 +7,7 @@ El flujo de correo y pedidos de GRANKHA corre **entero en Vercel**, no aquí:
 | `create-checkout/index.ts` | `api/create-checkout.js` |
 | `stripe-webhook/index.ts` | `api/stripe-webhook.js` |
 | `notify-tracking/index.ts` | `api/admin.js` (acción `shipped`) |
-| `fulfill-order/index.ts` | manual, desde `/pedidos.html` |
+| `fulfill-order/index.ts` | manual, desde el panel (`/api/panel`) |
 | `_shared/email.ts` | `api/_lib/mail.js` + `api/_lib/emails.js` |
 
 **No las despliegues tal cual.** Si las activas mientras el webhook de Vercel sigue en marcha,

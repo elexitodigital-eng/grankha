@@ -71,7 +71,7 @@ Ya puesto en Vercel: `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`,
 - [ ] Opcional: mover `EMAIL_AVISO` a `grankha@roadshop.online` cuando el buzón esté confirmado.
 
 Mientras no esté verificado, ningún pedido se pierde: se guarda en Supabase, el fallo queda en
-`orders.order_email_error` y se reenvía con un clic desde `/pedidos.html`.
+`orders.order_email_error` y se reenvía con un clic desde el panel (`/api/panel`).
 
 ## 5. Marketing y operación (recomendado)
 

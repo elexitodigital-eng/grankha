@@ -32,7 +32,7 @@ _Actualizado: 22 de octubre de 2026 · Resend configurado y panel de pedidos en 
 - `EMAIL_FROM` = `GRANKHA <grankha@roadshop.online>`
 - `EMAIL_REPLY_TO` = `grankha@roadshop.online`
 - `EMAIL_AVISO` = `elexitodigital@gmail.com`
-- `ADMIN_TOKEN` (cifrada) · token del panel `/pedidos.html`
+- `ADMIN_TOKEN` (cifrada) · credencial del panel `/api/panel`
 - `SUPPLIER_NAME` = `AW Dropshipping` · `DELIVERY_DAYS` = `3-8`
 
 ## Correo con Resend · estado
@@ -59,7 +59,9 @@ la raíz**: el MX de IONOS y el buzón `grankha@roadshop.online` no se tocan.
 
 ## Panel privado de pedidos
 
-**`https://grankha.roadshop.online/pedidos.html`** · token = variable `ADMIN_TOKEN` en Vercel.
+**`https://grankha.roadshop.online/api/panel?token=<ADMIN_TOKEN>`** · la primera vez fija una
+cookie HttpOnly y redirige a `/api/panel`. Sin credencial devuelve 404 idéntico al de cualquier
+otra URL inexistente: no hay ninguna página pública que delate el panel.
 
 Fuera del sitemap y con `noindex`. Sin token el servidor devuelve 401. Desde ahí: ver pedidos,
 filtrar los que faltan por pasar a AW o por avisar, copiar el bloque para el proveedor, marcar

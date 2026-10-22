@@ -72,7 +72,7 @@ dominio esté verificado. Stripe sigue mandando su propio recibo de pago al clie
    comprobar los registros en https://dns.email/. Si a las 72 h no verifica, pulsa
    *Restart verification* en Resend.
 
-6. **Compruébalo tú mismo en 10 segundos:** entra en el panel (`/pedidos.html`), en la tarjeta
+6. **Compruébalo tú mismo en 10 segundos:** entra en el panel (`/api/panel`), en la tarjeta
    «Estado del correo» pulsa **«Probar envío»**.
    - Si el mensaje dice **«Enviado con tu propio remitente: el dominio ya está verificado»** →
      ya está. No hay que cambiar nada en el código ni redesplegar, porque `EMAIL_FROM` ya está
@@ -96,7 +96,7 @@ Empezar en `p=none` y subir a `quarantine` más adelante, cuando veas que todo l
 
 ## 3. El panel de pedidos
 
-**URL:** `https://grankha.roadshop.online/pedidos.html`
+**URL:** `https://grankha.roadshop.online/api/panel?token=<ADMIN_TOKEN>`
 **Token:** el valor de la variable `ADMIN_TOKEN` en Vercel → proyecto `grankha` → Settings →
 Environment Variables. Es largo y empieza por `grk_`. Guárdalo en tu gestor de contraseñas.
 
