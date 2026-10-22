@@ -33,16 +33,24 @@ Falta `/tmp/vt` con el token de <https://vercel.com/account/tokens>.
 Al terminar: `bash ops/post_deploy.sh` — verifica clean URLs, formularios, panel, claves,
 sitemap y fichero de Google, y si todo cuadra avisa a IndexNow y Pingomatic.
 
-### Riesgo a comprobar en ese script
+### Riesgo cubierto: el fichero de verificación de Google
 
-`cleanUrls: true` hace que Vercel redirija `/x.html` → `/x`. Search Console exige que
-`/googlec2e45e8990a69adf.html` responda **200 en esa URL exacta**. Se intentó cubrir con un
-`rewrites.beforeFiles` en `vercel.json`, pero **no está confirmado que Vercel lo respete**:
-un rewrite que apunta a sí mismo puede ser un no-op y dejar pasar la redirección.
+`cleanUrls: true` hace que Vercel redirija `/x.html` → `/x` con un 308. Search Console exige
+que `/googlec2e45e8990a69adf.html` responda **200 en esa URL exacta**, así que la redirección
+rompería la verificación.
 
-El paso 2 del script lo comprueba. Si falla, la alternativa es cambiar la verificación de
-Search Console al método de **registro TXT en DNS** (no depende de ninguna URL y sobrevive a
-`cleanUrls`). Hace falta el token que da Search Console, que es distinto del de fichero.
+Solución aplicada: se creó `google-verify.txt`, gemelo idéntico byte a byte del fichero de
+verificación, y `vercel.json` lleva un `rewrites.beforeFiles` que apunta la URL `.html` a ese
+`.txt`. Funciona porque `cleanUrls` **solo actúa sobre rutas `.html`**: al ser el destino un
+`.txt`, se esquiva la redirección por completo. Un rewrite que apuntara a otro `.html` no
+serviría, porque volvería a entrar en `cleanUrls`.
+
+El paso 2 de `ops/post_deploy.sh` lo comprueba tras desplegar: espera 200 y el texto
+`google-site-verification` en la URL con `.html`.
+
+Si aun así fallara, queda una salida que no depende de `cleanUrls`: verificar la propiedad en
+Search Console por **registro TXT en DNS** en vez de por fichero. Hace falta el token que da
+Search Console, que es distinto del de fichero.
 
 ---
 
