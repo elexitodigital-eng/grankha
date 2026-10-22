@@ -32,11 +32,11 @@ Sin esto no puedes vender legalmente (LSSI art. 10). Necesito que me des:
 
 | Dato | Ejemplo | Dónde va |
 |---|---|---|
-| Nombre completo o razón social | Jorge X Y / ZENQA LIFE S.L. | Aviso legal, privacidad, facturas |
-| NIF / CIF | 12345678Z | Aviso legal |
-| Domicilio fiscal | Calle X, 1, 3ºB, 28939 Arroyomolinos, Madrid | Aviso legal |
-| Teléfono de atención | +34 6XX XXX XXX | Aviso legal, footer de la web |
-| Email de la tienda | grankha@roadshop.online | Todo el sitio |
+| Nombre completo o razón social | GRANKHA (ya puesto en la web) | Aviso legal, privacidad, facturas |
+| NIF / CIF | 12345678Z ← **falta, dímelo** | Aviso legal |
+| Domicilio fiscal | Calle X, 1, 3ºB, 28939 Arroyomolinos, Madrid ← **falta, dímelo** | Aviso legal |
+| Teléfono de atención | +34 6XX XXX XXX ← **falta, dímelo** | Aviso legal, footer de la web |
+| Email de la tienda | grankha@roadshop.online ✅ ya en todo el sitio | Todo el sitio |
 
 **Alternativa**: si aún no tienes alta de autónomo, puedes empezar como particular sin
 facturación empresarial, pero **es arriesgado**: Hacienda considerará la actividad
