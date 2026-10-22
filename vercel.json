@@ -3,16 +3,36 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/*.js": { "maxDuration": 20 }
+    "api/*.js": {
+      "maxDuration": 20
+    }
   },
   "headers": [
     {
       "source": "/api/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     },
     {
       "source": "/(.*).(webp|jpg|png|svg|ico)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, immutable"
+        }
+      ]
     }
-  ]
+  ],
+  "rewrites": {
+    "beforeFiles": [
+      {
+        "source": "/googlec2e45e8990a69adf.html",
+        "destination": "/googlec2e45e8990a69adf.html"
+      }
+    ]
+  }
 }

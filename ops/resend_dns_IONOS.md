@@ -7,6 +7,64 @@ Fecha de comprobación del DNS: 22/10/2026.
 
 ---
 
+## ⚠️ 0. LO QUE HA PASADO Y CÓMO ARREGLARLO (leer primero)
+
+Pusiste los cuatro registros en IONOS. **Los valores son todos correctos.** El problema es el
+nombre de host: les añadiste `.grankha`, y no va.
+
+Comprobado por DNS el 22/10/2026:
+
+| Lo que hay ahora (no sirve) | Lo que Resend busca (no existe) |
+|---|---|
+| `resend._domainkey.grankha.roadshop.online` ✅ valor correcto | `resend._domainkey.roadshop.online` ❌ vacío |
+| `send.grankha.roadshop.online` TXT ✅ valor correcto | `send.roadshop.online` TXT ❌ vacío |
+| `send.grankha.roadshop.online` MX ✅ valor correcto | `send.roadshop.online` MX ❌ vacío |
+| `rsend.grankha.roadshop.online` CNAME ✅ valor correcto | `rsend.roadshop.online` CNAME ❌ vacío |
+
+Verifiqué que el valor DKIM publicado bajo `grankha` es **idéntico byte a byte** al que
+Resend generó para la raíz. O sea: no hay que cambiar ningún valor, solo el nombre.
+
+### El arreglo: quitar `.grankha` a los cuatro nombres
+
+En IONOS → Dominios y SSL → `roadshop.online` → DNS, edita (o borra y vuelve a crear) estos
+cuatro registros. **El valor se queda igual en los cuatro.** Solo cambia el nombre de host:
+
+| # | Tipo | Nombre AHORA (mal) | Nombre CORRECTO | Valor |
+|---|------|--------------------|-----------------|-------|
+| 1 | TXT | `resend._domainkey.grankha` | **`resend._domainkey`** | el mismo, no lo toques |
+| 2 | MX | `send.grankha` | **`send`** | `feedback-smtp.eu-west-1.amazonses.com` · prio `10` |
+| 3 | TXT | `send.grankha` | **`send`** | `v=spf1 include:amazonses.com ~all` |
+| 4 | CNAME | `rsend.grankha` | **`rsend`** | `send.forge.rmta.net` |
+
+### Por qué pasó
+
+Es exactamente la trampa que avisa la §4: IONOS **añade `.roadshop.online` al final** de lo que
+escribas. Escribiste `send.grankha` y quedó `send.grankha.roadshop.online`. Como el dominio que
+verificamos es la raíz, el nombre de host es `send` a secas, y IONOS produce
+`send.roadshop.online`, que es lo que Resend busca.
+
+El `.grankha` solo habría sido correcto si hubiéramos decidido verificar el subdominio
+`grankha.roadshop.online`. Elegiste la raíz, así que no va.
+
+### Los registros actuales no estorban
+
+Los cuatro bajo `grankha` son inertes: no los busca nadie y no chocan con el CNAME de
+`grankha` a Vercel (son nombres distintos). Puedes dejarlos o borrarlos. **Recomiendo
+borrarlos** cuando los nuevos funcionen, para que la zona no quede confusa.
+
+### Alternativa, si prefieres editar un solo registro
+
+Si te da menos trabajo tocar uno que cuatro, dime y cambio el plan: doy de alta
+`grankha.roadshop.online` en Resend, y entonces tres de tus cuatro registros actuales ya
+serían correctos tal cual — solo habría que sustituir el valor DKIM, porque Resend genera uno
+distinto para cada dominio. El coste es que el remitente pasaría a ser
+`pedidos@grankha.roadshop.online` en vez de `grankha@roadshop.online`, y habría que cambiar
+`EMAIL_FROM` y redesplegar. **No lo recomiendo**: elegiste la raíz precisamente para que el
+remitente coincidiera con el correo que ya aparece en 8 sitios de `legal.html`.
+
+---
+
+
 ## 1. Qué vamos a hacer
 
 | | Valor |
