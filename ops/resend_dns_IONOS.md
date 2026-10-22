@@ -114,14 +114,40 @@ final** de lo que escribas en «Nombre de host».
 
 ---
 
-## 5. Los registros
+## 5. Los registros — VALORES REALES, ya generados por Resend
 
-**No hay que añadir DMARC.** El de la raíz (`v=DMARC1; p=none;`) ya existe, no lleva etiqueta
-`sp=` y por tanto cubre también a todos los subdominios. Poner otro sería redundante.
+El dominio **`roadshop.online` ya está dado de alta en Resend** (región eu-west-1, Irlanda).
+Id interno: `43a0dc99-c8e1-4d4a-9b28-2f1be6cb5603`. Estado actual: `not_started`, a la
+espera de estos registros.
 
-| # | Tipo | Nombre de host en IONOS | Valor / destino | Prioridad |
-|---|------|-------------------------|-----------------|-----------|
-| 1 | **TXT** | `resend._domainkey` | `p=MIGfMA0…` ← **la genera Resend, ver §7** | — |
+Resend ha devuelto **exactamente cuatro** registros y **ninguno es DMARC**, así que queda
+confirmado que no hay que añadirlo: el de la raíz (`v=DMARC1; p=none;`) ya existe, no lleva
+etiqueta `sp=` y cubre también a todos los subdominios.
+
+Copia y pega estos valores tal cual. Son los que ha generado Resend para tu dominio, no una
+estimación.
+
+### Registro 1 — DKIM
+
+| Campo | Valor |
+|---|---|
+| Tipo | `TXT` |
+| Nombre de host | `resend._domainkey` |
+| Valor | ver bloque de abajo |
+| TTL | Auto / el que venga |
+
+```
+p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDr4dDTcZ/36Bo8s+JdY55oFP6wE3CUntPdvpIItX4JIg8w3vHTg4N+8OX0AxrVwxwlWclNv8r/QF1y5g0dVk1ZfWyYWGgpxKBOlVuKrYxzQ7Pgw+LBbmBBejqzQrshxfIT9qv+HVFjveEtBKJovyqlD7G2VAb7oGNnfKVIi9ikyQIDAQAB
+```
+
+> Cópiala **entera**, desde `p=` hasta `AQAB`, en una sola pieza. Es una línea larga y los
+> navegadores de IONOS a veces la cortan visualmente: no te fíes de lo que se ve, pega y
+> guarda. Sin comillas alrededor, sin espacios al principio ni al final.
+
+### Registros 2, 3 y 4
+
+| # | Tipo | Nombre de host | Valor / destino | Prioridad |
+|---|------|----------------|-----------------|-----------|
 | 2 | **MX** | `send` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
 | 3 | **TXT** | `send` | `v=spf1 include:amazonses.com ~all` | — |
 | 4 | **CNAME** | `rsend` | `send.forge.rmta.net` | — |
@@ -129,21 +155,17 @@ final** de lo que escribas en «Nombre de host».
 Notas:
 
 - Los registros **2 y 3 comparten nombre de host** (`send`). Es normal: uno es MX y otro TXT,
-  tipos distintos bajo la misma etiqueta. IONOS lo admite sin problema.
-- Los valores 2, 3 y 4 son fijos. Son los mismos que ya funcionan en el otro proyecto, donde
-  están publicados y resuelven correctamente:
+  tipos distintos bajo la misma etiqueta. IONOS lo admite sin problema. No es un duplicado.
+- Estos tres valores son fijos e idénticos a los que ya funcionan en el otro proyecto:
 
   ```
-  send.sscarsgarage.roadshop.online        TXT  v=spf1 include:amazonses.com ~all
-  send.sscarsgarage.roadshop.online        MX   10 feedback-smtp.eu-west-1.amazonses.com.
+  send.sscarsgarage.roadshop.online        TXT   v=spf1 include:amazonses.com ~all
+  send.sscarsgarage.roadshop.online        MX    10 feedback-smtp.eu-west-1.amazonses.com.
   rsend.sscarsgarage.roadshop.online       CNAME send.forge.rmta.net.
   ```
 
-- El registro 1 (DKIM) es **único de tu dominio**. No se puede copiar del otro proyecto ni
-  inventar.
-- El registro 4 solo aparece si Resend te lo pide en la pestaña **Records**. En algunos
-  dominios Resend muestra tres registros y no cuatro. **Copia exactamente los que te muestre
-  a ti**, ni uno más ni uno menos. Yo lo confirmaré en cuanto dé de alta el dominio (§7).
+- El registro 1 (DKIM) es el único distinto, porque es único de tu dominio.
+
 
 ---
 
@@ -167,44 +189,48 @@ dice lo contrario quiero verlo antes de que se borre nada.
 
 ---
 
-## 7. Falta un dato: la clave DKIM
+## 7. Estado en Resend: ya está dado de alta
 
-El registro 1 necesita el valor `p=MIGfMA0…`, que solo existe una vez dado de alta el dominio
-en Resend. **Con la clave actual no puedo obtenerlo**: es de tipo *restricted*, solo permite
-enviar, y al intentar leer o crear dominios responde
+**Hecho.** `roadshop.online` ya existe en la cuenta de Resend, en región **eu-west-1
+(Irlanda)**, la más cercana a España y la misma que usa el otro proyecto.
 
-```
-401  "This API key is restricted to only send emails"
-```
+| | |
+|---|---|
+| Id del dominio en Resend | `43a0dc99-c8e1-4d4a-9b28-2f1be6cb5603` |
+| Estado | `not_started` — espera los registros de §5 |
+| Sending | `enabled` |
+| Receiving | `disabled` (correcto: el buzón sigue en IONOS) |
+| Registros que pide | 4, ninguno DMARC |
 
-Has elegido darme una clave con permisos de dominio. Cuando me la pegues, yo hago esto:
+**El riesgo de solapamiento que temía no existe.** Comprobado al dar de alta el dominio: esta
+cuenta de Resend tenía **0 dominios**, así que `sscarsgarage.roadshop.online` está en otra
+cuenta distinta. No hay conflicto posible entre los dos proyectos, y el alta devolvió
+`HTTP 201` a la primera.
 
-1. **Dar de alta `roadshop.online`** en Resend, región **eu-west-1 (Irlanda)** — la misma que
-   usa el otro proyecto y la más cercana a España.
-2. **Leer los registros exactos** que genere Resend y volcarlos en esta guía, sustituyendo los
-   valores esperados por los reales. Si Resend pide tres registros en vez de cuatro, lo
-   ajusto.
-3. **Dejarte la tabla lista para copiar y pegar** en IONOS, con los nombres ya escritos sin el
-   sufijo.
-4. Cuando los hayas puesto: **comprobar la propagación por DNS**, confirmar que Resend pasa el
-   dominio a *Verified* y **lanzar un pedido de prueba real** de punta a punta.
-5. **Borrar el pedido de prueba** de Supabase y dejar las tablas a cero.
+### Lo que falta es tu parte: poner los registros en IONOS
 
-La clave se borra del entorno en cuanto se use, igual que se hizo con la anterior.
+Solo queda copiar los cuatro valores de §5 en la zona DNS de `roadshop.online`. Es lo que no
+puedo hacer yo: no tengo acceso a tu panel de IONOS.
 
-> **Alternativa si prefieres no darme la clave:** entra tú en Resend → **Domains** →
-> **Add Domain** → `roadshop.online`, región eu-west-1, y pégame los valores de la pestaña
-> **Records**. Con eso me vale para rellenar la guía y comprobar que coinciden.
+En cuanto los pongas, yo hago el resto:
 
-### Un riesgo que vigilaré al dar de alta el dominio
+1. **Comprobar la propagación por DNS**, registro a registro (§9).
+2. **Confirmar que Resend pasa el dominio a *Verified***. Si a las 72 h no verifica, hay un
+   botón *Restart verification*; lo normal son 15 minutos.
+3. **Lanzar un pedido de prueba real** de punta a punta y confirmarte los tres correos:
+   confirmación al cliente, aviso interno de venta y, al marcarlo enviado, el de seguimiento.
+4. **Borrar el pedido de prueba** de Supabase y dejar las tablas a cero.
 
-En esa misma cuenta de Resend ya está verificado `sscarsgarage.roadshop.online`, que es un
-subdominio de `roadshop.online`. En principio Resend trata cada dominio como una entrada
-independiente y no debería haber conflicto. Pero si al dar de alta la raíz respondiera que el
-dominio **ya está en uso** o **solapa** con el otro, no insistiré: te lo digo y volvemos al
-plan B, que es verificar `grankha.roadshop.online` y cambiar `EMAIL_FROM` a
-`pedidos@grankha.roadshop.online`. Los nombres de ese plan B (`send.grankha`,
-`rsend.grankha`, `resend._domainkey.grankha`) también están libres, comprobado.
+**Y no hace falta redesplegar ni tocar variables.** Como se ha verificado la raíz y no un
+subdominio, `EMAIL_FROM` ya vale `GRANKHA <grankha@roadshop.online>`, que es una dirección
+del dominio verificado. Los tres correos empiezan a salir en cuanto Resend marque *Verified*.
+
+> La clave API con permisos de dominio ya se ha usado y se borra del entorno. La clave
+> anterior (`re_RHDGFx6G_…`, solo envío) sigue siendo la que usa la web en producción, y
+> **no hace falta cambiarla**: para enviar no necesita permisos de dominio. Si prefieres
+> retirar la que me has dado ahora, puedes borrarla en Resend → API Keys en cuanto el dominio
+> esté verificado; no afecta a nada.
+
 
 ---
 

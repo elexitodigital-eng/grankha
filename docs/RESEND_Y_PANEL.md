@@ -97,19 +97,32 @@ y el Return-Path `send.roadshop.online` pertenece al mismo dominio organizativo.
 La guía completa, con el paso a paso de IONOS, qué no tocar y qué hacer si IONOS avisa de un
 choque, está en **`ops/resend_dns_IONOS.md`**.
 
-### Lo que falta para poder hacerlo
+### Ya está dado de alta en Resend
 
-El registro 1 necesita la clave DKIM, que solo genera Resend al dar de alta el dominio. La
-clave actual (`re_RHDGFx6G_…`) es *restricted*: solo permite enviar, y al intentar leer o
-crear dominios devuelve `401 This API key is restricted to only send emails`.
+El dominio **`roadshop.online` ya existe en la cuenta de Resend**, en región **eu-west-1
+(Irlanda)**, y los cuatro registros que pide ya están volcados en `ops/resend_dns_IONOS.md`
+§5 con sus valores reales.
 
-Hace falta una clave de Resend con permiso de **Domains**. Con ella se da de alta el dominio,
-se leen los valores exactos que genere Resend y se vuelcan en la guía.
+| | |
+|---|---|
+| Id del dominio | `43a0dc99-c8e1-4d4a-9b28-2f1be6cb5603` |
+| Estado | `not_started` — espera los registros en el DNS |
+| Registros que pide | 4 · **ninguno es DMARC** |
 
-Alternativa sin ceder la clave: dar de alta `roadshop.online` en el panel de Resend
-(región **eu-west-1, Irlanda**) y pegar los valores de la pestaña **Records**.
+Dos cosas confirmadas al hacerlo:
 
-El detalle de ambas vías está en `ops/resend_dns_IONOS.md` §7.
+- **Resend no pide DMARC.** Devolvió exactamente cuatro registros: DKIM, MX y TXT bajo
+  `send`, y CNAME bajo `rsend`. El DMARC de la raíz ya cubre, así que no se añade nada.
+- **No había riesgo de solapamiento con el otro proyecto.** La cuenta tenía 0 dominios, así
+  que `sscarsgarage.roadshop.online` vive en otra cuenta de Resend distinta. El alta devolvió
+  `HTTP 201` a la primera.
+
+**Lo único que falta es tu paso en IONOS**: copiar los cuatro registros de
+`ops/resend_dns_IONOS.md` §5 en la zona DNS de `roadshop.online`. Es lo que no puedo hacer yo.
+
+La clave API con permisos de dominio se ha usado solo para esto y ya está borrada del
+entorno. La que usa la web en producción (`re_RHDGFx6G_…`, solo envío) **no hace falta
+cambiarla**: para enviar no necesita permisos de dominio.
 
 ### Cuando ya esté verificado
 
