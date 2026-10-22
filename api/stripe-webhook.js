@@ -109,6 +109,21 @@ module.exports = async (req, res) => {
             .eq("reference", o.reference);
         }
       }
+    } else if (event.type === "checkout.session.expired") {
+      // El cliente abrió el pago y lo abandonó: la sesión caduca a las 24 h.
+      // Sin este aviso el pedido se quedaba en 'pending' para siempre y el
+      // filtro "pagados sin enviar al proveedor" del panel se llenaba de ruido.
+      const s = event.data.object;
+      const { data: exp } = await supa.from("orders")
+        .update({ status: "expired" })
+        .eq("stripe_session_id", s.id)
+        // guarda: si ya estaba pagado no se toca (un evento fuera de orden no
+        // puede degradar una venta real)
+        .neq("status", "paid")
+        .select("reference")
+        .maybeSingle();
+      if (exp) console.log(`[sesión expirada] ${exp.reference} → expired (pago abandonado)`);
+
     } else if (event.type === "charge.refunded") {
       const c = event.data.object;
       await supa.from("orders").update({ status: "refunded" })

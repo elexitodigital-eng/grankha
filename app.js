@@ -45,7 +45,7 @@
     else { lines.push({ slug: slug, qty: Math.min(max, qty) }); }
     writeCart(lines);
     var name = p ? (p.title + (p.subtitle ? " · " + p.subtitle : "")) : "Producto";
-    toast("Añadido al carrito — " + name, "Ver carrito", "carrito.html");
+    toast("Añadido al carrito — " + name, "Ver carrito", "carrito");
     bump();
     return lines;
   }
@@ -69,7 +69,7 @@
   function cartCount() {
     return readCart().reduce(function (n, l) { return n + l.qty; }, 0);
   }
-  var EN_CARRITO = /carrito\.html$/.test(location.pathname);
+  var EN_CARRITO = /\/carrito(\.html)?\/?$/.test(location.pathname);
   function cartSubtotal() {
     return readCart().reduce(function (s, l) {
       var p = byslug[l.slug];
@@ -195,6 +195,52 @@
     toastTimer = setTimeout(function () { t.classList.remove("is-on"); }, 4200);
   }
 
+  /* ----------------------------------------------------------------- modal */
+  // Pop-up de confirmación. Se usa para los dos formularios: el cliente ve
+  // siempre una ventana de GRANKHA con su botón de cerrar, nunca un iframe ni
+  // una redirección a un servicio de terceros.
+  function modal(titulo, texto, opts) {
+    opts = opts || {};
+    var m = $("#grankha-modal");
+    if (!m) {
+      m = document.createElement("div");
+      m.id = "grankha-modal";
+      m.className = "modal";
+      m.innerHTML =
+        '<div class="modal__bg" data-mclose></div>' +
+        '<div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="gm-t" aria-describedby="gm-p">' +
+          '<div class="modal__ico" aria-hidden="true"></div>' +
+          '<h2 class="modal__t" id="gm-t"></h2>' +
+          '<p class="modal__p" id="gm-p"></p>' +
+          '<button type="button" class="btn modal__btn" data-mclose>Cerrar</button>' +
+        '</div>';
+      document.body.appendChild(m);
+      m.addEventListener("click", function (e) {
+        if (e.target.closest("[data-mclose]")) closeModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && m.classList.contains("is-on")) closeModal();
+      });
+    }
+    var ico = $(".modal__ico", m);
+    ico.className = "modal__ico" + (opts.error ? " modal__ico--err" : "");
+    ico.innerHTML = opts.error
+      ? '<svg viewBox="0 0 24 24"><path d="M12 8v5"/><path d="M12 16.5v.5"/></svg>'
+      : '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+    $("#gm-t", m).textContent = titulo;
+    $("#gm-p", m).textContent = texto;
+    m.classList.add("is-on");
+    document.documentElement.classList.add("no-scroll");
+    var b = $(".modal__btn", m);
+    if (b) setTimeout(function () { b.focus(); }, 40);
+  }
+
+  function closeModal() {
+    var m = $("#grankha-modal");
+    if (m) m.classList.remove("is-on");
+    document.documentElement.classList.remove("no-scroll");
+  }
+
   /* ----------------------------------------------------------------- envío */
   function shippingOptions() {
     return (CFG.shipping && CFG.shipping.options) || [];
@@ -302,7 +348,7 @@
         e.preventDefault();
         var box = $("[data-pdqty] input") || $("[data-qty] input");
         addToCart(btn.getAttribute("data-buy"), box ? box.value : 1);
-        location.href = "carrito.html";
+        location.href = "carrito";
       });
     });
   }
@@ -416,8 +462,8 @@
           '3. Lo recibes en 3-8 días laborables y tienes 30 días para devolverlo.</span></div></div>' +
         '<p class="small">Si algo no cuadra, respóndenos a ese correo o escríbenos desde la página de contacto ' +
           'con la referencia del pedido.</p>' +
-        '<div class="pd__buy"><a class="btn" href="tienda.html">Seguir comprando</a>' +
-        '<a class="btn btn--ghost" href="compromiso.html">Nuestra historia</a></div>' +
+        '<div class="pd__buy"><a class="btn" href="tienda">Seguir comprando</a>' +
+        '<a class="btn btn--ghost" href="compromiso">Nuestra historia</a></div>' +
       '</div></section>';
     window.scrollTo(0, 0);
   }
@@ -623,7 +669,7 @@
             '</div>' +
             '<p class="small mt-s">Total a pagar: <b class="mono">' + eur(order.total) + '</b> (IVA y envío incluidos)</p>' +
             '<div class="pd__buy"><a class="btn" href="' + mail + '">Confirmar por email</a>' +
-            '<a class="btn btn--ghost" href="tienda.html">Seguir comprando</a></div>';
+            '<a class="btn btn--ghost" href="tienda">Seguir comprando</a></div>';
           // el pedido ya está hecho: vaciamos la cesta (sin duplicados) pero
           // dejamos a la vista el resumen del pedido y el botón de confirmación
           clearCart();
@@ -679,7 +725,7 @@
       if (conmigo.length) {
         box.innerHTML = '<p class="small mb-m">Este artículo forma parte de estos packs:</p><div class="filters">' +
           conmigo.map(function (p) {
-            return '<a class="chip" href="' + p.slug + '.html">' + p.name + '</a>';
+            return '<a class="chip" href="' + p.slug + '">' + p.name + '</a>';
           }).join("") + '</div>';
       }
     }
@@ -710,8 +756,8 @@
     panel.style.cssText = "position:fixed;inset:0;background:#fff;z-index:80;padding:84px var(--pad) 40px;overflow:auto";
     panel.innerHTML = '<button class="icon-btn" id="menu-close" aria-label="Cerrar" style="position:absolute;top:22px;right:var(--pad);font-size:1.5rem">×</button>' +
       '<nav style="display:grid;gap:6px;font-size:1.6rem;letter-spacing:-.02em">' +
-      ['tienda.html|Tienda', 'tienda.html?cat=packs|Packs', 'compromiso.html|Compromiso',
-       'contacto.html|Contacto']
+      ['tienda|Tienda', 'tienda?cat=packs|Packs', 'compromiso|Compromiso',
+       'contacto|Contacto']
         .map(function (i) {
           var parts = i.split("|");
           return '<a href="' + parts[0] + '" style="padding:12px 0;border-bottom:1px solid var(--line)">' + parts[1] + '</a>';
@@ -770,25 +816,43 @@
         e.preventDefault();
         var input = $("input[type=email]", f);
         var ok = $("input[type=checkbox]", f);
-        if (!input || !input.checkValidity()) { toast("Revisa tu email"); return; }
-        if (ok && !ok.checked) { toast("Marca la casilla de consentimiento"); return; }
-        var email = input.value.trim();
-        var list = [];
-        try { list = JSON.parse(localStorage.getItem("grankha.news") || "[]"); } catch (err) {}
-        if (list.indexOf(email) === -1) list.push(email);
-        try { localStorage.setItem("grankha.news", JSON.stringify(list)); } catch (err) {}
-        // si el backend está configurado, la suscripción queda guardada de verdad
-        var sb = CFG.supabase;
-        if (sb && sb.url && sb.key) {
-          fetch(sb.url + "/rest/v1/subscribers", {
-            method: "POST",
-            headers: { "apikey": sb.key, "Authorization": "Bearer " + sb.key,
-                       "Content-Type": "application/json", "Prefer": "return=minimal" },
-            body: JSON.stringify({ email: email, source: "web", consent: true })
-          }).catch(function () {});
+        var btn = f.querySelector("button[type=submit]") || f.querySelector("button");
+
+        // Sin email válido no se avanza.
+        if (!input || !input.value.trim() || !input.checkValidity()) {
+          if (input) input.focus();
+          modal("Revisa tu email", "Escribe una dirección de correo válida para poder suscribirte.", { error: true });
+          return;
         }
-        f.reset();
-        toast("¡Gracias! Te escribiremos muy pronto.");
+        // Sin consentimiento expreso no se envía nada: bloqueamos el submit.
+        if (ok && !ok.checked) {
+          ok.focus();
+          modal("Falta tu consentimiento",
+                "Debes marcar la casilla y aceptar la política de privacidad antes de suscribirte.",
+                { error: true });
+          return;
+        }
+
+        var email = input.value.trim();
+        if (btn) btn.disabled = true;
+        // Se envía a nuestro propio endpoint. Quien habla con el destino final
+        // es el servidor: el navegador no ve ningún servicio de terceros.
+        fetch(CFG.newsletterEndpoint || "/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, consent: true })
+        }).then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        }).then(function () {
+          f.reset();
+          modal("¡Bienvenido a la familia GRANKHA!",
+                "Hemos registrado tu correo. Te escribiremos muy pronto con consejos de cuidado, novedades y avances en investigación animal.");
+        }).catch(function () {
+          modal("No hemos podido registrarte",
+                "Vuelve a intentarlo en unos minutos o escríbenos a " + CFG.contactEmail + " y te añadimos nosotros.",
+                { error: true });
+        }).then(function () { if (btn) btn.disabled = false; });
       });
     });
   }
@@ -803,27 +867,38 @@
         var btn = f.querySelector("button[type=submit]") || f.querySelector("button");
         if (btn) btn.disabled = true;
 
-        function fallback() {
-          var subject = "Consulta web GRANKHA" + (d.pedido ? " · " + d.pedido : "");
-          var body = "Nombre: " + (d.nombre || "") + "\nEmail: " + (d.email || "") +
-            (d.pedido ? "\nPedido: " + d.pedido : "") + "\n\n" + (d.mensaje || "");
-          location.href = "mailto:" + CFG.contactEmail + "?subject=" + encodeURIComponent(subject) +
-            "&body=" + encodeURIComponent(body);
-          toast("Abriendo tu correo para enviar el mensaje…");
+        // Consentimiento obligatorio: sin la casilla marcada no se envía.
+        var ok = f.querySelector("input[type=checkbox]");
+        if (ok && !ok.checked) {
+          ok.focus();
           if (btn) btn.disabled = false;
+          modal("Falta tu consentimiento",
+                "Debes marcar la casilla y aceptar la política de privacidad antes de enviar el mensaje.",
+                { error: true });
+          return;
         }
 
-        // con backend, el mensaje queda guardado y nos llega por correo
-        var ep = CFG.contactEndpoint;
-        if (!ep) { fallback(); return; }
+        function fallback() {
+          if (btn) btn.disabled = false;
+          modal("No hemos podido enviar tu mensaje",
+                "Escríbenos a " + CFG.contactEmail + " y te atendemos igualmente. Sentimos las molestias.",
+                { error: true });
+        }
+
+        // El mensaje va a nuestro propio endpoint; el servidor es quien lo
+        // entrega. El navegador no contacta con ningún tercero.
+        var ep = CFG.contactEndpoint || "/api/contact";
         fetch(ep, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(d)
         }).then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        }).then(function () {
           f.reset();
-          toast("Mensaje enviado. Te contestamos en 24 h laborables.");
+          modal("Mensaje enviado",
+                "Gracias por escribirnos. Te contestamos en 24 horas laborables al correo que nos has indicado.");
         }).catch(function () {
           fallback();
         }).then(function () { if (btn) btn.disabled = false; });

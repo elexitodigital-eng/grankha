@@ -220,5 +220,12 @@
   "PACK-03": 36.6,
   "PACK-06": 32.7,
   "PACK-05": 42.75
+ },
+ "meta": {
+  "stripe_pct": 0.015,
+  "stripe_fix": 0.25,
+  "packaging_per_order": 0.6,
+  "returns_rate": 0.03,
+  "returns_cost": 8.0
  }
 }

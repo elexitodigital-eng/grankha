@@ -12,6 +12,13 @@
 
 const PRICES = require("./prices.json");
 const COSTS = PRICES.costs || {};
+// Costes fijos por pedido: comisión de la pasarela y embalaje. Sin ellos el
+// margen que se informa sería mayor que el dinero que realmente queda.
+const META = PRICES.meta || {};
+const STRIPE_PCT = Number(META.stripe_pct || 0.015);
+const STRIPE_FIX = Number(META.stripe_fix || 0.25);
+const PACKAGING = Number(META.packaging_per_order || 0);
+const round2 = (n) => Math.round(Number(n || 0) * 100) / 100;
 const SITE = process.env.SITE_URL || "https://grankha.roadshop.online";
 const DELIVERY = process.env.DELIVERY_DAYS || "3-8";
 const MAIL = process.env.EMAIL_REPLY_TO || process.env.EMAIL_AVISO || "grankha@roadshop.online";
@@ -105,8 +112,13 @@ function saleEmail(o) {
   const iva = Number(o.vat_included || 0);
   const envio = Number(o.shipping_price || 0);
   const base = subtotal - iva;                    // venta sin IVA
-  const beneficio = base - cogs;                  // antes de envío y de la reserva
+  const bruto = base - cogs;                      // venta sin IVA − proveedor
   const reserva = Number(o.donation || 0);
+
+  // La pasarela cobra sobre el total cargado (IVA y envío incluidos), no sobre
+  // la base: calcularlo sobre `base` subestimaría la comisión.
+  const stripeFee = round2(Number(o.total || 0) * STRIPE_PCT + STRIPE_FIX);
+  const neto = round2(bruto - stripeFee - PACKAGING);
 
   // bloque para copiar y pegar en el panel del proveedor
   const aw = items.map((l) => `  ${l.qty} × ${l.sku || "—"}  ${l.name}`).join("\n");
@@ -140,14 +152,20 @@ function saleEmail(o) {
       <tr><td style="padding:4px 0">IVA repercutido (21 %)</td><td align="right">${eur(iva)}</td></tr>
       <tr><td style="padding:4px 0">Coste del proveedor</td><td align="right" style="color:#8a2020">− ${eur(cogs)}</td></tr>
       <tr><td style="padding:4px 0">Envío cobrado al cliente</td><td align="right">${envio === 0 ? "Gratis" : eur(envio)}</td></tr>
-      <tr><td style="padding:4px 0"><b>Beneficio bruto</b></td><td align="right"><b>${eur(beneficio)}</b></td></tr>
+      <tr><td style="padding:4px 0"><b>Beneficio bruto</b> (venta sin IVA − proveedor)</td><td align="right"><b>${eur(bruto)}</b></td></tr>
+      <tr><td style="padding:4px 0">Comisión de Stripe (${(STRIPE_PCT * 100).toFixed(1).replace(".", ",")} % + ${eur(STRIPE_FIX)})</td>
+          <td align="right" style="color:#8a2020">− ${eur(stripeFee)}</td></tr>
+      <tr><td style="padding:4px 0">Embalaje</td><td align="right" style="color:#8a2020">− ${eur(PACKAGING)}</td></tr>
+      <tr style="background:#f0f8f2"><td style="padding:6px 0"><b>Beneficio neto estimado</b></td>
+          <td align="right" style="padding:6px 0"><b>${eur(neto)}</b></td></tr>
       <tr><td style="padding:4px 0">Reserva para investigación (interna)</td><td align="right">${eur(reserva)}</td></tr>
       <tr style="border-top:2px solid #111"><td style="padding:8px 0"><b>Total cobrado</b></td>
           <td align="right" style="padding:8px 0"><b>${eur(o.total)}</b></td></tr>
     </table>
 
-    <p style="font-size:13px;color:#555">Ojo: el beneficio bruto no descuenta el coste real del envío cuando es
-    gratis (lo asume la tienda). Los importes de coste salen de <code>api/_lib/prices.json</code>.</p>
+    <p style="font-size:13px;color:#555"><b>El neto aún no descuenta el coste real del envío</b> cuando sale gratis
+    (lo asume la tienda) ni las devoluciones. Es decir: es lo que queda del producto, no la caja final del mes.
+    Importes de coste y comisiones en <code>api/_lib/prices.json</code>.</p>
 
     <h3 style="margin:22px 0 6px;font-size:15px">Datos para pasar a ${esc(PROVEEDOR)}</h3>
     <pre style="background:#f5f5f4;border:1px solid #e3e3e1;padding:14px;font-size:12.5px;line-height:1.55;overflow:auto;white-space:pre-wrap">${esc(awTexto)}</pre>
@@ -156,7 +174,7 @@ function saleEmail(o) {
     Cuando lo envíes, recuerda mandar el seguimiento al cliente: el correo de confirmación le promete
     el número de seguimiento en cuanto el paquete salga.</p>
   </div>`;
-  return { subject: `[VENTA] ${o.reference} · ${eur(o.total)} · margen ${eur(beneficio)} · pasar a ${PROVEEDOR}`, html };
+  return { subject: `[VENTA] ${o.reference} · ${eur(o.total)} · neto ${eur(neto)} · pasar a ${PROVEEDOR}`, html };
 }
 
 function send(res, status, body) {

@@ -135,8 +135,8 @@ CFG = {
                  if k in ("default", "freeFromPeninsular", "vat", "note", "options")},
     "checkout": {"endpoint": SITE["checkout"]["endpoint"]},
     "contactEndpoint": SITE.get("contact_endpoint", ""),
-    # si algún día hay proyecto Supabase, la newsletter se guarda de verdad
-    "supabase": SITE.get("supabase", {}),
+    # la newsletter va a nuestro propio endpoint; el servidor es quien entrega
+    "newsletterEndpoint": SITE.get("newsletter_endpoint", "/api/newsletter"),
     "currency": SITE["currency"],
     "returns": RETURNS,
     "delivery": DELIVERY,
@@ -182,8 +182,17 @@ def price_block(p, big=False):
     return f'<span class="{cls}">{eur(p["price"])}</span>{strike}'
 
 # ------------------------------------------------------------------ esqueleto
+def clean_path(path):
+    """URL pública sin extensión: 'tienda.html' -> 'tienda', 'index.html' -> ''."""
+    p = str(path or "")
+    if p.endswith(".html"):
+        p = p[:-5]
+    return "" if p == "index" else p
+
+
 def head(title, desc, path, og="assets/img/hero.jpg", og_type="website", jsonld=None):
     img = og if og.startswith("http") else f"{BASE}/{og}"
+    canon = f"{BASE}/{clean_path(path)}"
     j = ""
     if jsonld:
         j = '<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + "</script>"
@@ -196,14 +205,14 @@ def head(title, desc, path, og="assets/img/hero.jpg", og_type="website", jsonld=
 <meta name="description" content="{esc(desc)}">
 <meta name="theme-color" content="#0B0B0B">
 <script>document.documentElement.className+=" js";</script>
-<link rel="canonical" href="{BASE}/{path}">
+<link rel="canonical" href="{canon}">
 {favicon_tags()}
 <meta property="og:site_name" content="{esc(SITE['name'])}">
 <meta property="og:locale" content="es_ES">
 <meta property="og:type" content="{og_type}">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
-<meta property="og:url" content="{BASE}/{path}">
+<meta property="og:url" content="{canon}">
 <meta property="og:image" content="{img}">
 <meta name="twitter:card" content="summary_large_image">
 {j}
@@ -327,7 +336,21 @@ def tail(full=False):
 <script src="app.js?v={ASSET_V}" defer></script>
 </body></html>"""
 
+# Clean URLs: los enlaces internos se sirven sin extensión. Vercel sirve
+# "tienda.html" en /tienda y redirige /tienda.html -> /tienda (cleanUrls).
+_EXT_HTML = re.compile(r'\.html(?=["\'?#)\s<])')
+_EXT_INDEX = re.compile(r'index\.html(?=["\'?#)\s<])')
+
+
+def clean_links(s):
+    """Quita .html de los enlaces internos. index.html pasa a "./" para que
+    siga siendo relativo y funcione también fuera de la raíz."""
+    return _EXT_HTML.sub("", _EXT_INDEX.sub("./", s))
+
+
 def write(name, content):
+    if name.endswith(".html"):
+        content = clean_links(content)
     (ROOT / name).write_text(content, encoding="utf-8")
 
 # ------------------------------------------------------------------- index
@@ -1062,21 +1085,34 @@ def build_legal():
         <li><b>Finalidades:</b> gestionar tu pedido y su envío, atender consultas y devoluciones y —si lo autorizas— enviarte novedades.</li>
         <li><b>Base jurídica:</b> ejecución del contrato, consentimiento (newsletter), interés legítimo y obligación legal.</li>
         <li><b>Destinatarios:</b> {esc(PROVEEDOR)}, proveedor logístico que prepara y envía tu pedido en modelo de envío
-        directo (dropshipping), el transportista que lo entrega, la pasarela de pago (Stripe) y proveedores técnicos de
-        hosting y correo. Solo reciben los datos imprescindibles para enviar y cobrar tu pedido. No se venden datos a terceros.</li>
+        directo (dropshipping), el transportista que lo entrega, la pasarela de pago (Stripe) y nuestros proveedores
+        técnicos de hosting, correo y gestión de formularios (Google). Cada uno recibe únicamente los datos
+        imprescindibles para su función: enviar y cobrar tu pedido, y atenderte cuando nos escribes.
+        <b>No se venden datos a terceros.</b></li>
+        <li><b>Transferencias internacionales:</b> algunos de esos proveedores (Stripe, Google) tratan datos fuera del
+        Espacio Económico Europeo. Lo hacen amparados en la Decisión de Adecuación UE–EE. UU. (Data Privacy Framework)
+        y, donde aplica, en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</li>
         <li><b>Conservación:</b> datos de pedido durante los plazos legales (facturación: 4 años; garantías: 3 años);
         newsletter hasta que te des de baja.</li>
         <li><b>Derechos:</b> acceder, rectificar, suprimir, oponerte, limitar y portar tus datos escribiendo a
         {esc(SITE['contactEmail'])}. Puedes reclamar ante la Agencia Española de Protección de Datos.</li>
       </ul>
-      <p>Los datos de pago se introducen directamente en la pasarela del proveedor de pagos; GRANKHA no almacena números de tarjeta.
-      El carrito se guarda únicamente en tu navegador (almacenamiento local).</p>
+      <p>Los datos de pago se introducen directamente en la pasarela del proveedor de pagos; GRANKHA no almacena
+      números de tarjeta. El carrito se guarda únicamente en tu navegador (almacenamiento local).</p>
+      <p>Los formularios de contacto y de novedades se envían siempre a esta web, y es nuestro servidor quien los hace
+      llegar al buzón de gestión correspondiente. Tu navegador no contacta directamente con esos proveedores ni carga
+      recursos de terceros al rellenarlos.</p>
 
       <h2 id="cookies">Política de cookies</h2>
-      <p>Esta web <b>no utiliza cookies publicitarias ni de seguimiento</b>. Solo emplea almacenamiento local del navegador
-      para recordar tu carrito y tus preferencias: la información permanece en tu dispositivo y puedes borrarla desde los
-      ajustes de tu navegador. Si en el futuro se incorporan herramientas de analítica o píxeles publicitarios, se pedirá
-      consentimiento previo.</p>
+      <p>Esta web <b>no utiliza cookies publicitarias ni de seguimiento</b>, y <b>no instala ninguna cookie al navegar
+      por la tienda</b>. Solo emplea almacenamiento local del navegador para recordar tu carrito y tus preferencias: la
+      información permanece en tu dispositivo y puedes borrarla desde los ajustes de tu navegador.</p>
+      <p>Existe una única <b>cookie técnica y estrictamente necesaria</b>, reservada al área privada de gestión de
+      pedidos: mantiene la sesión abierta de la persona autorizada, es de tipo <i>HttpOnly</i> (inaccesible para
+      scripts), caduca a las 8 horas y nunca se instala al visitar la tienda. Al no ser publicitaria ni de medición,
+      no requiere consentimiento.</p>
+      <p>Si en el futuro se incorporan herramientas de analítica o píxeles publicitarios, se pedirá consentimiento
+      previo mediante un aviso visible.</p>
 
       <h2>Productos y responsabilidad</h2>
       <p>Las imágenes son orientativas; pueden existir ligeras variaciones de tono entre lotes. La información de esta web
@@ -1112,14 +1148,20 @@ def build_extras():
     # precios en servidor para la función de Stripe (evita que nadie manipule importes)
     prices = {p["sku"]: {"price": p["price"], "name": f"{p['name']} · {p['subtitle']}"} for p in PRODUCTS}
     costs = {p["sku"]: p.get("cost", 0) for p in PRODUCTS}
+    # Costes fijos por pedido que el servidor necesita para calcular el margen
+    # REAL (no solo venta − proveedor). Salen de data/pricing.json, que ya no se
+    # publica: este fichero vive en api/_lib y Vercel no lo sirve.
+    _meta = json.loads((ROOT / "data" / "pricing.json").read_text())["meta"]
+    meta = {k: _meta.get(k) for k in
+            ("stripe_pct", "stripe_fix", "packaging_per_order", "returns_rate", "returns_cost")}
     fn_dir = ROOT / "supabase" / "functions" / "create-checkout"
     fn_dir.mkdir(parents=True, exist_ok=True)
-    (fn_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs}, ensure_ascii=False, indent=1))
+    (fn_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs, "meta": meta}, ensure_ascii=False, indent=1))
     print(f"  · supabase/.../prices.json ({len(prices)} referencias)")
     # la misma lista usa la función de pago desplegada en Vercel
     api_dir = ROOT / "api" / "_lib"
     api_dir.mkdir(parents=True, exist_ok=True)
-    (api_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs}, ensure_ascii=False, indent=1))
+    (api_dir / "prices.json").write_text(json.dumps({**prices, "costs": costs, "meta": meta}, ensure_ascii=False, indent=1))
     print(f"  · api/_lib/prices.json ({len(prices)} referencias)")
 
     # redirecciones desde los slugs anteriores (SEO)
@@ -1171,13 +1213,13 @@ location.replace(m?decodeURIComponent(m[1]).replace(/[^a-z0-9-]/gi,"")+".html":"
 <meta http-equiv="refresh" content="1;url=tienda.html">
 </head><body style="font-family:system-ui;padding:40px">Redirigiendo… <a href="tienda.html">Ir a la tienda</a></body></html>""")
 
-    urls = ["index.html", "tienda.html", "compromiso.html", "envios.html", "contacto.html", "legal.html",
-            "carrito.html"] + [p["slug"] + ".html" for p in PRODUCTS]
+    urls = ["", "tienda", "compromiso", "envios", "contacto", "legal",
+            "carrito"] + [p["slug"] for p in PRODUCTS]
     today = date.today().isoformat()
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
-        pri = "1.0" if u == "index.html" else ("0.9" if u in ("tienda.html", "compromiso.html") else "0.7")
+        pri = "1.0" if u == "" else ("0.9" if u in ("tienda", "compromiso") else "0.7")
         sm.append(f"  <url><loc>{BASE}/{u}</loc><lastmod>{today}</lastmod><priority>{pri}</priority></url>")
     sm.append("</urlset>")
     write("sitemap.xml", "\n".join(sm))

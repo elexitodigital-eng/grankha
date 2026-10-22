@@ -15,6 +15,7 @@
 const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
 const PRICES = require("./_lib/prices.json");
+const { limitado } = require("./_lib/ratelimit");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
 const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
@@ -61,6 +62,13 @@ module.exports = async (req, res) => {
   const headers = cors(req);
   if (req.method === "OPTIONS") return send(res, 204, headers);
   if (req.method !== "POST") return send(res, 405, headers, { error: "Método no permitido" });
+
+  // Crear una sesión de Stripe es gratis pero deja basura en el panel y permite
+  // sondear el catálogo. 15 intentos por IP cada 10 min cubre de sobra una
+  // compra real (incluidos los "volver y reintentar") y corta el abuso.
+  if (limitado(req, "checkout", 15)) {
+    return send(res, 429, headers, { error: "Demasiados intentos seguidos. Espera unos minutos." });
+  }
 
   let order = req.body;
   if (typeof order === "string") {
@@ -151,8 +159,8 @@ module.exports = async (req, res) => {
         receipt_email: email,          // Stripe manda el recibo de pago al cliente
         metadata: { reference },
       },
-      success_url: `${SITE}/carrito.html?pedido=${reference}&estado=ok`,
-      cancel_url: `${SITE}/carrito.html?estado=cancelado`,
+      success_url: `${SITE}/carrito?pedido=${reference}&estado=ok`,
+      cancel_url: `${SITE}/carrito?estado=cancelado`,
     });
   } catch (e) {
     console.error("Stripe:", e.message);
