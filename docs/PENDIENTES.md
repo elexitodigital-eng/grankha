@@ -65,7 +65,11 @@ Detalle de las variables en `LANZAMIENTO.md`.
 
 - [x] Foto real de Khalid en portada, compromiso y banda «Te quiero amigo, esto va por ti.»
 - [ ] Instagram / TikTok de la marca y enlazarlos en el footer.
-- [ ] Google Search Console: `https://grankha.roadshop.online/sitemap.xml`.
+- [x] Fichero de verificación de Google **ya publicado y respondiendo 200** en
+      `https://grankha.roadshop.online/googlec2e45e8990a69adf.html`.
+      → Falta solo que **tú** entres en Search Console, añadas la propiedad
+      «Prefijo de la URL» = `https://grankha.roadshop.online/`, pulses *Verificar*
+      (ya pasará) y envíes el sitemap `https://grankha.roadshop.online/sitemap.xml`.
 - [ ] Google Merchant Center (Shopping): los datos estructurados ya están puestos.
 - [ ] Píxel de Meta / TikTok solo si haces publicidad (requiere actualizar la política de
       cookies y añadir consentimiento).
@@ -115,6 +119,16 @@ Detalle de las variables en `LANZAMIENTO.md`.
 - ✅ Correo unificado en `api/_lib/mail.js` con soporte SMTP (buzón propio), Resend y Brevo.
 - ✅ Prueba real en el dominio nuevo: checkout con sesión de Stripe en EUR, pedido guardado en
       Supabase, contacto guardado, webhook rechazando firma mala. Datos de prueba borrados después.
+- ✅ Camino SMTP verificado de verdad: prueba local contra servidor de pega y prueba dentro del
+      runtime de Vercel (`nodemailer 6.10.1` carga, `createTransport` disponible, `mailReady()`
+      en `true`). Solo falló por usar un host inválido a propósito.
+- ✅ `package-lock.json` al repo → build de Vercel reproducible.
+- ✅ **Bug corregido:** el sello de caché `styles.css?v=…` / `app.js?v=…` se calculaba con
+      `hash()` de Python, que lleva sal aleatoria por proceso. Cada rebuild cambiaba el sello en
+      las 85 páginas (git siempre sucio) y **rompía la caché del navegador de todos los
+      visitantes sin motivo**. Ahora usa SHA-1 del CSS+JS: build idempotente, comprobado con dos
+      builds consecutivos idénticos, y el sello sigue cambiando cuando se toca el CSS o el JS.
+- ✅ Fichero de verificación de Google Search Console publicado y respondiendo 200.
 
 ## Corregido en la revisión del 15/10/2026 (bloque 0 de la auditoría)
 

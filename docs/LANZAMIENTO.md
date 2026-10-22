@@ -104,6 +104,17 @@ Tu tienda cobra → el pedido queda en Supabase con todos los datos → se pasa 
 prepare y lo envíe directamente al cliente. Hoy es manual. En `supabase/functions/` quedan
 preparadas `fulfill-order` y `notify-tracking` para automatizarlo cuando quieras dar el paso.
 
+## Arreglado de paso hoy
+
+- **Bug de caché corregido.** El sello `styles.css?v=…` / `app.js?v=…` se calculaba con `hash()`
+  de Python, que lleva sal aleatoria por proceso: cada rebuild cambiaba el sello en las 85 páginas
+  (git siempre sucio) y rompía la caché del navegador de todos los visitantes sin motivo. Ahora usa
+  SHA-1 del CSS+JS. Build idempotente verificado: dos rebuilds seguidos dan ficheros idénticos, y el
+  sello sigue cambiando cuando se toca el CSS o el JS.
+- **`package-lock.json`** subido al repo para que el build de Vercel sea reproducible.
+- **Fichero de verificación de Google** publicado: `googlec2e45e8990a69adf.html` responde 200 en el
+  dominio. Solo falta que el titular verifique la propiedad en Search Console y envíe el sitemap.
+
 ## Si algún día hay que mover la web
 
 - El sitio estático se genera con `python3 tools/build.py`.
