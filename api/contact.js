@@ -47,10 +47,6 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return send(res, 204, headers);
   if (req.method !== "POST") return send(res, 405, headers, { error: "Método no permitido" });
 
-  if (limitado(req, "contacto", MAX_POR_IP)) {
-    return send(res, 429, headers, { error: "Demasiados mensajes seguidos. Espera unos minutos." });
-  }
-
   let d;
   try {
     d = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
@@ -74,6 +70,12 @@ module.exports = async (req, res) => {
   // El consentimiento es obligatorio.
   if (d.consent === false || d.consent === "false") {
     return send(res, 400, headers, { error: "Falta el consentimiento" });
+  }
+
+  // Igual que en la newsletter: primero validar (gratis), luego limitar la
+  // llamada saliente, que es lo que cuesta y lo que se puede abusar.
+  if (limitado(req, "contacto", MAX_POR_IP)) {
+    return send(res, 429, headers, { error: "Demasiados mensajes seguidos. Espera unos minutos." });
   }
 
   const r = await enviar(FORM_ID, {

@@ -10,15 +10,28 @@
 const VENTANA_MS = 10 * 60 * 1000; // 10 minutos
 const golpes = new Map();
 
+// Devuelve la IP del cliente, o null si no se puede determinar.
+// En Vercel x-forwarded-for siempre viene; el null es la red de seguridad.
 function ipDe(req) {
   const xff = req && req.headers && req.headers["x-forwarded-for"];
-  if (xff) return String(xff).split(",")[0].trim();
-  return (req && req.socket && req.socket.remoteAddress) || "desconocida";
+  if (xff) {
+    const ip = String(xff).split(",")[0].trim();
+    if (ip) return ip;
+  }
+  const sock = req && req.socket && req.socket.remoteAddress;
+  return sock ? String(sock) : null;
 }
 
-// Devuelve true si la IP ya ha agotado su cupo en la ventana.
+// Devuelve true si hay que rechazar con 429.
+//
+// FALLA ABIERTO: si no se puede identificar al cliente, se le deja pasar. Lo
+// contrario sería peor que no tener límite —sin cabecera, todas las peticiones
+// compartirían la clave "desconocida" y un único contador, así que bastarían
+// `max` peticiones sueltas para bloquear la tienda a todo el mundo.
 function limitado(req, clave, max = 5) {
-  const k = clave + ":" + ipDe(req);
+  const ip = ipDe(req);
+  if (!ip) return false;
+  const k = clave + ":" + ip;
   const ahora = Date.now();
   let lista = golpes.get(k);
   if (!lista) { lista = []; golpes.set(k, lista); }

@@ -37,10 +37,6 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return send(res, 204, headers);
   if (req.method !== "POST") return send(res, 405, headers, { error: "Método no permitido" });
 
-  if (limitado(req, "news", MAX_POR_IP)) {
-    return send(res, 429, headers, { error: "Demasiados intentos. Espera unos minutos." });
-  }
-
   let d;
   try {
     d = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
@@ -55,6 +51,12 @@ module.exports = async (req, res) => {
   // El consentimiento es obligatorio: sin él no se registra nada.
   if (d.consent !== true && d.consent !== "true" && d.consent !== "on") {
     return send(res, 400, headers, { error: "Falta el consentimiento" });
+  }
+
+  // El límite va aquí, no al principio: validar es gratis y una errata del
+  // usuario no debe quemarle cupo. Lo que se protege es la llamada saliente.
+  if (limitado(req, "news", MAX_POR_IP)) {
+    return send(res, 429, headers, { error: "Demasiados intentos. Espera unos minutos." });
   }
 
   const r = await enviar(FORM_ID, { [ENTRY_EMAIL]: email });

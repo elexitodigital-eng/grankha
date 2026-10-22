@@ -63,13 +63,6 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return send(res, 204, headers);
   if (req.method !== "POST") return send(res, 405, headers, { error: "Método no permitido" });
 
-  // Crear una sesión de Stripe es gratis pero deja basura en el panel y permite
-  // sondear el catálogo. 15 intentos por IP cada 10 min cubre de sobra una
-  // compra real (incluidos los "volver y reintentar") y corta el abuso.
-  if (limitado(req, "checkout", 15)) {
-    return send(res, 429, headers, { error: "Demasiados intentos seguidos. Espera unos minutos." });
-  }
-
   let order = req.body;
   if (typeof order === "string") {
     try { order = JSON.parse(order); } catch { return send(res, 400, headers, { error: "JSON inválido" }); }
@@ -84,6 +77,17 @@ module.exports = async (req, res) => {
   }
   if (!String(cust.name || "").trim() || !String(cust.address || "").trim() || !String(cust.city || "").trim()) {
     return send(res, 400, headers, { error: "Faltan datos de envío" });
+  }
+
+  // Crear una sesión de Stripe deja basura en el panel y permite sondear el
+  // catálogo. 15 intentos por IP cada 10 min cubren de sobra una compra real
+  // (incluidos los "volver y reintentar") y cortan el abuso.
+  //
+  // Va AQUÍ y no al principio: validar los datos es gratis y no llama a nadie,
+  // así que una errata del usuario no debe quemarle cupo. Lo que se protege es
+  // la llamada a Stripe, que es lo que cuesta y lo que se puede abusar.
+  if (limitado(req, "checkout", 15)) {
+    return send(res, 429, headers, { error: "Demasiados intentos seguidos. Espera unos minutos." });
   }
 
   // ---------------------------------------------------- precios oficiales ----
