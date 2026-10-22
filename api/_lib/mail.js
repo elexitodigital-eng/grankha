@@ -38,6 +38,12 @@ function mailReady() {
 }
 
 async function sendSmtp(to, subject, html) {
+  // Con la configuración a medias (p. ej. host y usuario puestos pero sin contraseña)
+  // no se intenta nada: así se pueden pre-rellenar las variables en Vercel sin riesgo.
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log("[smtp incompleto] faltan SMTP_HOST / SMTP_USER / SMTP_PASS ·", to, "·", subject);
+    return false;
+  }
   const nodemailer = require("nodemailer");
   const port = Number(process.env.SMTP_PORT || 587);
   const transporter = nodemailer.createTransport({
