@@ -46,51 +46,73 @@ Y ningún pedido se pierde: se guarda igual en Supabase, el fallo queda anotado 
 muestra con el filtro «Con email de pedido fallido», y lo reenvías con un clic en cuanto el
 dominio esté verificado. Stripe sigue mandando su propio recibo de pago al cliente.
 
-### Pasos (unos 10 minutos)
+### Se verifica un SUBDOMINIO, no la raíz
 
-1. Entra en **https://resend.com/domains** con la cuenta `elexitodigital@gmail.com`.
-2. **Add Domain** → escribe `roadshop.online`.
-   - Región: **eu-west-1 (Ireland)**, es la más cercana a España.
-   - Return-Path: déjalo por defecto (`send.roadshop.online`).
-3. Resend te mostrará la pestaña **Records** con 3 registros. Cópialos **exactamente**.
-   Serán algo así (los valores reales te los da Resend, no los inventes):
+El dominio que se da de alta en Resend es **`grankha.roadshop.online`**, igual que en el otro
+proyecto se usó `sscarsgarage.roadshop.online`. El remitente pasa a ser
+`GRANKHA <pedidos@grankha.roadshop.online>`.
 
-   | Tipo | Nombre / Host | Valor |
-   |---|---|---|
-   | `TXT` | `send.roadshop.online` | `v=spf1 include:amazonses.com ~all` |
-   | `TXT` | `resend._domainkey.roadshop.online` | `p=MIGfMA0GCSq…` (clave DKIM larga) |
-   | `MX` | `send.roadshop.online` | `feedback-smtp.eu-west-1.amazonses.com` (prioridad 10) |
+Por qué así y no la raíz:
 
-4. Añádelos en el **panel de IONOS** → Dominios y SSL → `roadshop.online` → DNS.
+- **Aísla la reputación.** Si algún correo cae en spam, no mancha `roadshop.online` ni el
+  buzón real, que sigue recibiendo las respuestas gracias a `EMAIL_REPLY_TO`.
+- **No se toca nada existente.** Los cuatro registros van bajo `send.grankha`,
+  `rsend.grankha` y `resend._domainkey.grankha`. El MX y el SPF del buzón de IONOS están en
+  la raíz y no se modifican.
 
-> **Importante, y es buena noticia:** los tres registros van sobre `send.roadshop.online` y
-> `resend._domainkey.roadshop.online`, **no sobre el dominio raíz**. Tu MX actual
-> (`mx00.ionos.es` / `mx01.ionos.es`) y tu buzón `grankha@roadshop.online` **no se tocan** y
-> siguen recibiendo correo como siempre. No hay conflicto.
+Está comprobado en la propia zona que el patrón funciona: `sscarsgarage.roadshop.online` es
+un CNAME a Vercel **y** tiene sus cuatro registros de Resend debajo, activos. `grankha` está
+en la misma situación. Un CNAME impide añadir registros *en ese mismo nombre*, no en nombres
+por debajo.
 
-5. Espera la verificación: normalmente **15 minutos**, hasta 72 h en el peor caso. Puedes
-   comprobar los registros en https://dns.email/. Si a las 72 h no verifica, pulsa
-   *Restart verification* en Resend.
+### Son 4 registros, y sin DMARC
 
-6. **Compruébalo tú mismo en 10 segundos:** entra en el panel (`/api/panel`), en la tarjeta
-   «Estado del correo» pulsa **«Probar envío»**.
-   - Si el mensaje dice **«Enviado con tu propio remitente: el dominio ya está verificado»** →
-     ya está. No hay que cambiar nada en el código ni redesplegar, porque `EMAIL_FROM` ya está
-     puesto en `GRANKHA <grankha@roadshop.online>`. Los tres correos salen solos.
-   - Si dice **«por el remitente de RESERVA»** → el dominio sigue sin verificar.
-   - Si sale ⚠, el panel te explica el motivo en cristiano (dominio sin verificar, clave
-     inválida, límite de envíos…) en vez de soltar un error técnico.
+| # | Tipo | Nombre de host en IONOS | Valor / destino | Prioridad |
+|---|------|-------------------------|-----------------|-----------|
+| 1 | `TXT` | `resend._domainkey.grankha` | `p=MIGfMA0…` (la da Resend) | — |
+| 2 | `MX` | `send.grankha` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
+| 3 | `TXT` | `send.grankha` | `v=spf1 include:amazonses.com ~all` | — |
+| 4 | `CNAME` | `rsend.grankha` | `send.forge.rmta.net` | — |
 
-### Después, recomendado: DMARC
+> **En IONOS se escriben SIN el sufijo `.roadshop.online`.** Solo existe la zona de
+> `roadshop.online` e IONOS añade el sufijo automáticamente. Si lo escribes tú, queda
+> duplicado y no verifica nunca.
 
-Ya tienes un DMARC heredado de IONOS con `p=none` (no bloquea nada). Cuando el dominio esté
-verificado conviene dejar uno propio, por ejemplo:
+**No se añade DMARC.** El de la raíz (`_dmarc.roadshop.online` → `v=DMARC1; p=none;`) no
+lleva etiqueta `sp=`, así que cubre automáticamente a todos los subdominios, `grankha`
+incluido. Poner otro sería redundante.
 
-```
-TXT  _dmarc.roadshop.online   v=DMARC1; p=none; rua=mailto:grankha@roadshop.online
-```
+La guía completa, con el paso a paso de IONOS, qué no tocar y qué hacer si IONOS avisa de un
+choque, está en **`ops/resend_dns_IONOS.md`**.
 
-Empezar en `p=none` y subir a `quarantine` más adelante, cuando veas que todo llega bien.
+### Lo que falta para poder hacerlo
+
+El registro 1 necesita la clave DKIM, que solo genera Resend al dar de alta el dominio. La
+clave actual (`re_RHDGFx6G_…`) es *restricted*: solo permite enviar, y al intentar leer o
+crear dominios devuelve `401 This API key is restricted to only send emails`.
+
+Hace falta una de estas dos cosas:
+
+- una clave de Resend con permiso de **Domains**, o
+- dar de alta `grankha.roadshop.online` en el panel de Resend y pegar los valores de la
+  pestaña **Records**.
+
+El detalle de ambas vías está en `ops/resend_dns_IONOS.md` §6.
+
+### Cuando ya esté verificado
+
+**Compruébalo tú mismo en 10 segundos:** entra en el panel (`/api/panel`), en la tarjeta
+«Estado del correo» pulsa **«Probar envío»**.
+
+- Si dice **«Enviado con tu propio remitente: el dominio ya está verificado»** → ya está.
+- Si dice **«por el remitente de RESERVA»** → el dominio sigue sin verificar.
+- Si sale ⚠, el panel te explica el motivo en cristiano (dominio sin verificar, clave
+  inválida, límite de envíos…) en vez de soltar un error técnico.
+
+A diferencia de antes, aquí **sí hace falta un cambio tras verificar**: hay que poner
+`EMAIL_FROM=GRANKHA <pedidos@grankha.roadshop.online>` en Vercel y redesplegar, porque el
+remitente tiene que pertenecer al dominio verificado. `EMAIL_REPLY_TO` se queda en
+`grankha@roadshop.online` para que las respuestas sigan llegando al buzón de siempre.
 
 ---
 
@@ -100,8 +122,39 @@ Empezar en `p=none` y subir a `quarantine` más adelante, cuando veas que todo l
 **Token:** el valor de la variable `ADMIN_TOKEN` en Vercel → proyecto `grankha` → Settings →
 Environment Variables. Es largo y empieza por `grk_`. Guárdalo en tu gestor de contraseñas.
 
-La página no contiene ningún secreto y está fuera del sitemap y con `noindex`: sin el token el
-servidor no devuelve nada (401). El token se guarda solo en tu navegador.
+### No es una página pública
+
+El panel **no existe como página del sitio**. Antes estaba en `/pedidos.html`, en la raíz,
+visible para cualquiera que probara esa URL aunque no pudiera entrar. Ahora no:
+
+- **`/pedidos.html` → 404.** El fichero se borró del repositorio.
+- **`/api/panel` sin credencial → 404.** Y no un 404 propio: devuelve **exactamente** el
+  mismo cuerpo, las mismas cabeceras y el mismo `content-type` que cualquier ruta
+  inexistente de Vercel (`The page could not be found / NOT_FOUND / <id de petición>`,
+  79 bytes). Comprobado byte a byte. Desde fuera no hay forma de distinguir «aquí hay un
+  panel protegido» de «aquí no hay nada».
+- **`/api/admin` sin credencial → 404.** Antes devolvía 401, 405 o 500 según el caso, y
+  cada uno de esos códigos delataba que el endpoint existía. Ahora todo es 404: sin
+  credencial, con método raro, con JSON inválido.
+- Nada de esto está en el `sitemap.xml`, y la respuesta buena lleva `X-Robots-Tag: noindex`,
+  `Referrer-Policy: no-referrer` y `X-Frame-Options: DENY`.
+
+### Cómo se entra
+
+1. Abres la URL con `?token=…` una sola vez.
+2. El servidor comprueba el token **en tiempo constante**, fija una cookie y responde
+   **302 a `/api/panel`** — así el token desaparece de la barra de direcciones y no queda
+   en el historial, en los marcadores ni en el `Referer`.
+3. La cookie `grankha_panel` es `HttpOnly` (ningún script puede leerla), `Secure`,
+   `SameSite=Strict` y con `Path=/api` (no se envía al resto del sitio). Dura **8 horas**;
+   pasado ese tiempo vuelves a usar la URL con token.
+4. El botón **Salir** apunta a `/api/panel?logout=1`, borra la cookie y devuelve 404.
+
+El HTML del panel está incrustado en `api/_lib/panel-html.js`, no es un fichero suelto que
+se sirva. Ya no usa `localStorage` para el token.
+
+Endpoint: `api/panel.js` sirve el HTML; `api/admin.js` sirve los datos y las acciones.
+Ambos comparten la credencial desde `api/_lib/auth.js`.
 
 ### Qué puedes hacer desde ahí
 
@@ -131,21 +184,30 @@ Ya están todas puestas:
 | Variable | Valor |
 |---|---|
 | `EMAIL_PROVIDER` | `resend` |
-| `RESEND_API_KEY` | cifrada |
-| `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` |
-| `EMAIL_REPLY_TO` | `grankha@roadshop.online` |
+| `RESEND_API_KEY` | cifrada · **solo envío**, sin permiso de dominios |
+| `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` → **cambiará** a `GRANKHA <pedidos@grankha.roadshop.online>` en cuanto el subdominio esté verificado |
+| `EMAIL_REPLY_TO` | `grankha@roadshop.online` · **no cambia nunca** |
 | `EMAIL_AVISO` | `elexitodigital@gmail.com` |
 | `EMAIL_FALLBACK_FROM` | opcional · por defecto `GRANKHA <onboarding@resend.dev>` |
-| `ADMIN_TOKEN` | cifrada |
+| `ADMIN_TOKEN` | cifrada · credencial única de `/api/panel` y `/api/admin` |
 | `SUPPLIER_NAME` | `AW Dropshipping` |
 | `DELIVERY_DAYS` | `3-8` |
 | `SITE_URL` | `https://grankha.roadshop.online` |
 
-`EMAIL_REPLY_TO` importa: aunque Resend envíe desde un subdominio o cambies el remitente, las
-respuestas del cliente caen en `grankha@roadshop.online`.
+`EMAIL_REPLY_TO` es lo que hace viable el subdominio: el cliente ve
+`pedidos@grankha.roadshop.online` como remitente, pero cuando pulsa «Responder» el correo
+cae en `grankha@roadshop.online`, el buzón de siempre.
+
+Ojo con `EMAIL_FROM`: mientras el subdominio no esté verificado en Resend, poner ahí una
+dirección de `grankha.roadshop.online` no arregla nada — Resend seguirá rechazándolo con
+`domain is not verified`. El orden correcto es: DNS primero, verificación después, cambio de
+variable al final.
 
 Si algún día quieres que los avisos de venta vayan al buzón de la empresa en vez de al Gmail,
-cambia `EMAIL_AVISO` a `grankha@roadshop.online` en Vercel y redespliega.
+cambia `EMAIL_AVISO` a `grankha@roadshop.online` en Vercel y redespliega. Ten en cuenta que
+la **red de reserva** solo funciona mientras `EMAIL_AVISO` sea la dirección de la cuenta de
+Resend (`elexitodigital@gmail.com`): `onboarding@resend.dev` únicamente puede enviar hacia
+esa dirección. Si la cambias antes de verificar el dominio, te quedas sin avisos internos.
 
 El código admite también SMTP (`EMAIL_PROVIDER=smtp` con el buzón de IONOS) y Brevo, por si
 prefieres no depender de Resend. Está en `api/_lib/mail.js`.

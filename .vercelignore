@@ -4,6 +4,9 @@
 # publicada no lo necesita. Subirlo dejaba /data/pricing.json público.
 data/
 docs/
+# ops/ son guías internas de operación (DNS de IONOS, claves, pasos de panel).
+# Documentación para ti, no contenido de la web: no debe publicarse nunca.
+ops/
 assets/src/
 src/
 tools/
