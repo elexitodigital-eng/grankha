@@ -180,9 +180,22 @@
         if (!res.ok) throw new Error(res.j.error || "No autorizado");
         pedidos = res.j.pedidos || [];
         var c = res.j.correo || {};
-        $("#correo").innerHTML = c.configurado
-          ? "Proveedor de correo <b>configurado</b> · remitente <code>" + esc(c.from) + "</code>"
-          : "<b style='color:var(--err)'>Correo SIN configurar.</b> Los correos se generan pero no salen.";
+        if (!c.configurado) {
+          $("#correo").innerHTML =
+            "<b style='color:var(--err)'>Correo SIN configurar.</b> Los correos se generan pero no salen.";
+        } else {
+          // "configurado" solo significa que hay proveedor y clave. Que el dominio
+          // esté verificado en Resend es otra cosa, y si no lo está los correos a
+          // clientes NO salen. Se dice claro en vez de dar un ✓ tranquilizador falso.
+          $("#correo").innerHTML =
+            "Proveedor de correo <b>configurado</b> · remitente <code>" + esc(c.from) + "</code>" +
+            (c.reserva ? "<br><span class='small mut'>Remitente de reserva para tus avisos internos: <code>" +
+              esc(c.reserva) + "</code></span>" : "") +
+            "<br><b style='color:var(--warn,#8a5a00)'>Ojo:</b> esto no confirma que el dominio esté " +
+            "verificado en Resend. Mientras no lo esté, <b>los correos a clientes no salen</b> " +
+            "(tuyos sí, por el remitente de reserva). Pulsa <b>«Probar envío»</b> para comprobarlo: " +
+            "si responde «con tu propio remitente», ya está todo en marcha.";
+        }
         pintar();
         aviso("", "");
       })
