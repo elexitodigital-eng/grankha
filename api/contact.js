@@ -11,31 +11,13 @@ const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE
 
 const esc = (s = "") => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
 
+// El aviso interno siempre va al correo de la empresa
+const { sendEmail } = require("./_lib/mail");
+
 async function notify(subject, html) {
-  const provider = (process.env.EMAIL_PROVIDER || "").toLowerCase();
-  const from = process.env.EMAIL_FROM || "GRANKHA <onboarding@resend.dev>";
   const to = process.env.EMAIL_AVISO;
   if (!to) return;
-  try {
-    if (provider === "resend" && process.env.RESEND_API_KEY) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: [to], subject, html }),
-      });
-    } else if (provider === "brevo" && process.env.BREVO_API_KEY) {
-      await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sender: { name: "GRANKHA", email: from.replace(/.*<|>.*/g, "") },
-          to: [{ email: to }], subject, htmlContent: html,
-        }),
-      });
-    }
-  } catch (e) {
-    console.error("contacto email:", e.message);
-  }
+  await sendEmail(to, subject, html);
 }
 
 function send(res, status, headers, body) {

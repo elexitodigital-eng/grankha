@@ -8,9 +8,11 @@
 //   STRIPE_SECRET_KEY          (la misma que usa el checkout)
 //   STRIPE_WEBHOOK_SECRET      whsec_...
 //   SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
-//   EMAIL_PROVIDER = resend | brevo      (opcional)
-//   RESEND_API_KEY / BREVO_API_KEY       (opcional)
-//   EMAIL_FROM = "GRANKHA <hola@grankha.com>"
+//   EMAIL_PROVIDER = smtp | resend | brevo   (opcional; se deduce solo)
+//     smtp   → SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS  (buzón de la empresa)
+//     resend → RESEND_API_KEY
+//     brevo  → BREVO_API_KEY
+//   EMAIL_FROM = "GRANKHA <grankha@roadshop.online>"
 //   EMAIL_AVISO = correo interno que recibe el aviso de cada venta
 // ============================================================================
 const Stripe = require("stripe");
@@ -27,38 +29,8 @@ const config = { api: { bodyParser: false } };
 const eur = (n = 0) => Number(n).toFixed(2).replace(".", ",") + " €";
 const esc = (s = "") => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
 
-async function sendEmail(to, subject, html) {
-  if (!to) return false;
-  const provider = (process.env.EMAIL_PROVIDER || "").toLowerCase();
-  const from = process.env.EMAIL_FROM || "GRANKHA <onboarding@resend.dev>";
-  try {
-    if (provider === "resend" && process.env.RESEND_API_KEY) {
-      const r = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: [to], subject, html }),
-      });
-      if (!r.ok) console.error("Resend", r.status, await r.text());
-      return r.ok;
-    }
-    if (provider === "brevo" && process.env.BREVO_API_KEY) {
-      const r = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sender: { name: "GRANKHA", email: from.replace(/.*<|>.*/g, "") },
-          to: [{ email: to }], subject, htmlContent: html,
-        }),
-      });
-      if (!r.ok) console.error("Brevo", r.status, await r.text());
-      return r.ok;
-    }
-  } catch (e) {
-    console.error("email:", e.message);
-  }
-  console.log("[email sin proveedor]", to, subject);
-  return false;
-}
+// Correo unificado (SMTP del buzón de la empresa, Resend o Brevo)
+const { sendEmail } = require("./_lib/mail");
 
 function orderEmail(o) {
   const lines = (o.order_items || []).map(

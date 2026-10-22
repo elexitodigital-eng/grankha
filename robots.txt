@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://grankha-beta.vercel.app/sitemap.xml
+Sitemap: https://grankha.roadshop.online/sitemap.xml

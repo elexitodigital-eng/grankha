@@ -33,6 +33,25 @@ DON_TEXT = SITE["donation"].get("public_text", "un porcentaje de los beneficios"
 RETURNS = SITE.get("returns_days", 30)
 DELIVERY = SITE.get("delivery_days", "3-8")
 
+# ------------------------------------------------- datos legales / logísticos
+LEGAL = SITE.get("legal", {})
+TITULAR = LEGAL.get("titular") or SITE.get("legal_name") or SITE["name"]
+NIF = LEGAL.get("nif", "").strip()
+DOMICILIO = LEGAL.get("domicilio", "").strip()
+MAIL = SITE["contactEmail"]
+PROVEEDOR = (LEGAL.get("fulfillment") or {}).get("name", "AW Dropshipping")
+MODELO = (LEGAL.get("fulfillment") or {}).get("model", "dropshipping")
+FULFILL_TEXT = SITE.get(
+    "fulfillment_text",
+    f"Trabajamos con envío directo (dropshipping) junto a nuestro proveedor logístico {PROVEEDOR}."
+)
+# la marca legal coincide con la comercial: no repetir «GRANKHA · GRANKHA»
+MARCA_LEGAL = "" if TITULAR.upper() == SITE["name"].upper() else " · " + html.escape(TITULAR)
+NIF_TXT = html.escape(NIF)
+DOM_TXT = html.escape(DOMICILIO)
+# si aún no hay NIF / domicilio, no se publica el hueco: se ofrece el dato a petición
+FISCAL_COMPLETO = bool(NIF and DOMICILIO)
+
 PROD = [p for p in PRODUCTS if p["kind"] == "product"]
 PACKS = [p for p in PRODUCTS if p["kind"] == "pack"]
 CATS = [
@@ -250,8 +269,8 @@ def footer():
       </ul></div>
     </div>
     <div class="footer__base">
-      <span>© <span data-year>2026</span> {esc(SITE['name'])} · {esc(SITE['legal_name'])} · Todos los derechos reservados</span>
-      <span>{esc(SITE['contactEmail'])} · Envío en {DELIVERY} días laborables</span>
+      <span>© <span data-year>2026</span> {esc(SITE['name'])}{MARCA_LEGAL} · Todos los derechos reservados</span>
+      <span>{esc(MAIL)} · Envío en {DELIVERY} días laborables</span>
     </div>
   </div>
 </footer>"""
@@ -865,9 +884,16 @@ def build_envios():
 
       <h2 class="h3 mt-l">Cómo funciona</h2>
       <div class="grid g3 mt-m">
-        <div class="notice"><b>1 · Preparación</b><br>Verificamos y preparamos tu pedido en 24-48 horas laborables.</div>
+        <div class="notice"><b>1 · Preparación</b><br>Verificamos tu pedido y lo pasamos a preparación en 24-48 horas laborables.</div>
         <div class="notice"><b>2 · Envío con seguimiento</b><br>Recibes un email con el número de seguimiento en cuanto sale del almacén; puedes consultar el estado del envío en la web del transportista.</div>
         <div class="notice"><b>3 · Entrega</b><br>Entrega en {DELIVERY} días laborables con aviso del transportista. Si no estás, se reintenta o se deja en punto de recogida.</div>
+      </div>
+
+      <div class="notice notice--light mt-l">
+        <b>Envío directo: de su almacén a tu casa</b><br>
+        {esc(FULFILL_TEXT)} Así reducimos manipulaciones y plazos.
+        <b>GRANKHA sigue siendo tu único interlocutor:</b> la factura, la garantía de 3 años y las devoluciones
+        las gestionas siempre con nosotros en <a href="mailto:{esc(MAIL)}" style="color:#fff">{esc(MAIL)}</a>.
       </div>
 
       <h2 class="h3 mt-l" id="seguimiento">Seguimiento del pedido</h2>
@@ -934,7 +960,7 @@ def build_contacto():
           <li>{SVG['return']}<span><b>Devoluciones</b><br>Indica qué producto quieres devolver; el motivo es opcional.</span></li>
           <li>{SVG['heart']}<span><b>Propuestas de investigación</b><br>Entidades y equipos que trabajen en cáncer o enfermedades raras en mascotas.</span></li>
         </ul>
-        <p class="small mt-m">GRANKHA · {esc(SITE['legal_name'])} · {esc(SITE['contactEmail'])}</p>
+        <p class="small mt-m">{esc(SITE['name'])}{MARCA_LEGAL} · {esc(MAIL)}</p>
       </div>
       <form class="form" data-contact>
         <div class="f2">
@@ -973,19 +999,22 @@ def build_legal():
   </section>
   <section class="section" style="padding-top:0">
     <div class="wrap prose">
-      <!-- HUECOS PENDIENTES (invisibles para el cliente): razón social, NIF, domicilio fiscal y teléfono.
-           Se sustituyen en cuanto el titular facilite los datos. Ver docs/PENDIENTES.md -->
+      <!-- Datos fiscales: titular, email y modelo logístico publicados.
+           NIF y domicilio fiscal se añaden en cuanto el titular los facilite (docs/PENDIENTES.md). -->
 
       <h2 id="aviso">Aviso legal</h2>
       <p>En cumplimiento del artículo 10 de la Ley 34/2002 (LSSI-CE), se informa:</p>
       <ul>
-        <li><b>Titular:</b> [RAZÓN SOCIAL / NOMBRE Y APELLIDOS]</li>
-        <li><b>Nombre comercial:</b> GRANKHA · {esc(SITE['legal_name'])}</li>
-        <li><b>NIF:</b> [NIF]</li>
-        <li><b>Domicilio:</b> [DIRECCIÓN COMPLETA, CP, LOCALIDAD, MADRID, ESPAÑA]</li>
-        <li><b>Email:</b> {esc(SITE['contactEmail'])}</li>
-        <li><b>Actividad:</b> comercio electrónico de accesorios para mascotas.</li>
+        <li><b>Titular:</b> {esc(TITULAR)}</li>
+        {'<li><b>Nombre comercial:</b> ' + esc(SITE['name']) + '</li>' if SITE['name'].upper() != TITULAR.upper() else ''}
+        {'<li><b>NIF:</b> ' + NIF_TXT + '</li>' if NIF_TXT else ''}
+        {'<li><b>Domicilio fiscal:</b> ' + DOM_TXT + '</li>' if DOM_TXT else ''}
+        <li><b>Email:</b> <a href="mailto:{esc(MAIL)}">{esc(MAIL)}</a></li>
+        <li><b>Web:</b> {esc(BASE)}</li>
+        <li><b>Actividad:</b> {esc(LEGAL.get('actividad') or 'comercio electrónico de accesorios para mascotas')}.</li>
+        <li><b>Modelo de envío:</b> envío directo (dropshipping) con el proveedor logístico {esc(PROVEEDOR)}.</li>
       </ul>
+      {'' if FISCAL_COMPLETO else f'<p class="small">Los datos fiscales completos de la empresa (NIF y domicilio fiscal) se facilitan gratuitamente a cualquier consumidor que los solicite escribiendo a <a href="mailto:{esc(MAIL)}">{esc(MAIL)}</a>, y se publicarán en esta página en cuanto finalice el alta.</p>'}
       <p>El acceso y uso de este sitio atribuye la condición de usuario e implica la aceptación de este aviso legal.
       Los contenidos, marcas y diseños son propiedad de su titular o se utilizan con autorización.</p>
 
@@ -1005,6 +1034,9 @@ def build_legal():
       <p>Plazo estimado: {DELIVERY} días laborables desde la confirmación. Enviamos con número de seguimiento que
       recibirás por email. Los retrasos por causas ajenas (aduanas, transporte, fuerza mayor) no generan derecho a
       indemnización, sin perjuicio del derecho de desistimiento.</p>
+      <p><b>Cómo llega tu pedido:</b> {esc(FULFILL_TEXT)} GRANKHA es siempre tu único interlocutor y responsable
+      de la venta: cualquier incidencia con el envío, la garantía o una devolución se gestiona con nosotros en
+      <a href="mailto:{esc(MAIL)}">{esc(MAIL)}</a>, nunca con el proveedor logístico.</p>
       <h3>5. Desistimiento y devoluciones</h3>
       <p>Dispones de <b>{RETURNS} días</b> desde la recepción para devolver el producto sin justificar el motivo,
       muy por encima de los 14 días naturales legales. Condiciones en <a href="envios.html#devoluciones">Envíos y devoluciones</a>.</p>
@@ -1023,11 +1055,12 @@ def build_legal():
       <h2 id="privacidad">Política de privacidad</h2>
       <p>De acuerdo con el RGPD (UE 2016/679) y la LOPDGDD:</p>
       <ul>
-        <li><b>Responsable:</b> [RAZÓN SOCIAL], NIF [NIF], correo {esc(SITE['contactEmail'])}.</li>
+        <li><b>Responsable:</b> {esc(TITULAR)}{', NIF ' + NIF_TXT if NIF_TXT else ''}, correo {esc(MAIL)}.</li>
         <li><b>Finalidades:</b> gestionar tu pedido y su envío, atender consultas y devoluciones y —si lo autorizas— enviarte novedades.</li>
         <li><b>Base jurídica:</b> ejecución del contrato, consentimiento (newsletter), interés legítimo y obligación legal.</li>
-        <li><b>Destinatarios:</b> proveedor logístico y transportista que entrega el pedido, pasarela de pago (Stripe) y
-        proveedores técnicos de hosting y correo. No se venden datos a terceros.</li>
+        <li><b>Destinatarios:</b> {esc(PROVEEDOR)}, proveedor logístico que prepara y envía tu pedido en modelo de envío
+        directo (dropshipping), el transportista que lo entrega, la pasarela de pago (Stripe) y proveedores técnicos de
+        hosting y correo. Solo reciben los datos imprescindibles para enviar y cobrar tu pedido. No se venden datos a terceros.</li>
         <li><b>Conservación:</b> datos de pedido durante los plazos legales (facturación: 4 años; garantías: 3 años);
         newsletter hasta que te des de baja.</li>
         <li><b>Derechos:</b> acceder, rectificar, suprimir, oponerte, limitar y portar tus datos escribiendo a

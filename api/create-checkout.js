@@ -21,7 +21,7 @@ const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE
   auth: { persistSession: false },
 });
 
-const SITE = process.env.SITE_URL || "https://grankha.vercel.app";
+const SITE = process.env.SITE_URL || "https://grankha.roadshop.online";
 const DONATION_RATE = 0.05;        // interno: nunca se muestra en la web
 const VAT = 0.21;
 const COSTS = PRICES.costs || {};

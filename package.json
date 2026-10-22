@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "description": "GRANKHA · tienda de accesorios para perros y gatos",
-  "engines": { "node": "22.x" },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "stripe": "^16.12.0",
-    "@supabase/supabase-js": "^2.45.4"
+    "@supabase/supabase-js": "^2.45.4",
+    "nodemailer": "^6.9.15"
   }
 }

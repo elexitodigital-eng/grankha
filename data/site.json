@@ -1,9 +1,9 @@
 {
   "name": "GRANKHA",
-  "legal_name": "ZENQA LIFE",
+  "legal_name": "GRANKHA",
   "tagline": "Accesorios para perros y gatos con propósito",
-  "url": "https://grankha-beta.vercel.app",
-  "contactEmail": "zenqalife@gmail.com",
+  "url": "https://grankha.roadshop.online",
+  "contactEmail": "grankha@roadshop.online",
   "currency": "EUR",
   "shipping": {
     "default": "pen",
@@ -93,7 +93,7 @@
     ]
   },
   "checkout": {
-    "endpoint": "https://grankha-beta.vercel.app/api/create-checkout",
+    "endpoint": "https://grankha.roadshop.online/api/create-checkout",
     "_comment": "Deja endpoint vacío para el flujo de confirmación por email. Al conectar Stripe/Supabase, pon aquí la URL de tu función y el carrito enviará el pedido en JSON y redirigirá a la pasarela si devuelve { url }."
   },
   "returns_days": 30,
@@ -104,9 +104,21 @@
     "purpose": "investigación del cáncer y las enfermedades raras en mascotas",
     "internal_note": "El porcentaje exacto (5 %) es interno: se reserva en orders.donation y en la auditoría de precios. No mostrarlo en la web."
   },
-  "contact_endpoint": "https://grankha-beta.vercel.app/api/contact",
+  "contact_endpoint": "https://grankha.roadshop.online/api/contact",
   "supabase": {
     "url": "https://ravvjwyjaxofidgueopc.supabase.co",
     "key": "sb_publishable_Igfe5uw4FCwMF2wc3G0Mag_xjta9ye-"
-  }
+  },
+  "legal": {
+    "titular": "GRANKHA",
+    "nif": "",
+    "domicilio": "",
+    "email": "grankha@roadshop.online",
+    "actividad": "Comercio electrónico de accesorios para perros y gatos",
+    "fulfillment": {
+      "name": "AW Dropshipping",
+      "model": "dropshipping"
+    }
+  },
+  "fulfillment_text": "Trabajamos con envío directo (dropshipping) junto a nuestro proveedor logístico AW Dropshipping: en cuanto confirmas el pedido, se prepara y sale directamente desde su almacén hacia tu casa, sin pasos intermedios."
 }
