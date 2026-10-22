@@ -36,7 +36,7 @@ Sin esto no puedes vender legalmente (LSSI art. 10). Necesito que me des:
 | NIF / CIF | 12345678Z | Aviso legal |
 | Domicilio fiscal | Calle X, 1, 3ºB, 28939 Arroyomolinos, Madrid | Aviso legal |
 | Teléfono de atención | +34 6XX XXX XXX | Aviso legal, footer de la web |
-| Email de la tienda | hola@grankha.com o zenqalife@gmail.com | Todo el sitio |
+| Email de la tienda | grankha@roadshop.online | Todo el sitio |
 
 **Alternativa**: si aún no tienes alta de autónomo, puedes empezar como particular sin
 facturación empresarial, pero **es arriesgado**: Hacienda considerará la actividad
@@ -214,9 +214,9 @@ Un cliente compra y tiene que recibir **dos correos**. Ninguno se escribe a mano
 
 ```bash
 supabase functions deploy notify-tracking --no-verify-jwt
-supabase secrets set EMAIL_PROVIDER=brevo BREVO_API_KEY=xkeysib-... EMAIL_FROM="GRANKHA <hola@grankha.com>"
+supabase secrets set EMAIL_PROVIDER=brevo BREVO_API_KEY=xkeysib-... EMAIL_FROM="GRANKHA <grankha@roadshop.online>"
 # o, si prefieres Resend:
-supabase secrets set EMAIL_PROVIDER=resend RESEND_API_KEY=re_... EMAIL_FROM="GRANKHA <hola@grankha.com>"
+supabase secrets set EMAIL_PROVIDER=resend RESEND_API_KEY=re_... EMAIL_FROM="GRANKHA <grankha@roadshop.online>"
 ```
 
 Si aún no hay claves, las funciones **no fallan**: escriben el correo en el log (modo simulación), así que puedes
@@ -260,7 +260,7 @@ Con esas cuatro respuestas, la tienda queda lista para vender hoy mismo.
 
 ## Extras recomendados (no bloquean la venta)
 
-- **Dominio propio** (10 €/año): `grankha.com` o `grankha.es`. Se configura en 5 minutos:
+- **Dominio propio**: ya en marcha en `grankha.roadshop.online`. Se configura en 5 minutos:
   repositorio → Settings → Pages → Custom domain (+ CNAME en el registrador).
   Una URL propia transmite más confianza que `github.io`.
 - **Google Search Console**: dar de alta el dominio y enviar `sitemap.xml`.

@@ -9,7 +9,7 @@
 //   STRIPE_SECRET_KEY            rk_live_... o sk_live_...
 //   SUPABASE_URL                 https://xxxx.supabase.co
 //   SUPABASE_SERVICE_ROLE_KEY    service_role (solo servidor)
-//   SITE_URL                     https://grankha.com  (para volver tras pagar)
+//   SITE_URL                     https://grankha.roadshop.online  (para volver tras pagar)
 //   ALLOWED_ORIGIN               opcional, por defecto cualquiera
 // ============================================================================
 const Stripe = require("stripe");

@@ -5,18 +5,18 @@
 //
 //   supabase secrets set EMAIL_PROVIDER=brevo
 //   supabase secrets set BREVO_API_KEY=xkeysib-...
-//   supabase secrets set EMAIL_FROM="GRANKHA <hola@grankha.com>"
+//   supabase secrets set EMAIL_FROM="GRANKHA <grankha@roadshop.online>"
 //
 //   ... o bien:
 //   supabase secrets set EMAIL_PROVIDER=resend
 //   supabase secrets set RESEND_API_KEY=re_...
-//   supabase secrets set EMAIL_FROM="GRANKHA <hola@grankha.com>"
+//   supabase secrets set EMAIL_FROM="GRANKHA <grankha@roadshop.online>"
 //
 // Si no hay claves configuradas, no falla: escribe el correo en el log de la
 // función (modo simulación), para que puedas probar todo el flujo hoy mismo.
 // ============================================================================
 
-const FROM = Deno.env.get("EMAIL_FROM") ?? "GRANKHA <onboarding@resend.dev>";
+const FROM = Deno.env.get("EMAIL_FROM") ?? "GRANKHA <grankha@roadshop.online>";
 const PROVIDER = (Deno.env.get("EMAIL_PROVIDER") ?? "").toLowerCase();
 
 export type Order = {
