@@ -46,83 +46,82 @@ Y ningún pedido se pierde: se guarda igual en Supabase, el fallo queda anotado 
 muestra con el filtro «Con email de pedido fallido», y lo reenvías con un clic en cuanto el
 dominio esté verificado. Stripe sigue mandando su propio recibo de pago al cliente.
 
-### Se verifica la RAÍZ `roadshop.online`
+### Se verifica el SUBDOMINIO `grankha.roadshop.online`
 
-El dominio que se da de alta en Resend es **`roadshop.online`**, y el remitente sigue siendo
-`GRANKHA <grankha@roadshop.online>`.
+El dominio dado de alta en Resend es **`grankha.roadshop.online`**, igual que en el otro
+proyecto se usó `sscarsgarage.roadshop.online`. El remitente pasa a ser
+`GRANKHA <pedidos@grankha.roadshop.online>`.
 
-Se barajó primero enviar desde un subdominio (`pedidos@grankha.roadshop.online`), que es lo
-que se hizo en el otro proyecto con `sscarsgarage`. Se descarta por dos motivos concretos:
+Por qué así y no la raíz:
 
-- **No hay que cambiar nada.** `EMAIL_FROM` en Vercel ya vale
-  `GRANKHA <grankha@roadshop.online>`. En cuanto el dominio verifique, los tres correos salen
-  solos: sin tocar variables y **sin redesplegar**.
-- **Es la dirección ya publicada.** `grankha@roadshop.online` aparece en 8 sitios de
-  `legal.html`. Con un subdominio el cliente vería un remitente distinto al que la propia web
-  le indica.
+- **Aísla la reputación.** Si algún correo cae en spam, no mancha `roadshop.online` ni el
+  buzón real, que sigue recibiendo las respuestas gracias a `EMAIL_REPLY_TO`.
+- **No se toca nada existente.** Los cuatro registros van bajo `resend._domainkey.grankha`,
+  `send.grankha` y `rsend.grankha`. El MX, el SPF y el A de la raíz no se modifican.
 
-El coste es que no se aísla la reputación por proyecto. Se asume a sabiendas.
+El coste es que **sí hace falta cambiar `EMAIL_FROM` y redesplegar**, porque el remitente
+tiene que pertenecer al dominio verificado. Con la raíz no habría hecho falta. Es un cambio
+de una variable, no de código.
 
 ### Son 4 registros, y sin DMARC
 
 | # | Tipo | Nombre de host en IONOS | Valor / destino | Prioridad |
 |---|------|-------------------------|-----------------|-----------|
-| 1 | `TXT` | `resend._domainkey` | `p=MIGfMA0…` (la da Resend) | — |
-| 2 | `MX` | `send` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
-| 3 | `TXT` | `send` | `v=spf1 include:amazonses.com ~all` | — |
-| 4 | `CNAME` | `rsend` | `send.forge.rmta.net` | — |
+| 1 | `TXT` | `resend._domainkey.grankha` | `p=MIGfMA0…` (clave DKIM, ver §5 de la guía) | — |
+| 2 | `MX` | `send.grankha` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
+| 3 | `TXT` | `send.grankha` | `v=spf1 include:amazonses.com ~all` | — |
+| 4 | `CNAME` | `rsend.grankha` | `send.forge.rmta.net` | — |
 
-> **En IONOS se escriben SIN el sufijo `.roadshop.online`.** Solo existe la zona de
-> `roadshop.online` e IONOS añade el sufijo automáticamente. Si lo escribes tú, queda
-> duplicado y no verifica nunca.
+> **En IONOS se escriben SIN el sufijo `.roadshop.online`**, que IONOS añade solo. El
+> `.grankha` **sí** forma parte del nombre de host.
 
-**No se añade DMARC.** El de la raíz (`_dmarc.roadshop.online` → `v=DMARC1; p=none;`) ya
-existe y no lleva etiqueta `sp=`, así que cubre también a todos los subdominios.
+**No se añade DMARC.** El de la raíz (`_dmarc.roadshop.online` → `v=DMARC1; p=none;`) no
+lleva etiqueta `sp=`, así que cubre automáticamente a todos los subdominios, `grankha`
+incluido. Poner otro sería redundante y podría contradecir al primero.
 
-Comprobado antes de escribir esto: `resend._domainkey.roadshop.online`,
-`send.roadshop.online` y `rsend.roadshop.online` **no existen hoy**, así que ningún registro
-nuevo pisa uno existente. Y la raíz no tiene CNAME, que era el único impedimento técnico
-posible. El MX (`mx00/mx01.ionos.es`), el SPF (`include:_spf-eu.ionos.com`) y el A
-(`217.160.0.140`) de la raíz **no se tocan**.
+**El SPF de la raíz no se modifica.** El SPF se comprueba contra el Return-Path, no contra el
+From visible: Resend envía con Return-Path en `send.grankha.roadshop.online`, que lleva su
+propio SPF con `include:amazonses.com`. El de la raíz sigue autorizando a IONOS para el
+correo que mandes tú desde el buzón. Dos comprobaciones sobre dos nombres distintos.
 
-**El SPF de la raíz no se modifica**, y conviene entender por qué: el SPF se comprueba contra
-el Return-Path, no contra el From visible. Resend envía con Return-Path en
-`send.roadshop.online`, que lleva su propio SPF con `include:amazonses.com`. El de la raíz
-sigue autorizando a IONOS para el correo que mandes tú desde el buzón. Dos comprobaciones
-sobre dos nombres distintos, sin estorbarse.
+DMARC pasa por las dos vías: DKIM firma con `d=grankha.roadshop.online` (coincide exacto con
+el From) y el Return-Path `send.grankha.roadshop.online` pertenece al mismo dominio
+organizativo, `roadshop.online`.
 
-DMARC pasa por las dos vías: DKIM firma con `d=roadshop.online` (coincide exacto con el From)
-y el Return-Path `send.roadshop.online` pertenece al mismo dominio organizativo.
+**Un CNAME a Vercel no impide estos registros.** `grankha.roadshop.online` es un CNAME a
+Vercel, y un CNAME prohíbe otros registros *en ese mismo nombre*, no en nombres hijos.
+`send.grankha…` es un nombre distinto. Está demostrado en esta misma zona:
+`sscarsgarage.roadshop.online` es un CNAME a Vercel y tiene sus cuatro registros de Resend
+activos debajo.
 
-La guía completa, con el paso a paso de IONOS, qué no tocar y qué hacer si IONOS avisa de un
-choque, está en **`ops/resend_dns_IONOS.md`**.
+La guía completa, con el paso a paso de IONOS y qué no tocar, está en
+**`ops/resend_dns_IONOS.md`**.
 
 ### Ya está dado de alta en Resend
 
-El dominio **`roadshop.online` ya existe en la cuenta de Resend**, en región **eu-west-1
-(Irlanda)**, y los cuatro registros que pide ya están volcados en `ops/resend_dns_IONOS.md`
-§5 con sus valores reales.
-
 | | |
 |---|---|
-| Id del dominio | `43a0dc99-c8e1-4d4a-9b28-2f1be6cb5603` |
-| Estado | `not_started` — espera los registros en el DNS |
+| Dominio | `grankha.roadshop.online` |
+| Id | `a0183708-5bdc-4967-8027-707c119d43a2` |
+| Región | `eu-west-1` (Irlanda) |
+| Estado | `not_started` — en cuanto el DKIM sea el bueno pasa a `verified` |
 | Registros que pide | 4 · **ninguno es DMARC** |
 
-Dos cosas confirmadas al hacerlo:
+**Tres de los cuatro registros ya están bien puestos en IONOS.** Comprobado uno a uno por DNS
+contra lo que pide Resend: el MX y el TXT de `send.grankha` y el CNAME de `rsend.grankha`
+coinciden. No hay que tocarlos.
 
-- **Resend no pide DMARC.** Devolvió exactamente cuatro registros: DKIM, MX y TXT bajo
-  `send`, y CNAME bajo `rsend`. El DMARC de la raíz ya cubre, así que no se añade nada.
-- **No había riesgo de solapamiento con el otro proyecto.** La cuenta tenía 0 dominios, así
-  que `sscarsgarage.roadshop.online` vive en otra cuenta de Resend distinta. El alta devolvió
-  `HTTP 201` a la primera.
+**Solo falla el registro 1, el DKIM**, y no por un error al teclear: Resend genera una clave
+distinta para cada dominio, y la que está publicada es la del dominio raíz `roadshop.online`,
+de cuando se barajó verificar la raíz. El nombre del registro es correcto; el valor pertenece
+a otro dominio. Hay que sustituirlo por el de `ops/resend_dns_IONOS.md` §5.
 
-**Lo único que falta es tu paso en IONOS**: copiar los cuatro registros de
-`ops/resend_dns_IONOS.md` §5 en la zona DNS de `roadshop.online`. Es lo que no puedo hacer yo.
+El dominio raíz que se llegó a dar de alta en Resend se ha borrado, para que no queden dos
+entradas conviviendo. En la cuenta solo queda `grankha.roadshop.online`.
 
-La clave API con permisos de dominio se ha usado solo para esto y ya está borrada del
-entorno. La que usa la web en producción (`re_RHDGFx6G_…`, solo envío) **no hace falta
-cambiarla**: para enviar no necesita permisos de dominio.
+La clave API con permisos de dominio sigue en el entorno porque hace falta para confirmar que
+Resend pasa el dominio a `verified`; se borra en cuanto eso ocurra. La que usa la web en
+producción (`re_RHDGFx6G_…`, solo envío) **no hace falta cambiarla**.
 
 ### Cuando ya esté verificado
 
@@ -134,9 +133,12 @@ cambiarla**: para enviar no necesita permisos de dominio.
 - Si sale ⚠, el panel te explica el motivo en cristiano (dominio sin verificar, clave
   inválida, límite de envíos…) en vez de soltar un error técnico.
 
-Y no hace falta tocar nada más: como se verifica la raíz, `EMAIL_FROM` ya apunta a una
-dirección del dominio verificado. Los tres correos empiezan a salir en cuanto Resend marque
-el dominio como *Verified*.
+Y aquí **sí hace falta un cambio tras verificar**: poner en Vercel
+`EMAIL_FROM=GRANKHA <pedidos@grankha.roadshop.online>` y redesplegar, porque el remitente
+tiene que pertenecer al dominio verificado. `EMAIL_REPLY_TO` se queda en
+`grankha@roadshop.online`, que es el buzón real de IONOS y la dirección publicada en
+`legal.html`: el cliente ve un remitente del subdominio, pero al responder le llega a la
+cuenta de siempre.
 
 
 ---
@@ -210,7 +212,7 @@ Ya están todas puestas:
 |---|---|
 | `EMAIL_PROVIDER` | `resend` |
 | `RESEND_API_KEY` | cifrada · **solo envío**, sin permiso de dominios |
-| `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` · **no cambia** al verificar la raíz |
+| `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` → **cambiará** a `GRANKHA <pedidos@grankha.roadshop.online>` cuando el subdominio verifique |
 | `EMAIL_REPLY_TO` | `grankha@roadshop.online` |
 | `EMAIL_AVISO` | `elexitodigital@gmail.com` |
 | `EMAIL_FALLBACK_FROM` | opcional · por defecto `GRANKHA <onboarding@resend.dev>` |
@@ -219,15 +221,14 @@ Ya están todas puestas:
 | `DELIVERY_DAYS` | `3-8` |
 | `SITE_URL` | `https://grankha.roadshop.online` |
 
-Como se verifica la raíz, `EMAIL_FROM` y `EMAIL_REPLY_TO` son la misma dirección y **ninguna
-de las dos hay que tocarla**. Es la ventaja principal de este planteamiento frente al
-subdominio: cuando Resend marque el dominio como *Verified*, los tres correos empiezan a
-salir sin cambiar variables ni redesplegar.
+`EMAIL_REPLY_TO` es lo que hace viable el subdominio: el cliente ve
+`pedidos@grankha.roadshop.online` como remitente, pero al pulsar «Responder» el correo cae en
+`grankha@roadshop.online`, el buzón de siempre y la dirección que ya aparece en 8 sitios de
+`legal.html`. La dirección de contacto de la web no cambia.
 
-Hasta entonces no hay nada que ajustar en Vercel. `EMAIL_FROM` ya apunta a
-`grankha@roadshop.online`, que es justo la dirección que quedará autorizada; lo único que
-falta es que Resend deje de responder `domain is not verified`. El orden es: DNS en IONOS →
-verificación en Resend → los correos salen solos.
+Ojo con el orden: mientras el subdominio no esté verificado, poner en `EMAIL_FROM` una
+dirección de `grankha.roadshop.online` no arregla nada — Resend seguirá rechazándolo con
+`domain is not verified`. **DNS primero, verificación después, cambio de variable al final.**
 
 Si algún día quieres que los avisos de venta vayan al buzón de la empresa en vez de al Gmail,
 cambia `EMAIL_AVISO` a `grankha@roadshop.online` en Vercel y redespliega. Ten en cuenta que
