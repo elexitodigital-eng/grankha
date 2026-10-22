@@ -100,6 +100,11 @@
     <div class="card">
       <h2>Estado del correo</h2>
       <div id="correo" class="small mut">—</div>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button id="probar" class="sec" style="width:auto">Probar envío</button>
+        <span class="small mut">Manda un correo de prueba a tu dirección de avisos. Úsalo
+          después de verificar el dominio en Resend para confirmar que ya sale.</span>
+      </div>
     </div>
 
     <div class="card">
@@ -331,7 +336,11 @@
     if (map[a]) {
       b.disabled = true; aviso("Reenviando…", "");
       pedir({ action: map[a], reference: ref }).then(function (r) {
-        aviso("✓ Reenviado a " + r.enviado_a + " (id " + (r.email && r.email.id ? r.email.id : "—") + ")", "ok");
+        if (r.ok) {
+          aviso("✓ Reenviado a " + r.enviado_a + " (id " + (r.email && r.email.id ? r.email.id : "—") + ")", "ok");
+        } else {
+          aviso("⚠ " + (r.mensaje || "El correo no salió."), "warn");
+        }
         return cargar();
       }).catch(function (err) { aviso("No se pudo reenviar: " + err.message, "err"); b.disabled = false; });
     }
@@ -347,6 +356,15 @@
   });
   $("#tok").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#entrar").click(); });
   $("#refrescar").addEventListener("click", cargar);
+  $("#probar").addEventListener("click", function () {
+    var b = this; b.disabled = true;
+    aviso("Enviando correo de prueba…", "");
+    pedir({ action: "test-email" }).then(function (r) {
+      aviso((r.ok ? "✓ " : "⚠ ") + (r.mensaje || (r.ok ? "Enviado." : "No se pudo enviar.")), r.ok ? "ok" : "warn");
+    }).catch(function (err) {
+      aviso("No se pudo probar: " + err.message, "err");
+    }).then(function () { b.disabled = false; });
+  });
   $("#f").addEventListener("change", pintar);
   $("#salir").addEventListener("click", function () {
     localStorage.removeItem("grankha_admin_token"); location.reload();

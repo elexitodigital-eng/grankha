@@ -14,7 +14,7 @@
 // Variables: ADMIN_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY y las de correo.
 // ============================================================================
 const { createClient } = require("@supabase/supabase-js");
-const { sendEmail, mailReady } = require("./_lib/mail");
+const { sendEmail, mailReady, explainEmailError } = require("./_lib/mail");
 const { orderEmail, saleEmail, shippingEmail } = require("./_lib/emails");
 
 const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
@@ -82,6 +82,37 @@ module.exports = async (req, res) => {
   if (!tokenOk(d.token)) return send(res, 401, { error: "Token incorrecto" });
 
   const action = String(d.action || "");
+
+  // ------------------------------------------- prueba del proveedor de correo
+  // No toca la base de datos: manda un correo de prueba a EMAIL_AVISO para
+  // comprobar que el remitente ya funciona (por ejemplo tras verificar el
+  // dominio en Resend) sin tener que esperar a un pedido real.
+  if (action === "test-email") {
+    const destino = process.env.EMAIL_AVISO || "";
+    if (!destino) return send(res, 400, { error: "EMAIL_AVISO no está configurado en Vercel" });
+    const listo = await mailReady();
+    if (!listo) return send(res, 200, {
+      ok: false, enviado_a: destino,
+      mensaje: "No hay proveedor de correo configurado en Vercel (falta RESEND_API_KEY o SMTP).",
+    });
+    const r = await sendEmail(destino, "GRANKHA · prueba del panel de pedidos",
+      `<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto">
+         <h2 style="letter-spacing:-.02em">El correo de GRANKHA funciona.</h2>
+         <p>Este mensaje lo ha mandado el panel de pedidos (<code>/pedidos.html</code>) con el
+         remitente configurado en producción.</p>
+         <p>Si lo has recibido desde <b>grankha@roadshop.online</b>, el dominio ya está verificado
+         en Resend y los tres correos de la tienda (pedido confirmado, aviso de venta y envío con
+         seguimiento) salen ya con tu propia dirección. No hay que tocar nada más.</p>
+         <p style="color:#555;font-size:13px">Enviado: ${new Date().toISOString()}</p>
+       </div>`);
+    return send(res, 200, {
+      ok: r.ok, enviado_a: destino,
+      email: r.ok ? { id: r.id } : { error: r.error },
+      mensaje: r.ok ? "Correo de prueba enviado. Comprueba tu bandeja (y la de spam la primera vez)."
+                    : "El correo no salió: " + explainEmailError(r.error),
+    });
+  }
+
   const reference = String(d.reference || "").trim();
   if (!reference) return send(res, 400, { error: "Falta la referencia del pedido" });
 
@@ -152,11 +183,18 @@ module.exports = async (req, res) => {
         await supa.from("orders").update({ tracking_email_sent_at: new Date().toISOString() })
           .eq("reference", reference);
       }
-      return send(res, r.ok ? 200 : 502, {
+      // Devolvemos 200 aunque el correo no saliera: la petición se procesó bien,
+      // el fallo es del proveedor y va en ok:false con un mensaje legible.
+      // Con 502 el front solo veía "HTTP 502" y se perdía el motivo real.
+      return send(res, 200, {
         ok: r.ok, reference, enviado_a: destino,
         email: r.ok ? { id: r.id } : { error: r.error },
+        mensaje: r.ok ? "Correo enviado correctamente."
+                      : "El correo no salió: " + explainEmailError(r.error),
       });
     }
+
+
 
     return send(res, 400, { error: `Acción no reconocida: ${action}` });
   } catch (e) {

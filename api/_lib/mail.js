@@ -42,6 +42,29 @@ const toText = (html = "") =>
     .trim();
 
 /** ¿Hay correo configurado de verdad? */
+// Traduce el error crudo del proveedor a algo que se pueda leer y actuar.
+// Lo usan el panel y los logs: un "502" o un JSON de Resend no le dicen nada a
+// quien está gestionando pedidos.
+function explainEmailError(err) {
+  const raw = err == null ? "" : (typeof err === "string" ? err : JSON.stringify(err));
+  const s = String(raw).toLowerCase();
+  if (!s.trim()) return "Error desconocido del proveedor de correo.";
+  if (s.includes("not verified"))
+    return "El dominio del remitente aún no está verificado en Resend. Añádelo en " +
+      "resend.com/domains y copia los registros DNS a IONOS (guía: docs/RESEND_Y_PANEL.md). " +
+      "Ningún pedido se pierde: se guarda igual y puedes reenviarlo desde aquí cuando esté en verde.";
+  if (s.includes("only send testing emails") || s.includes("onboarding"))
+    return "Resend está en modo de pruebas: con el remitente por defecto solo puede escribir a la " +
+      "dirección de tu propia cuenta. Se resuelve verificando el dominio.";
+  if (s.includes("invalid api key") || s.includes("unauthorized") || s.includes("401"))
+    return "La clave de Resend no es válida o no tiene permiso para enviar. Revísala en Vercel (RESEND_API_KEY).";
+  if (s.includes("rate limit") || s.includes("429") || s.includes("too many"))
+    return "Resend ha limitado los envíos por exceso de peticiones. Espera un par de minutos y reintenta.";
+  if (s.includes("sin proveedor"))
+    return "No hay proveedor de correo configurado en Vercel. Falta RESEND_API_KEY (o SMTP_HOST/USER/PASS).";
+  return String(raw).slice(0, 400);
+}
+
 function mailReady() {
   const p = provider();
   if (p === "resend") return Boolean(process.env.RESEND_API_KEY);
@@ -140,4 +163,4 @@ async function sendEmail(to, subject, html) {
   return { ok: false, error: "sin proveedor configurado" };
 }
 
-module.exports = { sendEmail, mailReady, fromAddress, replyTo, bareEmail, toText };
+module.exports = { sendEmail, mailReady, fromAddress, replyTo, bareEmail, toText, explainEmailError };

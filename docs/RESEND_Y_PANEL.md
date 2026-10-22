@@ -61,9 +61,13 @@ recibo de pago al cliente.
    comprobar los registros en https://dns.email/. Si a las 72 h no verifica, pulsa
    *Restart verification* en Resend.
 
-6. Cuando esté en verde, **avísame** (o compruébalo tú): no hay que cambiar nada en el código ni
-   redesplegar, porque `EMAIL_FROM` ya está puesto en `GRANKHA <grankha@roadshop.online>`.
-   Los correos empiezan a salir solos.
+6. **Compruébalo tú mismo en 10 segundos:** entra en el panel (`/pedidos.html`), en la tarjeta
+   «Estado del correo» pulsa **«Probar envío»**. Si sale ✓, ya está: no hay que cambiar nada en
+   el código ni redesplegar, porque `EMAIL_FROM` ya está puesto en
+   `GRANKHA <grankha@roadshop.online>`. Los correos empiezan a salir solos.
+
+   Si sale ⚠, el panel te dice el motivo en cristiano (dominio sin verificar, clave inválida,
+   límite de envíos…) en vez de un error técnico.
 
 ### Después, recomendado: DMARC
 
@@ -100,6 +104,9 @@ servidor no devuelve nada (401). El token se guarda solo en tu navegador.
 - **Reenviar confirmación**: si el correo de pedido falló en su día, lo reenvías.
 - **Reenviar seguimiento**: si te equivocaste en el número, lo corriges y reenvías.
 - **Reenviarme el aviso**: te vuelve a llegar a ti el aviso interno con el margen.
+- **Probar envío**: manda un correo de prueba a `EMAIL_AVISO` para comprobar que el remitente ya
+  funciona. Útil justo después de verificar el dominio, sin esperar a un pedido real. No toca la
+  base de datos.
 
 Endpoint: `api/admin.js`. Todo exige el token; la comparación se hace en tiempo constante.
 
