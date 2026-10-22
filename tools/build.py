@@ -10,7 +10,7 @@ GRANKHA · build.py — genera el sitio estático completo (HTML autocontenido).
 
 Uso: python3 tools/build.py
 """
-import base64, html, io, json, re
+import base64, hashlib, html, io, json, re
 from pathlib import Path
 from datetime import date
 from PIL import Image
@@ -23,8 +23,11 @@ SITE = json.loads((ROOT / "data" / "site.json").read_text())
 ANALYSIS = json.loads((ROOT / "data" / "pricing_analysis.json").read_text())
 CSS = (ROOT / "src" / "styles.css").read_text()
 JS = (ROOT / "src" / "app.js").read_text().replace("</", "<\\/")
-# sello de versión: invalida la caché del navegador solo cuando el archivo cambia
-ASSET_V = str(abs(hash(CSS + JS)) % 10 ** 8)
+# sello de versión: invalida la caché del navegador solo cuando el archivo cambia.
+# OJO: hash() de Python lleva sal aleatoria por proceso, así que cambiaba en cada
+# rebuild y ensuciaba las 85 páginas rompiendo la caché de todos los visitantes.
+# Con SHA-1 el sello es estable: solo cambia si cambian de verdad el CSS o el JS.
+ASSET_V = hashlib.sha1((CSS + JS).encode("utf-8")).hexdigest()[:8]
 
 BASE = SITE["url"].rstrip("/")
 SHIP_OPTS = SITE["shipping"]["options"]
