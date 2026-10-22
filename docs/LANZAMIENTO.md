@@ -58,6 +58,22 @@ con tres caminos; solo hace falta que me pases **uno**:
 > Dashboard → Settings → Emails está activado *Successful payments*. El pedido se cobra y se
 > guarda igual; lo que no sale es el correo con la marca GRANKHA.
 
+**El camino SMTP ya está verificado, no es una suposición:**
+
+- Prueba local contra un servidor SMTP de pega: `sendEmail()` devolvió `true`, con
+  `MAIL FROM:<grankha@roadshop.online>`, `RCPT TO` correcto, asunto, HTML y alternativa en
+  texto plano presentes.
+- Prueba real **dentro del runtime de Vercel** (despliegue de preview con variables SMTP solo
+  para preview y un host inválido a propósito): `nodemailer 6.10.1` carga bien,
+  `createTransport` es una función y `mailReady()` da `true`. El envío falló únicamente por el
+  host inexistente, es decir, por el motivo esperado.
+- `package-lock.json` subido al repo para que el build de Vercel sea reproducible.
+- Andamiaje de prueba retirado: endpoint de diagnóstico borrado (producción devuelve 404),
+  variables SMTP de preview eliminadas de Vercel, mensajes de prueba borrados de Supabase.
+
+**Conclusión:** en cuanto me pases las cinco variables de la opción A (o una clave Resend/Brevo),
+los correos salen. No queda código por escribir.
+
 ### 2. NIF y domicilio fiscal 🟡 (obligatorio en el aviso legal)
 
 Ya están publicados titular, email, web, actividad y modelo de envío. La LSSI (art. 10) exige
