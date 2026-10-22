@@ -12,7 +12,8 @@
 //     smtp   → SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS  (buzón de la empresa)
 //     resend → RESEND_API_KEY
 //     brevo  → BREVO_API_KEY
-//   EMAIL_FROM = "GRANKHA <grankha@roadshop.online>"
+//   EMAIL_FROM = "GRANKHA <pedidos@grankha.roadshop.online>"  (dominio verificado en Resend)
+//   EMAIL_REPLY_TO = grankha@roadshop.online  (buzón real: ahí caen las respuestas)
 //   EMAIL_AVISO = correo interno que recibe el aviso de cada venta
 // ============================================================================
 const Stripe = require("stripe");

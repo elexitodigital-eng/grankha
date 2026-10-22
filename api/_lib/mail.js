@@ -11,8 +11,9 @@
 //   3) brevo   → EMAIL_PROVIDER=brevo  + BREVO_API_KEY
 //
 // Comunes a los tres:
-//   EMAIL_FROM     remitente. Ej. "GRANKHA <pedidos@mail.roadshop.online>"
-//   EMAIL_REPLY_TO dónde caen las respuestas. Ej. grankha@roadshop.online
+//   EMAIL_FROM     remitente. Debe pertenecer al dominio verificado en Resend.
+//                  GRANKHA usa "GRANKHA <pedidos@grankha.roadshop.online>"
+//   EMAIL_REPLY_TO dónde caen las respuestas. GRANKHA: grankha@roadshop.online
 //                  Imprescindible si se envía desde un subdominio verificado en
 //                  Resend: el cliente responde y te llega al buzón de verdad.
 //   EMAIL_AVISO    correo interno que recibe cada venta
@@ -21,12 +22,15 @@
 // función para poder revisarlo en Vercel. Nunca rompe un pedido ya cobrado.
 // ============================================================================
 
-const FROM_DEFAULT = "GRANKHA <grankha@roadshop.online>";
+// Remitente por defecto: pertenece al subdominio verificado en Resend.
+// Solo entra en juego si falta EMAIL_FROM en Vercel. Las respuestas no van
+// aquí sino a EMAIL_REPLY_TO (el buzón real de IONOS).
+const FROM_DEFAULT = "GRANKHA <pedidos@grankha.roadshop.online>";
 
 // Remitente de reserva. Resend deja enviar desde onboarding@resend.dev SIN
 // verificar dominio, pero solo a la dirección de la propia cuenta. Sirve para
 // que el aviso interno de venta llegue siempre, incluso antes de verificar
-// roadshop.online. A los clientes no les llega por esta vía (Resend lo bloquea),
+// grankha.roadshop.online. A los clientes no les llega por esta vía (Resend lo bloquea),
 // por eso solo se intenta cuando el destinatario es EMAIL_AVISO.
 const FALLBACK_FROM_DEFAULT = "GRANKHA <onboarding@resend.dev>";
 

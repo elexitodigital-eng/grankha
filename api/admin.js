@@ -19,7 +19,7 @@
 // Variables: ADMIN_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY y las de correo.
 // ============================================================================
 const { createClient } = require("@supabase/supabase-js");
-const { sendEmail, mailReady, explainEmailError, fallbackFrom } = require("./_lib/mail");
+const { sendEmail, mailReady, explainEmailError, fallbackFrom, fromAddress, bareEmail } = require("./_lib/mail");
 const { orderEmail, saleEmail, shippingEmail } = require("./_lib/emails");
 const { TOKEN, autorizado, noExiste } = require("./_lib/auth");
 
@@ -100,9 +100,10 @@ module.exports = async (req, res) => {
          <h2 style="letter-spacing:-.02em">El correo de GRANKHA funciona.</h2>
          <p>Este mensaje lo ha mandado el panel de pedidos (<code>/api/panel</code>) con el
          remitente configurado en producción.</p>
-         <p>Si lo has recibido desde <b>grankha@roadshop.online</b>, el dominio ya está verificado
-         en Resend y los tres correos de la tienda (pedido confirmado, aviso de venta y envío con
-         seguimiento) salen ya con tu propia dirección. No hay que tocar nada más.</p>
+         <p>Si lo has recibido desde <b>${bareEmail(fromAddress())}</b>, el dominio ya está
+         verificado en Resend y los tres correos de la tienda (pedido confirmado, aviso de venta y
+         envío con seguimiento) salen ya con tu propia dirección. Las respuestas del cliente llegan
+         a <b>${process.env.EMAIL_REPLY_TO || "—"}</b>, que es el buzón de siempre.</p>
          <p style="color:#555;font-size:13px">Enviado: ${new Date().toISOString()}</p>
        </div>`);
     return send(res, 200, {
@@ -110,9 +111,9 @@ module.exports = async (req, res) => {
       email: r.ok ? { id: r.id, por_reserva: !!r.fallback } : { error: r.error },
       mensaje: r.ok
         ? (r.fallback
-            ? "Enviado, pero por el remitente de RESERVA (onboarding@resend.dev): roadshop.online " +
-              "aún no está verificado en Resend. El aviso interno de venta te llegará igual, pero " +
-              "los correos a clientes siguen bloqueados hasta que verifiques el dominio. " +
+            ? "Enviado, pero por el remitente de RESERVA (onboarding@resend.dev): el dominio de " +
+              "envío aún no está verificado en Resend. El aviso interno de venta te llegará igual, " +
+              "pero los correos a clientes siguen bloqueados hasta que verifiques el dominio. " +
               "Comprueba tu bandeja."
             : "Enviado con tu propio remitente: el dominio ya está verificado. " +
               "Los tres correos de la tienda funcionan. Comprueba tu bandeja (y spam la primera vez).")
