@@ -23,7 +23,15 @@
 
 const FROM_DEFAULT = "GRANKHA <grankha@roadshop.online>";
 
+// Remitente de reserva. Resend deja enviar desde onboarding@resend.dev SIN
+// verificar dominio, pero solo a la dirección de la propia cuenta. Sirve para
+// que el aviso interno de venta llegue siempre, incluso antes de verificar
+// roadshop.online. A los clientes no les llega por esta vía (Resend lo bloquea),
+// por eso solo se intenta cuando el destinatario es EMAIL_AVISO.
+const FALLBACK_FROM_DEFAULT = "GRANKHA <onboarding@resend.dev>";
+
 const fromAddress = () => process.env.EMAIL_FROM || FROM_DEFAULT;
+const fallbackFrom = () => process.env.EMAIL_FALLBACK_FROM || FALLBACK_FROM_DEFAULT;
 const replyTo = () => (process.env.EMAIL_REPLY_TO || "").trim();
 const bareEmail = (from = "") => String(from).replace(/.*<|>.*/g, "").trim();
 const provider = () => (process.env.EMAIL_PROVIDER || "").toLowerCase();
@@ -77,8 +85,8 @@ function mailReady() {
   return false;
 }
 
-async function sendResend(to, subject, html) {
-  const payload = { from: fromAddress(), to: [to], subject, html, text: toText(html) };
+async function sendResend(to, subject, html, from = fromAddress()) {
+  const payload = { from, to: [to], subject, html, text: toText(html) };
   if (replyTo()) payload.reply_to = replyTo();
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -151,7 +159,27 @@ async function sendEmail(to, subject, html) {
     else if (process.env.BREVO_API_KEY) p = "brevo";
   }
   try {
-    if (p === "resend" && process.env.RESEND_API_KEY) return await sendResend(to, subject, html);
+    if (p === "resend" && process.env.RESEND_API_KEY) {
+      const r = await sendResend(to, subject, html);
+      if (r.ok) return r;
+
+      // Red de seguridad: si el dominio aún no está verificado, el aviso interno
+      // se reenvía desde onboarding@resend.dev, que Resend sí acepta sin verificar
+      // pero SOLO hacia la dirección de la propia cuenta. Se intenta únicamente
+      // cuando el destinatario es EMAIL_AVISO; a un cliente no le serviría de nada.
+      const aviso = (process.env.EMAIL_AVISO || "").trim().toLowerCase();
+      const esAviso = aviso && String(to).trim().toLowerCase() === aviso;
+      const noVerificado = String(r.error || "").toLowerCase().includes("not verified");
+      if (esAviso && noVerificado && fallbackFrom() !== fromAddress()) {
+        const r2 = await sendResend(to, subject, html, fallbackFrom());
+        if (r2.ok) {
+          console.log(`[aviso por remitente de reserva] ${to} · dominio ${bareEmail(fromAddress())} sin verificar`);
+          return { ok: true, id: r2.id, fallback: true };
+        }
+        return { ok: false, error: r.error, fallback_error: r2.error };
+      }
+      return r;
+    }
     if (p === "smtp") return await sendSmtp(to, subject, html);
     if (p === "brevo" && process.env.BREVO_API_KEY) return await sendBrevo(to, subject, html);
   } catch (e) {
@@ -163,4 +191,4 @@ async function sendEmail(to, subject, html) {
   return { ok: false, error: "sin proveedor configurado" };
 }
 
-module.exports = { sendEmail, mailReady, fromAddress, replyTo, bareEmail, toText, explainEmailError };
+module.exports = { sendEmail, mailReady, fromAddress, fallbackFrom, replyTo, bareEmail, toText, explainEmailError };

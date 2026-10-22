@@ -14,7 +14,7 @@
 // Variables: ADMIN_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY y las de correo.
 // ============================================================================
 const { createClient } = require("@supabase/supabase-js");
-const { sendEmail, mailReady, explainEmailError } = require("./_lib/mail");
+const { sendEmail, mailReady, explainEmailError, fallbackFrom } = require("./_lib/mail");
 const { orderEmail, saleEmail, shippingEmail } = require("./_lib/emails");
 
 const supa = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
@@ -63,7 +63,11 @@ module.exports = async (req, res) => {
     if (error) return send(res, 500, { error: error.message });
     return send(res, 200, {
       ok: true,
-      correo: { configurado: mailReady(), from: process.env.EMAIL_FROM || "(por defecto)" },
+      correo: {
+        configurado: mailReady(),
+        from: process.env.EMAIL_FROM || "(por defecto)",
+        reserva: fallbackFrom(),
+      },
       pedidos: data,
     });
   }
@@ -107,9 +111,16 @@ module.exports = async (req, res) => {
        </div>`);
     return send(res, 200, {
       ok: r.ok, enviado_a: destino,
-      email: r.ok ? { id: r.id } : { error: r.error },
-      mensaje: r.ok ? "Correo de prueba enviado. Comprueba tu bandeja (y la de spam la primera vez)."
-                    : "El correo no salió: " + explainEmailError(r.error),
+      email: r.ok ? { id: r.id, por_reserva: !!r.fallback } : { error: r.error },
+      mensaje: r.ok
+        ? (r.fallback
+            ? "Enviado, pero por el remitente de RESERVA (onboarding@resend.dev): roadshop.online " +
+              "aún no está verificado en Resend. El aviso interno de venta te llegará igual, pero " +
+              "los correos a clientes siguen bloqueados hasta que verifiques el dominio. " +
+              "Comprueba tu bandeja."
+            : "Enviado con tu propio remitente: el dominio ya está verificado. " +
+              "Los tres correos de la tienda funcionan. Comprueba tu bandeja (y spam la primera vez).")
+        : "El correo no salió: " + explainEmailError(r.error),
     });
   }
 

@@ -30,10 +30,21 @@ Hoy Resend **rechaza** enviar desde `grankha@roadshop.online` con este error:
 
 > `validation_error: The roadshop.online domain is not verified.`
 
-Mientras eso siga así, los correos se generan pero no salen. **Ningún pedido se pierde**: se
-guarda igual en Supabase, se anota el fallo en la columna `order_email_error`, y desde el panel
-puedes reenviarlo con un clic cuando el dominio esté verificado. Stripe sigue mandando su propio
-recibo de pago al cliente.
+Mientras eso siga así, **los correos a clientes no salen**. Pero hay una red de seguridad
+montada para que tú no te quedes a ciegas:
+
+| Correo | ¿Sale hoy, sin verificar el dominio? |
+|---|---|
+| **Aviso de venta (a ti)** | ✅ **SÍ.** Sale por un remitente de reserva (`onboarding@resend.dev`), que Resend acepta sin verificar pero solo hacia la dirección de tu propia cuenta, que es justo donde va `EMAIL_AVISO`. |
+| Confirmación al cliente | ❌ No. Resend lo bloquea hasta verificar el dominio. |
+| Envío con seguimiento | ❌ No. Igual. |
+
+Así que **te enteras de cada venta en cuanto ocurre**, aunque el cliente aún no reciba tu correo.
+
+Y ningún pedido se pierde: se guarda igual en Supabase, el fallo queda anotado en la columna
+`order_email_error` (nunca en `notes`, que puede llevar el comentario del cliente), el panel lo
+muestra con el filtro «Con email de pedido fallido», y lo reenvías con un clic en cuanto el
+dominio esté verificado. Stripe sigue mandando su propio recibo de pago al cliente.
 
 ### Pasos (unos 10 minutos)
 
@@ -62,12 +73,13 @@ recibo de pago al cliente.
    *Restart verification* en Resend.
 
 6. **Compruébalo tú mismo en 10 segundos:** entra en el panel (`/pedidos.html`), en la tarjeta
-   «Estado del correo» pulsa **«Probar envío»**. Si sale ✓, ya está: no hay que cambiar nada en
-   el código ni redesplegar, porque `EMAIL_FROM` ya está puesto en
-   `GRANKHA <grankha@roadshop.online>`. Los correos empiezan a salir solos.
-
-   Si sale ⚠, el panel te dice el motivo en cristiano (dominio sin verificar, clave inválida,
-   límite de envíos…) en vez de un error técnico.
+   «Estado del correo» pulsa **«Probar envío»**.
+   - Si el mensaje dice **«Enviado con tu propio remitente: el dominio ya está verificado»** →
+     ya está. No hay que cambiar nada en el código ni redesplegar, porque `EMAIL_FROM` ya está
+     puesto en `GRANKHA <grankha@roadshop.online>`. Los tres correos salen solos.
+   - Si dice **«por el remitente de RESERVA»** → el dominio sigue sin verificar.
+   - Si sale ⚠, el panel te explica el motivo en cristiano (dominio sin verificar, clave
+     inválida, límite de envíos…) en vez de soltar un error técnico.
 
 ### Después, recomendado: DMARC
 
@@ -123,6 +135,7 @@ Ya están todas puestas:
 | `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` |
 | `EMAIL_REPLY_TO` | `grankha@roadshop.online` |
 | `EMAIL_AVISO` | `elexitodigital@gmail.com` |
+| `EMAIL_FALLBACK_FROM` | opcional · por defecto `GRANKHA <onboarding@resend.dev>` |
 | `ADMIN_TOKEN` | cifrada |
 | `SUPPLIER_NAME` | `AW Dropshipping` |
 | `DELIVERY_DAYS` | `3-8` |
