@@ -82,9 +82,15 @@ module.exports = async (req, res) => {
           const rInt = await sendEmail(process.env.EMAIL_AVISO, interno.subject, interno.html);
           console.log(`[aviso venta] ${o.reference} → ${process.env.EMAIL_AVISO} · ${rInt.ok ? "OK " + (rInt.id || "") : "FALLO " + (rInt.error || "")}`);
         }
-        // si el correo al cliente no salió, se anota en el pedido para reenviarlo desde /pedidos
+        // si el correo al cliente no salió, se anota en su propia columna (no en notes,
+        // que puede llevar el comentario del cliente) para reenviarlo desde /pedidos.html
         if (!rCli.ok) {
-          await supa.from("orders").update({ notes: `email_cliente_pendiente: ${rCli.error || "desconocido"}` })
+          await supa.from("orders")
+            .update({ order_email_error: String(rCli.error || "desconocido").slice(0, 300) })
+            .eq("reference", o.reference);
+        } else {
+          await supa.from("orders")
+            .update({ order_email_sent_at: new Date().toISOString(), order_email_error: null })
             .eq("reference", o.reference);
         }
       }

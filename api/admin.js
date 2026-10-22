@@ -115,7 +115,7 @@ module.exports = async (req, res) => {
       const r = await sendEmail(cliente, subject, html);
 
       patch.tracking_email_sent_at = r.ok ? new Date().toISOString() : null;
-      if (!r.ok) patch.notes = `email_seguimiento_fallo: ${r.error || "desconocido"}`;
+      if (r.ok) patch.order_email_error = null;
       const { error } = await supa.from("orders").update(patch).eq("reference", reference);
       if (error) return send(res, 500, { error: error.message });
 
@@ -123,7 +123,8 @@ module.exports = async (req, res) => {
         ok: r.ok, reference, enviado_a: cliente,
         email: r.ok ? { id: r.id } : { error: r.error },
         mensaje: r.ok ? "Pedido marcado como enviado y correo de seguimiento entregado a Resend."
-                      : "Pedido marcado como enviado, pero el correo NO salió. Mira el error y reenvía.",
+                      : "Pedido marcado como enviado, pero el correo NO salió (" +
+                        (r.error || "error desconocido") + "). Usa «Reenviar seguimiento» cuando esté resuelto.",
       });
     }
 

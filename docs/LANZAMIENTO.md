@@ -1,6 +1,6 @@
 # GRANKHA · estado del lanzamiento
 
-_Actualizado: 22 de octubre de 2026_
+_Actualizado: 22 de octubre de 2026 · Resend configurado y panel de pedidos en marcha_
 
 ## Dominio definitivo
 
@@ -28,72 +28,55 @@ _Actualizado: 22 de octubre de 2026_
 - `STRIPE_WEBHOOK_SECRET`
 - `SUPABASE_URL` · `SUPABASE_SERVICE_ROLE_KEY`
 - `SITE_URL` = `https://grankha.roadshop.online`
-- `EMAIL_AVISO` = `grankha@roadshop.online`
+- `EMAIL_PROVIDER` = `resend` · `RESEND_API_KEY` (cifrada)
 - `EMAIL_FROM` = `GRANKHA <grankha@roadshop.online>`
+- `EMAIL_REPLY_TO` = `grankha@roadshop.online`
+- `EMAIL_AVISO` = `elexitodigital@gmail.com`
+- `ADMIN_TOKEN` (cifrada) · token del panel `/pedidos.html`
+- `SUPPLIER_NAME` = `AW Dropshipping` · `DELIVERY_DAYS` = `3-8`
+
+## Correo con Resend · estado
+
+Proveedor elegido: **Resend**. Las tres plantillas están escritas, probadas con envíos reales y
+conectadas:
+
+| Correo | Para quién | Cuándo |
+|---|---|---|
+| Pedido confirmado | el cliente | automático al cobrar Stripe |
+| Aviso de venta (margen + bloque para copiar a AW) | tú | automático, a la vez |
+| Envío con seguimiento | el cliente | cuando lo marcas en el panel |
+
+Plantillas en `api/_lib/emails.js`; las usan `api/stripe-webhook.js` y `api/admin.js`.
+
+**Falta un paso, y es tuyo:** verificar `roadshop.online` en Resend y añadir 3 registros DNS en
+IONOS. Hoy Resend responde `The roadshop.online domain is not verified`, así que los correos se
+generan pero no salen. **Ningún pedido se pierde**: se guarda en Supabase, el fallo queda anotado
+en `orders.order_email_error` y se reenvía con un clic desde el panel en cuanto el dominio esté
+verificado. Instrucciones paso a paso en **`docs/RESEND_Y_PANEL.md`**.
+
+Los registros van sobre `send.roadshop.online` y `resend._domainkey.roadshop.online`, **no sobre
+la raíz**: el MX de IONOS y el buzón `grankha@roadshop.online` no se tocan.
+
+## Panel privado de pedidos
+
+**`https://grankha.roadshop.online/pedidos.html`** · token = variable `ADMIN_TOKEN` en Vercel.
+
+Fuera del sitemap y con `noindex`. Sin token el servidor devuelve 401. Desde ahí: ver pedidos,
+filtrar los que faltan por pasar a AW o por avisar, copiar el bloque para el proveedor, marcar
+enviado con seguimiento (manda el correo al cliente) y reenviar cualquier correo que fallara.
+Endpoint `api/admin.js`, todo protegido por token con comparación en tiempo constante.
 
 ## Lo único que falta para cerrar
 
-### 1. Proveedor de correo 🔴 (bloqueante para los emails propios)
+### 1. Verificar el dominio en Resend 🔴 (el único bloqueante)
 
-Los correos de «pedido confirmado» y el aviso interno de venta **se generan pero no salen**,
-porque no hay proveedor de correo configurado. Ya está el código listo en `api/_lib/mail.js`
-con tres caminos; solo hace falta que me pases **uno**:
+Añadir `roadshop.online` en https://resend.com/domains y copiar los 3 registros que te dé
+Resend al panel DNS de IONOS. Detalle completo en **`docs/RESEND_Y_PANEL.md`**.
 
-**Opción A — SMTP del buzón de la empresa (la más directa, ya tienes `grankha@roadshop.online`)**
-
-El proveedor de correo **ya está identificado por DNS**, no es una suposición:
-
-- `MX roadshop.online` → `mx00.ionos.es` / `mx01.ionos.es`
-- `TXT roadshop.online` → `v=spf1 include:_spf-eu.ionos.com ~all`
-- `NS` → `ns10xx.ui-dns.*` y `SOA` → `hostmaster.1und1.com`
-
-Es decir: **IONOS**. Y `smtp.ionos.es:587` responde con `220 kundenserver.de … Nemesis ESMTP
-Service ready` y anuncia `STARTTLS`. Estas cuatro variables **ya están puestas en Vercel**:
-
-| Variable | Valor | Estado |
-|---|---|---|
-| `EMAIL_PROVIDER` | `smtp` | ✅ puesta |
-| `SMTP_HOST` | `smtp.ionos.es` | ✅ puesta |
-| `SMTP_PORT` | `587` | ✅ puesta |
-| `SMTP_USER` | `grankha@roadshop.online` | ✅ puesta |
-| `SMTP_PASS` | la contraseña del buzón | ⬜ **falta solo esta** |
-
-> El código no intenta enviar nada si falta `SMTP_PASS`, así que tener las otras cuatro puestas
-> no rompe nada. Comprobado en producción: `/api/contact` responde 200 en 0,86 s.
-> Alternativa: puerto `465` con TLS implícito (también responde); el código lo usa solo si
-> `SMTP_PORT=465`.
-
-**Ojo con la entregabilidad (DKIM).** El SPF de IONOS ya está publicado y hay un DMARC
-(`p=none`), pero **no encuentro registros DKIM** en los selectores habituales
-(`default._domainkey`, `ionos._domainkey`, `google._domainkey`). Conviene activar DKIM en el
-panel de IONOS para el dominio: sin él, los correos transaccionales firmados solo con SPF
-tienen más papeletas para acabar en spam. Se activa en IONOS → Email → DKIM, y ellos publican
-el registro TXT solos.
-
-**Opción B — Resend:** crear cuenta en resend.com, verificar el dominio `roadshop.online`
-(añadiendo los registros TXT/MX que te dé) y pasarme `RESEND_API_KEY` + `EMAIL_PROVIDER=resend`.
-
-**Opción C — Brevo:** cuenta en brevo.com y pasarme `BREVO_API_KEY` + `EMAIL_PROVIDER=brevo`.
-
-> Mientras no haya proveedor, Stripe sigue mandando **su** recibo de pago al cliente si en
-> Dashboard → Settings → Emails está activado *Successful payments*. El pedido se cobra y se
-> guarda igual; lo que no sale es el correo con la marca GRANKHA.
-
-**El camino SMTP ya está verificado, no es una suposición:**
-
-- Prueba local contra un servidor SMTP de pega: `sendEmail()` devolvió `true`, con
-  `MAIL FROM:<grankha@roadshop.online>`, `RCPT TO` correcto, asunto, HTML y alternativa en
-  texto plano presentes.
-- Prueba real **dentro del runtime de Vercel** (despliegue de preview con variables SMTP solo
-  para preview y un host inválido a propósito): `nodemailer 6.10.1` carga bien,
-  `createTransport` es una función y `mailReady()` da `true`. El envío falló únicamente por el
-  host inexistente, es decir, por el motivo esperado.
-- `package-lock.json` subido al repo para que el build de Vercel sea reproducible.
-- Andamiaje de prueba retirado: endpoint de diagnóstico borrado (producción devuelve 404),
-  variables SMTP de preview eliminadas de Vercel, mensajes de prueba borrados de Supabase.
-
-**Conclusión:** en cuanto me pases las cinco variables de la opción A (o una clave Resend/Brevo),
-los correos salen. No queda código por escribir.
+Ya está puesto en Vercel: `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, `EMAIL_FROM`,
+`EMAIL_REPLY_TO=grankha@roadshop.online`, `EMAIL_AVISO=elexitodigital@gmail.com`,
+`ADMIN_TOKEN`, `SUPPLIER_NAME`, `DELIVERY_DAYS`. No hay que tocar nada más: en cuanto
+Resend verifique el dominio, los correos salen solos.
 
 ### 2. NIF y domicilio fiscal 🟡 (obligatorio en el aviso legal)
 
