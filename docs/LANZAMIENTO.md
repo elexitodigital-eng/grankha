@@ -41,13 +41,34 @@ con tres caminos; solo hace falta que me pases **uno**:
 
 **Opción A — SMTP del buzón de la empresa (la más directa, ya tienes `grankha@roadshop.online`)**
 
-| Variable | Valor |
-|---|---|
-| `EMAIL_PROVIDER` | `smtp` |
-| `SMTP_HOST` | el del proveedor del dominio (si `roadshop.online` está en IONOS: `smtp.ionos.es`) |
-| `SMTP_PORT` | `587` |
-| `SMTP_USER` | `grankha@roadshop.online` |
-| `SMTP_PASS` | la contraseña del buzón |
+El proveedor de correo **ya está identificado por DNS**, no es una suposición:
+
+- `MX roadshop.online` → `mx00.ionos.es` / `mx01.ionos.es`
+- `TXT roadshop.online` → `v=spf1 include:_spf-eu.ionos.com ~all`
+- `NS` → `ns10xx.ui-dns.*` y `SOA` → `hostmaster.1und1.com`
+
+Es decir: **IONOS**. Y `smtp.ionos.es:587` responde con `220 kundenserver.de … Nemesis ESMTP
+Service ready` y anuncia `STARTTLS`. Estas cuatro variables **ya están puestas en Vercel**:
+
+| Variable | Valor | Estado |
+|---|---|---|
+| `EMAIL_PROVIDER` | `smtp` | ✅ puesta |
+| `SMTP_HOST` | `smtp.ionos.es` | ✅ puesta |
+| `SMTP_PORT` | `587` | ✅ puesta |
+| `SMTP_USER` | `grankha@roadshop.online` | ✅ puesta |
+| `SMTP_PASS` | la contraseña del buzón | ⬜ **falta solo esta** |
+
+> El código no intenta enviar nada si falta `SMTP_PASS`, así que tener las otras cuatro puestas
+> no rompe nada. Comprobado en producción: `/api/contact` responde 200 en 0,86 s.
+> Alternativa: puerto `465` con TLS implícito (también responde); el código lo usa solo si
+> `SMTP_PORT=465`.
+
+**Ojo con la entregabilidad (DKIM).** El SPF de IONOS ya está publicado y hay un DMARC
+(`p=none`), pero **no encuentro registros DKIM** en los selectores habituales
+(`default._domainkey`, `ionos._domainkey`, `google._domainkey`). Conviene activar DKIM en el
+panel de IONOS para el dominio: sin él, los correos transaccionales firmados solo con SPF
+tienen más papeletas para acabar en spam. Se activa en IONOS → Email → DKIM, y ellos publican
+el registro TXT solos.
 
 **Opción B — Resend:** crear cuenta en resend.com, verificar el dominio `roadshop.online`
 (añadiendo los registros TXT/MX que te dé) y pasarme `RESEND_API_KEY` + `EMAIL_PROVIDER=resend`.

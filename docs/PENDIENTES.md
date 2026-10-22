@@ -47,17 +47,38 @@ Pedidos, newsletter y contacto escriben de verdad en la base de datos.
 
 ---
 
-## 4. Correo de la tienda 🔴 el único bloqueante
+## 4. Correo de la tienda 🔴 el único bloqueante (ya solo falta la contraseña)
 
 Los emails con marca GRANKHA (pedido confirmado + aviso interno de venta) se generan pero
-**no salen**: falta proveedor. Código listo en `api/_lib/mail.js` con tres caminos:
+**no salen**: falta la contraseña del buzón. **Todo lo demás ya está puesto y verificado.**
 
-- **SMTP del buzón** (`EMAIL_PROVIDER=smtp` + `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`)
-  → la vía más directa, ya tienes `grankha@roadshop.online`.
-- **Resend** (`RESEND_API_KEY`) verificando el dominio `roadshop.online`.
-- **Brevo** (`BREVO_API_KEY`).
+El proveedor es **IONOS** (confirmado por DNS: MX `mx00/mx01.ionos.es`, SPF
+`include:_spf-eu.ionos.com`, NS `ui-dns.*`, SOA `hostmaster.1und1.com`). Y
+`smtp.ionos.es:587` responde con banner `Nemesis ESMTP` y anuncia `STARTTLS`.
 
-Detalle de las variables en `LANZAMIENTO.md`.
+Ya configurado en Vercel (producción, preview y development):
+
+| Variable | Valor | Estado |
+|---|---|---|
+| `EMAIL_PROVIDER` | `smtp` | ✅ |
+| `SMTP_HOST` | `smtp.ionos.es` | ✅ |
+| `SMTP_PORT` | `587` | ✅ |
+| `SMTP_USER` | `grankha@roadshop.online` | ✅ |
+| `EMAIL_FROM` | `GRANKHA <grankha@roadshop.online>` | ✅ |
+| `EMAIL_AVISO` | `grankha@roadshop.online` | ✅ |
+| **`SMTP_PASS`** | **la contraseña del buzón** | ⬜ **falta solo esta** |
+
+> El código no intenta enviar nada si falta `SMTP_PASS`, así que la configuración a medias no
+> rompe nada: `/api/contact` responde 200 en 0,86 s en producción.
+
+Alternativas si prefieres no dar la contraseña del buzón: `RESEND_API_KEY` o `BREVO_API_KEY`
+(más `EMAIL_PROVIDER=resend` / `brevo`). El código admite los tres caminos.
+
+- [ ] **Activar DKIM en IONOS** para `roadshop.online` (Email → DKIM). El SPF ya está publicado y
+      hay DMARC (`p=none`), pero no se encuentran registros DKIM en los selectores habituales.
+      Sin DKIM los correos transaccionales tienen más riesgo de acabar en spam.
+- [ ] Comprobar que el buzón `grankha@roadshop.online` existe y permite SMTP saliente
+      (en IONOS algunos buzones son solo de reenvío).
 
 ---
 
