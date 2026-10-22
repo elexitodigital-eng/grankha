@@ -1,213 +1,236 @@
 # Resend en IONOS — GRANKHA
 
-Guía para verificar el dominio de envío de GRANKHA en Resend.
-Mismo montaje que ya funciona en `sscarsgarage.roadshop.online`.
+Guía para verificar **`roadshop.online`** (el dominio raíz) en Resend y que los correos de
+GRANKHA salgan desde `grankha@roadshop.online`.
 
 Fecha de comprobación del DNS: 22/10/2026.
 
 ---
 
-## 1. Qué vamos a hacer y por qué
-
-Los correos de GRANKHA saldrán de un **subdominio de envío**, no del dominio raíz:
+## 1. Qué vamos a hacer
 
 | | Valor |
 |---|---|
-| Dominio que se verifica en Resend | `grankha.roadshop.online` |
-| Remitente que verá el cliente | `GRANKHA <pedidos@grankha.roadshop.online>` |
-| Reply-To (sin cambio) | `grankha@roadshop.online` |
+| Dominio que se verifica en Resend | `roadshop.online` (la raíz) |
+| Remitente que verá el cliente | `GRANKHA <grankha@roadshop.online>` |
+| Reply-To | `grankha@roadshop.online` |
 
-**Por qué un subdominio y no la raíz:**
+**Decidido así a propósito.** Se barajó enviar desde un subdominio
+(`pedidos@grankha.roadshop.online`), que es lo que se hizo en el otro proyecto. Se descarta
+porque la raíz tiene dos ventajas concretas aquí:
 
-- Aísla la reputación. Si un día un correo cae en spam, no mancha `roadshop.online`
-  ni el buzón real `grankha@roadshop.online`, que sigue recibiendo las respuestas.
-- Es exactamente lo que se hizo en el otro proyecto: `pedidos@sscarsgarage.roadshop.online`.
-- No hay que tocar el SPF ni el MX del buzón de IONOS. Ni un registro existente se modifica.
+1. **El remitente ya es el correcto y no hay que cambiar nada.** `EMAIL_FROM` en Vercel ya
+   vale `GRANKHA <grankha@roadshop.online>`. En cuanto el dominio verifique, los tres correos
+   salen solos: sin tocar variables y **sin redesplegar**.
+2. **Es la dirección que ya está publicada.** `grankha@roadshop.online` aparece en 8 sitios
+   de `legal.html`. Con un subdominio, el cliente vería un remitente distinto al que la web
+   le dice que use.
 
-**Consecuencia visible, para que no te sorprenda:** el cliente verá
-`pedidos@grankha.roadshop.online` como remitente en vez de `grankha@roadshop.online`.
-Cuando pulse «Responder», el correo llegará a `grankha@roadshop.online` igual que ahora,
-porque el Reply-To no cambia.
-
----
-
-## 2. Ya está comprobado que esto funciona en tu zona
-
-La duda razonable es: *`grankha.roadshop.online` es un CNAME a Vercel, ¿se pueden añadir
-registros debajo?* Sí. Lo he verificado en tu propia zona, no es teoría:
-
-```
-sscarsgarage.roadshop.online          CNAME  d1aff6f9ab81ad45.vercel-dns-017.com.   ← la web
-send.sscarsgarage.roadshop.online     TXT    v=spf1 include:amazonses.com ~all       ← Resend
-send.sscarsgarage.roadshop.online     MX     10 feedback-smtp.eu-west-1.amazonses.com.
-resend._domainkey.sscarsgarage...     TXT    p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDK56PacZkk…
-rsend.sscarsgarage.roadshop.online    CNAME  send.forge.rmta.net.
-```
-
-`sscarsgarage` es un CNAME a Vercel **y** tiene los cuatro registros de Resend debajo,
-funcionando. `grankha` está en la misma situación:
-
-```
-grankha.roadshop.online               CNAME  63e57cf5614e4cf1.vercel-dns-017.com.
-```
-
-Un CNAME impide añadir otros registros **en ese mismo nombre**, pero no en nombres
-*por debajo* (`send.grankha…`, `rsend.grankha…`). Son etiquetas distintas.
-
-Y confirmado también: **ninguno de los cuatro nombres que vamos a crear existe hoy.**
-No hay nada que reemplazar.
-
-```
-send.roadshop.online                    → no existe
-resend._domainkey.roadshop.online       → no existe
-send.grankha.roadshop.online            → no existe
-resend._domainkey.grankha.roadshop.online → no existe
-rsend.grankha.roadshop.online           → no existe
-```
+El coste es que no se aísla la reputación por proyecto. Se asume: `roadshop.online` es un
+dominio con poco tráfico y todos los proyectos son tuyos.
 
 ---
 
-## 3. ⚠️ La regla de oro en IONOS
+## 2. Comprobado antes de escribir esta guía
 
-En IONOS **solo existe la zona de `roadshop.online`**. El subdominio `grankha` no tiene
-zona propia. IONOS **añade `.roadshop.online` al final** de lo que escribas.
+### Los tres nombres que hay que crear están libres
 
-> **Escribe el nombre de host SIN el sufijo `.roadshop.online`.**
+```
+resend._domainkey.roadshop.online   → no existe
+send.roadshop.online                → no existe
+rsend.roadshop.online               → no existe
+```
+
+**No hay nada que reemplazar.** Ninguno de los cuatro registros pisa un registro existente.
+
+### La raíz no tiene CNAME, así que no hay impedimento técnico
+
+```
+roadshop.online   CNAME   → no existe
+roadshop.online   A       → 217.160.0.140
+```
+
+Esto importa: un CNAME en un nombre impide añadir otros registros en ese mismo nombre. En la
+raíz no lo hay, así que se puede añadir lo que haga falta sin conflicto.
+
+### Lo que NO se toca
+
+| Nombre | Tipo | Valor actual | Para qué sirve |
+|---|---|---|---|
+| `roadshop.online` | MX | `10 mx00.ionos.es` / `10 mx01.ionos.es` | Recibir correo en `grankha@roadshop.online` |
+| `roadshop.online` | TXT | `v=spf1 include:_spf-eu.ionos.com ~all` | Autorizar a IONOS a enviar desde el buzón |
+| `roadshop.online` | A | `217.160.0.140` | Web principal en IONOS |
+| `_dmarc.roadshop.online` | TXT | `v=DMARC1; p=none;` | Política DMARC |
+| `grankha` | CNAME | `63e57cf5614e4cf1.vercel-dns-017.com` | La tienda en Vercel |
+
+Los registros de Resend van todos bajo `resend._domainkey`, `send` y `rsend`. **Ninguno
+aparece en esta tabla.**
+
+---
+
+## 3. La duda razonable: ¿y el SPF de la raíz?
+
+Es lo que más preocupa y la respuesta es que **no se modifica**.
+
+El SPF de la raíz (`v=spf1 include:_spf-eu.ionos.com ~all`) sigue ahí, intacto, autorizando a
+IONOS. No hay que añadirle `include:amazonses.com`.
+
+Por qué no hace falta: los servidores de correo comprueban el SPF contra el **Return-Path**
+(el sobre técnico del mensaje), no contra el From que ve el cliente. Resend envía con
+Return-Path en `send.roadshop.online`, y ese nombre lleva **su propio SPF** con
+`include:amazonses.com`. Son dos comprobaciones sobre dos nombres distintos.
+
+Resultado:
+
+- El correo que mandes tú desde el buzón de IONOS → sigue validando con el SPF de la raíz.
+- El correo que mande Resend → valida con el SPF de `send`.
+- Ninguno estorba al otro.
+
+Y **DMARC pasa por las dos vías**, porque todo queda dentro de `roadshop.online`:
+
+| Comprobación | Valor | ¿Alineado con el From? |
+|---|---|---|
+| From | `grankha@roadshop.online` | — |
+| DKIM `d=` | `roadshop.online` | ✅ coincide exacto |
+| Return-Path | `send.roadshop.online` | ✅ mismo dominio organizativo |
+
+El DMARC actual es `p=none`, así que de todos modos no rechaza nada. Pero con esto, cuando
+algún día lo subas a `quarantine` o `reject`, los correos de GRANKHA seguirán pasando.
+
+---
+
+## 4. ⚠️ La regla de oro en IONOS
+
+En IONOS solo existe la zona de `roadshop.online`, e IONOS **añade `.roadshop.online` al
+final** de lo que escribas en «Nombre de host».
+
+> **Escribe el nombre SIN el sufijo `.roadshop.online`.**
 >
-> - Correcto: `send.grankha`
-> - Incorrecto: `send.grankha.roadshop.online` → crearía
->   `send.grankha.roadshop.online.roadshop.online` y no funcionaría nunca.
+> - Correcto: `send`
+> - Incorrecto: `send.roadshop.online` → crearía
+>   `send.roadshop.online.roadshop.online` y no verificaría nunca.
 
 **TTL:** déjalo como venga por defecto. No lo toques.
 
 ---
 
-## 4. Los 4 registros
+## 5. Los registros
 
-Son cuatro, no cinco. **No hay que añadir DMARC**: el que ya existe en la raíz
-(`_dmarc.roadshop.online` → `v=DMARC1; p=none;`) no lleva etiqueta `sp=`, así que
-**cubre automáticamente a todos los subdominios**, incluido `grankha`.
+**No hay que añadir DMARC.** El de la raíz (`v=DMARC1; p=none;`) ya existe, no lleva etiqueta
+`sp=` y por tanto cubre también a todos los subdominios. Poner otro sería redundante.
 
-| # | Tipo | Nombre de host (escribir exactamente así) | Valor / destino | Prioridad |
-|---|------|-------------------------------------------|-----------------|-----------|
-| 1 | **TXT** | `resend._domainkey.grankha` | `p=MIGfMA0…` ← **te la da Resend, ver §6** | — |
-| 2 | **MX** | `send.grankha` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
-| 3 | **TXT** | `send.grankha` | `v=spf1 include:amazonses.com ~all` | — |
-| 4 | **CNAME** | `rsend.grankha` | `send.forge.rmta.net` | — |
+| # | Tipo | Nombre de host en IONOS | Valor / destino | Prioridad |
+|---|------|-------------------------|-----------------|-----------|
+| 1 | **TXT** | `resend._domainkey` | `p=MIGfMA0…` ← **la genera Resend, ver §7** | — |
+| 2 | **MX** | `send` | `feedback-smtp.eu-west-1.amazonses.com` | `10` |
+| 3 | **TXT** | `send` | `v=spf1 include:amazonses.com ~all` | — |
+| 4 | **CNAME** | `rsend` | `send.forge.rmta.net` | — |
 
 Notas:
 
-- Los registros **2 y 3 comparten nombre de host** (`send.grankha`). Es normal y correcto:
-  uno es MX y otro TXT, tipos distintos bajo la misma etiqueta. IONOS lo admite.
-- Los valores 2, 3 y 4 son fijos, idénticos a los del otro proyecto. No cambian.
-- El valor 1 (DKIM) es **único para tu dominio** y solo lo genera Resend al darlo de alta.
-  No se puede inventar ni copiar del otro proyecto.
+- Los registros **2 y 3 comparten nombre de host** (`send`). Es normal: uno es MX y otro TXT,
+  tipos distintos bajo la misma etiqueta. IONOS lo admite sin problema.
+- Los valores 2, 3 y 4 son fijos. Son los mismos que ya funcionan en el otro proyecto, donde
+  están publicados y resuelven correctamente:
+
+  ```
+  send.sscarsgarage.roadshop.online        TXT  v=spf1 include:amazonses.com ~all
+  send.sscarsgarage.roadshop.online        MX   10 feedback-smtp.eu-west-1.amazonses.com.
+  rsend.sscarsgarage.roadshop.online       CNAME send.forge.rmta.net.
+  ```
+
+- El registro 1 (DKIM) es **único de tu dominio**. No se puede copiar del otro proyecto ni
+  inventar.
+- El registro 4 solo aparece si Resend te lo pide en la pestaña **Records**. En algunos
+  dominios Resend muestra tres registros y no cuatro. **Copia exactamente los que te muestre
+  a ti**, ni uno más ni uno menos. Yo lo confirmaré en cuanto dé de alta el dominio (§7).
 
 ---
 
-## 5. Paso a paso en IONOS
+## 6. Paso a paso en IONOS
 
-1. Entra en **IONOS** → **Dominios y SSL**.
-2. Busca **roadshop.online** y pulsa **DNS**.
-3. Pulsa **Añadir registro**.
-4. Rellena el **registro 1** de la tabla:
-   - Tipo: `TXT`
-   - Nombre de host: `resend._domainkey.grankha`
-   - Valor: la clave DKIM que te dé Resend (§6)
-5. Repite para los registros **2**, **3** y **4**.
-6. Guarda.
+1. **IONOS** → **Dominios y SSL**.
+2. Busca **roadshop.online** → pulsa **DNS**.
+3. **Añadir registro** → rellena el registro **1** de la tabla.
+4. Repite con el **2**, el **3** y el **4**.
+5. Guarda.
 
 ### Si IONOS te avisa de algo
 
-Si al guardar aparece un aviso de que un registro **reemplaza**, **sobrescribe** o
-**choca** con otro existente:
+Si al guardar aparece un aviso de que un registro **reemplaza**, **sobrescribe** o **choca**
+con otro existente:
 
-> **NO aceptes.** Cancela y mándame una captura de la pantalla.
+> **NO aceptes.** Cancela y mándame una captura.
 
-Con lo verificado en §2 no debería pasar — los cuatro nombres están libres — pero si
-IONOS dice lo contrario, quiero verlo antes de que borres nada.
+Con lo comprobado en §2 no debería ocurrir — los tres nombres están libres — pero si IONOS
+dice lo contrario quiero verlo antes de que se borre nada.
 
 ---
 
-## 6. Falta un dato: la clave DKIM
+## 7. Falta un dato: la clave DKIM
 
-El registro 1 necesita el valor `p=MIGfMA0…`, que solo existe una vez que el dominio está
-dado de alta en Resend. **No puedo obtenerlo yo con la clave actual**: la clave
-`re_RHDGFx6G_…` es de tipo *restricted* (solo enviar). Al intentar leer o crear dominios
-devuelve:
+El registro 1 necesita el valor `p=MIGfMA0…`, que solo existe una vez dado de alta el dominio
+en Resend. **Con la clave actual no puedo obtenerlo**: es de tipo *restricted*, solo permite
+enviar, y al intentar leer o crear dominios responde
 
 ```
 401  "This API key is restricted to only send emails"
 ```
 
-Dos caminos, elige el que prefieras:
+Has elegido darme una clave con permisos de dominio. Cuando me la pegues, yo hago esto:
 
-**Opción A — me das una clave con permisos de dominio (yo hago todo)**
-
-1. Resend → **API Keys** → **Create API Key**.
-2. En permisos, activa **Domains** (lectura y escritura), no solo *Sending access*.
-3. Pégame la clave. Yo doy de alta `grankha.roadshop.online`, recojo los cuatro valores
-   exactos, relleno esta guía y te la dejo lista para copiar y pegar en IONOS.
-4. Cuando termines en IONOS, verifico la propagación por DNS y lanzo el correo de prueba.
+1. **Dar de alta `roadshop.online`** en Resend, región **eu-west-1 (Irlanda)** — la misma que
+   usa el otro proyecto y la más cercana a España.
+2. **Leer los registros exactos** que genere Resend y volcarlos en esta guía, sustituyendo los
+   valores esperados por los reales. Si Resend pide tres registros en vez de cuatro, lo
+   ajusto.
+3. **Dejarte la tabla lista para copiar y pegar** en IONOS, con los nombres ya escritos sin el
+   sufijo.
+4. Cuando los hayas puesto: **comprobar la propagación por DNS**, confirmar que Resend pasa el
+   dominio a *Verified* y **lanzar un pedido de prueba real** de punta a punta.
+5. **Borrar el pedido de prueba** de Supabase y dejar las tablas a cero.
 
 La clave se borra del entorno en cuanto se use, igual que se hizo con la anterior.
 
-**Opción B — lo das de alta tú en el panel de Resend**
+> **Alternativa si prefieres no darme la clave:** entra tú en Resend → **Domains** →
+> **Add Domain** → `roadshop.online`, región eu-west-1, y pégame los valores de la pestaña
+> **Records**. Con eso me vale para rellenar la guía y comprobar que coinciden.
 
-1. Resend → **Domains** → **Add Domain**.
-2. Nombre: `grankha.roadshop.online`. Región: **eu-west-1 (Irlanda)**, la misma que usa
-   el otro proyecto.
-3. Entra en la pestaña **Records** del dominio creado.
-4. Pégame los cuatro valores tal cual aparecen ahí (o al menos el TXT de
-   `resend._domainkey`), y yo actualizo esta guía y compruebo que coincidan con la tabla.
+### Un riesgo que vigilaré al dar de alta el dominio
 
-**En cualquiera de las dos opciones, copia los valores literalmente.** Sin añadir comillas,
-sin espacios al final, sin puntos extra. Un carácter de más y la verificación falla.
-
----
-
-## 7. Qué NO tocar
-
-Estos registros son del buzón real y de la web. **No se modifican ni se borran:**
-
-| Nombre | Tipo | Valor actual | Para qué sirve |
-|---|---|---|---|
-| `roadshop.online` | MX | `10 mx00.ionos.es` / `10 mx01.ionos.es` | Recibir correo en `grankha@roadshop.online` |
-| `roadshop.online` | TXT | `v=spf1 include:_spf-eu.ionos.com ~all` | Autorizar a IONOS a enviar |
-| `_dmarc.roadshop.online` | TXT | `v=DMARC1; p=none;` | Política DMARC (ya cubre subdominios) |
-| `grankha` | CNAME | `63e57cf5614e4cf1.vercel-dns-017.com` | Sirve la tienda en Vercel |
-| `roadshop.online` | A | `217.160.0.140` | Web principal en IONOS |
-
-Los cuatro registros de Resend van todos bajo `send.grankha`, `rsend.grankha` y
-`resend._domainkey.grankha`. **Ninguno pisa nada de esta tabla.**
+En esa misma cuenta de Resend ya está verificado `sscarsgarage.roadshop.online`, que es un
+subdominio de `roadshop.online`. En principio Resend trata cada dominio como una entrada
+independiente y no debería haber conflicto. Pero si al dar de alta la raíz respondiera que el
+dominio **ya está en uso** o **solapa** con el otro, no insistiré: te lo digo y volvemos al
+plan B, que es verificar `grankha.roadshop.online` y cambiar `EMAIL_FROM` a
+`pedidos@grankha.roadshop.online`. Los nombres de ese plan B (`send.grankha`,
+`rsend.grankha`, `resend._domainkey.grankha`) también están libres, comprobado.
 
 ---
 
-## 8. Después de guardar en IONOS
+## 8. Mientras tanto, nada está roto
 
-Avísame. Yo hago, en este orden:
+El comportamiento actual se mantiene hasta que el dominio verifique:
 
-1. **Compruebo la propagación por DNS** (los cuatro registros, uno a uno).
-   Suele tardar entre 15 minutos y unas horas; Resend admite hasta 72 h.
-2. **Verifico el dominio en Resend** y confirmo que pasa a estado *Verified*.
-3. **Cambio `EMAIL_FROM` en Vercel** a `GRANKHA <pedidos@grankha.roadshop.online>`
-   y mantengo `EMAIL_REPLY_TO=grankha@roadshop.online`.
-4. **Lanzo un pedido de prueba real** de punta a punta y te confirmo los tres correos:
-   confirmación al cliente, aviso interno de venta y, al marcarlo enviado, el correo
-   de seguimiento.
-5. **Borro el pedido de prueba** de Supabase y dejo las tablas a cero.
+| Correo | ¿Sale hoy? |
+|---|---|
+| **Aviso de venta (a ti)** | ✅ Sí, por el remitente de reserva `GRANKHA <onboarding@resend.dev>` |
+| Confirmación al cliente | ❌ No. Resend lo bloquea con `domain is not verified` |
+| Envío con seguimiento | ❌ No. Igual |
 
-Mientras el dominio no esté verificado, el comportamiento actual se mantiene sin cambios:
-los avisos internos siguen saliendo por la red de reserva desde
-`GRANKHA <onboarding@resend.dev>` y los correos a clientes no salen. Nada se rompe
-por esperar.
+Y ningún pedido se pierde: se guarda en Supabase, el fallo queda en la columna
+`order_email_error` (nunca en `notes`, que puede llevar el comentario del cliente), el panel lo
+muestra con el filtro «Con email de pedido fallido» y se reenvía con un clic en cuanto el
+dominio esté verificado. Stripe además manda su propio recibo de pago al cliente.
 
 ---
 
-## 9. Comprobación rápida (la haré yo, pero puedes ejecutarla tú)
+## 9. Comprobación rápida
+
+La haré yo, pero puedes ejecutarla tú:
 
 ```bash
-for n in resend._domainkey.grankha.roadshop.online send.grankha.roadshop.online rsend.grankha.roadshop.online; do
+for n in resend._domainkey.roadshop.online send.roadshop.online rsend.roadshop.online; do
   for t in TXT MX CNAME; do
     echo "-- $n $t"
     curl -s "https://dns.google/resolve?name=$n&type=$t" \
@@ -216,14 +239,15 @@ for n in resend._domainkey.grankha.roadshop.online send.grankha.roadshop.online 
 done
 ```
 
-Los cuatro registros tienen que aparecer. Si alguno sale vacío, no ha propagado todavía
-o el nombre de host se escribió con el sufijo duplicado (§3).
+Tienen que aparecer el TXT de DKIM, el TXT de SPF y el MX bajo `send`, y el CNAME bajo `rsend`
+si Resend lo pidió. Si algo sale vacío, o no ha propagado todavía (Resend admite hasta 72 h,
+lo normal son 15 minutos) o el nombre se escribió con el sufijo duplicado (§4).
 
 ---
 
 ## 10. Resumen de una línea
 
-Cuatro registros en la zona `roadshop.online` de IONOS, escritos **sin** el sufijo
-`.roadshop.online`, bajo `send.grankha` / `rsend.grankha` / `resend._domainkey.grankha`.
-Sin DMARC. Sin tocar el buzón ni el CNAME de Vercel. Falta la clave DKIM, que solo
-Resend puede dar (§6).
+Tres o cuatro registros en la zona `roadshop.online` de IONOS, bajo los nombres
+`resend._domainkey`, `send` y `rsend`, escritos **sin** el sufijo `.roadshop.online`. Sin
+DMARC. Sin tocar el MX, el SPF ni el A de la raíz. Falta la clave DKIM, que solo Resend
+genera al dar de alta el dominio (§7).
