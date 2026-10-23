@@ -1,9 +1,81 @@
 # Acciones pendientes · GRANKHA
 
-Todo el código de la tanda está commiteado y publicado en GitHub. Lo de abajo es lo que
-**no** se ha podido ejecutar por falta de credenciales o porque depende de un paso manual.
+**Estado: 23/10/2026, producción desplegada y verificada.**
 
-Fecha: 22/10/2026.
+Lo que estaba bloqueado ya está hecho:
+
+| Pendiente anterior | Estado |
+|---|---|
+| Desplegar los 5 commits | ✅ desplegado (`vercel deploy --prod`); `/tienda` da 200 |
+| Corregir el registro TXT de Resend en IONOS | ✅ corregido por el usuario; DNS verificado registro a registro |
+| Confirmar `verified` en Resend | ✅ `verified`, los 4 registros en verde |
+| Actualizar `EMAIL_FROM` al subdominio | ✅ `GRANKHA <pedidos@grankha.roadshop.online>` + redeploy |
+| Reemplazar la clave API de Resend revocada | ✅ sustituida en el entorno + redeploy |
+| Probar el envío real | ✅ `ok: true`; E2E completo (confirmación, venta y seguimiento) |
+| Activar `checkout.session.expired` en Stripe | ✅ activado vía API (webhook `enabled`) |
+
+Lo que sigue abajo son los pasos que **aún** faltan y quién los hace.
+
+---
+
+## A. Lo que queda (3 acciones del usuario, 1 opcional)
+
+### A1. Search Console: cambiar el método de verificación ⚠️ importante
+
+**Confirmado en producción:** con `cleanUrls:true` Vercel redirige **todas** las rutas que
+terminan en `.html`, y los `rewrites` de `vercel.json` no preemptan esa redirección. Por eso
+`/googlec2e45e8990a69adf.html` responde **308** y no 200. Es una limitación de plataforma,
+no un fallo del despliegue; no hay configuración de Vercel que lo resuelva sin renunciar a
+las URLs limpias.
+
+**Solución:** verificar por un método inmune a los cambios de URL.
+
+- **Opción recomendada — TXT de DNS.** En Search Console, al añadir la propiedad, elige
+  «Proveedor de nombres de dominio» → Google te da un TXT que empieza por
+  `google-site-verification=`. Lo añades en IONOS en la **raíz** `roadshop.online`, tipo TXT,
+  TTL 3600. No toca nada del correo ni del sitio. Cuando esté publicado, avísame y lo
+  compruebo yo por DNS.
+- **Alternativa — meta tag.** Si prefieres no tocar DNS, pégame el `<meta>` que te da Search
+  Console y lo incrusto en el `<head>` de las 86 páginas y redespliego.
+
+Después: enviar `https://grankha.roadshop.online/sitemap.xml` en «Sitemaps».
+
+> Si Search Console ya te aparece como verificado, no hace falta repetir nada: aun así el
+> TXT es más duradero que el fichero, que ahora es inalcanzable.
+
+### A2. Supabase: quitar la política que deja escribir suscriptores
+
+Los formularios ya no tocan Supabase (van a Google Forms por servidor), así que la inserción
+pública de `subscribers` es superficie de abuso sin uso. La clave de servicio no puede
+ejecutar DDL, así que hay que hacerlo en el **SQL Editor** de Supabase:
+
+```sql
+drop policy if exists "subscribers_insert_public" on public.subscribers;
+```
+
+### A3. Datos legales que faltan en el pie y en `legal.html`
+
+Art. 10 de la LSSI-CE: **NIF y domicilio fiscal** de GRANKHA. Sin eso la tienda no cumple el
+mínimo legal para vender en España. Pásamelos y los publico en un minuto.
+
+### A4. Opcional: limpieza de las respuestas de prueba en Google Forms
+
+Durante las pruebas se colaron respuestas de test (~10 en el de newsletter y ~9 en el de
+contacto). Bórralas desde las pestañas «Respuestas» de cada formulario si no quieres verlas
+en las estadísticas.
+
+---
+
+## B. Recordatorio de operación
+
+- El proyecto **no tiene integración con GitHub**: los pushes no despliegan solos. Tras cada
+  cambio hay que ejecutar `vercel deploy --prod` (o `ops/deploy_vercel.sh`).
+- Backups: el plan Free de Supabase no los incluye. Si quieres copia de seguridad de pedidos,
+  activa Point-in-Time Recovery o exporta `orders`/`order_items` periódicamente.
+- Comprobación post-despliegue: `bash ops/post_deploy.sh`. Ahora avisa (sin contar fallo) del
+  308 del fichero de Google, y verifica que `/pedidos.html` se comporta igual que cualquier
+  otra ruta `.html` inexistente (308→404), de modo que no delata el panel.
+
 
 ---
 

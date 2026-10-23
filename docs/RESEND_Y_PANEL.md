@@ -119,9 +119,23 @@ a otro dominio. Hay que sustituirlo por el de `ops/resend_dns_IONOS.md` §5.
 El dominio raíz que se llegó a dar de alta en Resend se ha borrado, para que no queden dos
 entradas conviviendo. En la cuenta solo queda `grankha.roadshop.online`.
 
-La clave API con permisos de dominio sigue en el entorno porque hace falta para confirmar que
-Resend pasa el dominio a `verified`; se borra en cuanto eso ocurra. La que usa la web en
-producción (`re_RHDGFx6G_…`, solo envío) **no hace falta cambiarla**.
+### Estado real (verificado en producción)
+
+Los cuatro registros DNS están publicados y Resend marca el dominio **`verified`**. Con eso
+hecho ya se puede enviar desde **cualquier dirección de `grankha.roadshop.online`** sin
+configurar nada más — no hace falta dar de alta cada buzón.
+
+**La clave API ha cambiado.** La que estaba en producción (`re_RHDGFx6G_…`, solo envío) fue
+revocada en el panel de Resend y la web dejó de poder enviar. Ahora el entorno usa la clave
+con permisos de dominio (`re_XFKG1rS5_…`), que también envía. Se ha actualizado con
+`vercel env rm/add` y se ha redeployado; el envío de prueba devolvió `ok: true`.
+
+> ⚠️ Si vuelves a revocar una clave en el panel de Resend, la web deja de enviar correo al
+> instante y los pedidos se quedan sin confirmación. Antes de borrar ninguna, crea la nueva
+> y actualízala en Vercel (`RESEND_API_KEY`) + redeploy.
+
+Remitente configurado: `GRANKHA <pedidos@grankha.roadshop.online>`, con
+`EMAIL_REPLY_TO=grankha@roadshop.online` para que las respuestas lleguen al buzón real.
 
 ### Cuando ya esté verificado
 

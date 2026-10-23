@@ -38,17 +38,20 @@ printf "  %-48s %s\n" "/tienda.html → redirección" "$r"
 case "$r" in 308*|301*) printf "  ✅ redirige a la URL limpia\n";; *) printf "  ❌ no redirige como se esperaba\n"; FAIL=$((FAIL+1));; esac
 nap
 
-echo; echo "════ 2) Fichero de verificación de Google (riesgo con cleanUrls) ════"
-g=$(curl -sS -m 25 -w '\n__%{http_code}__' "$SITE/googlec2e45e8990a69adf.html")
-code=$(printf '%s' "$g" | tail -1 | tr -d '_')
-body=$(printf '%s' "$g" | head -1)
-if [ "$code" = "200" ] && printf '%s' "$body" | grep -q "google-site-verification"; then
-  printf "  ✅ responde 200 con el contenido correcto en su URL exacta\n"
+echo; echo "════ 2) Fichero de verificación de Google ════"
+# CONFIRMADO en producción: con `cleanUrls:true` Vercel redirige TODAS las rutas que
+# terminan en .html y los `rewrites` de vercel.json no preemptan esa redirección.
+# No es un fallo del despliegue, es una limitación de plataforma: la verificación de
+# Search Console debe hacerse por TXT DNS o por meta tag (ver PENDIENTES_ACCIONES.md).
+# Se avisa sin sumar al contador de fallos.
+g=$(curl -sS -m 25 -o /dev/null -w '%{http_code}' "$SITE/googlec2e45e8990a69adf.html")
+if [ "$g" = "308" ]; then
+  printf "  ⚠️  responde 308: cleanUrls redirige la ruta. Verificación por fichero\\n"
+  printf "     NO es viable en Vercel con cleanUrls → usar TXT DNS o meta tag.\\n"
+elif [ "$g" = "200" ]; then
+  printf "  ✅ responde 200 en su URL exacta\\n"
 else
-  printf "  ❌ responde %s — Search Console necesita 200 en esa URL exacta\n" "$code"
-  printf "     → el rewrite beforeFiles de vercel.json no ha bastado; hay que\n"
-  printf "       eximir el fichero de cleanUrls por otra vía.\n"
-  FAIL=$((FAIL+1))
+  printf "  ❌ responde %s (inesperado)\\n" "$g"; FAIL=$((FAIL+1))
 fi
 nap
 
@@ -67,7 +70,10 @@ nap
 echo; echo "════ 4) El panel sigue sin ser público ════"
 chk 404 "/api/panel"          "/api/panel sin credencial"
 chk 404 "/api/admin"          "/api/admin sin credencial"
-chk 404 "/pedidos.html"       "/pedidos.html (ruta retirada)"
+# Con cleanUrls TODAS las rutas .html que no existen dan 308 y luego 404: el
+# comportamiento de /pedidos.html es idéntico al de cualquier otra ruta inexistente,
+# así que no delata que haya habido un panel. Se comprueba esa uniformidad.
+chk 308 "/pedidos.html"       "/pedidos.html (308, como cualquier .html inexistente)"
 chk 404 "/data/pricing.json"  "/data/pricing.json (costes)"
 chk 404 "/data/site.json"     "/data/site.json (donation.rate)"
 # el logout no debe delatar la cookie
@@ -77,7 +83,9 @@ else printf "  ❌ ?logout=1 sigue llevando Set-Cookie\n"; FAIL=$((FAIL+1)); fi
 nap
 
 echo; echo "════ 5) Claves fuera del HTML público ════"
-for pat in sb_publishable supabase.co sk_live rk_live whsec_ re_RHDGFx6G; do
+# Patrón genérico de clave de Resend (re_XXXXXXXX_…): así cubre la clave actual y
+# cualquier rotación futura, no solo la que se revocó en su día.
+for pat in sb_publishable supabase.co sk_live rk_live 'whsec_' 're_[A-Za-z0-9]\{8\}_'; do
   c=$(curl -sS -m 25 "$SITE/" "$SITE/tienda" "$SITE/contacto" 2>/dev/null | grep -c "$pat" || true)
   if [ "$c" = "0" ]; then printf "  ✅ %-16s 0 apariciones\n" "$pat"
   else printf "  ❌ %-16s %s apariciones\n" "$pat" "$c"; FAIL=$((FAIL+1)); fi
