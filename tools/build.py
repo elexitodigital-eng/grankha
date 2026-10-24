@@ -204,6 +204,7 @@ def head(title, desc, path, og="assets/img/hero.jpg", og_type="website", jsonld=
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="theme-color" content="#0B0B0B">
+<meta name="google-site-verification" content="vOKLg1RrTV0Ap7V2LQN2jlUQHc6DafzBgS6dBmKU298" />
 <script>document.documentElement.className+=" js";</script>
 <link rel="canonical" href="{canon}">
 {favicon_tags()}
